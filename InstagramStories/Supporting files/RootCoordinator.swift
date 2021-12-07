@@ -10,27 +10,31 @@ import UIKit
 final class RootCoordinator {
     
     //MARK: - Public properties
-    static let shared = RootCoordinator()
     
-    var rootViewController: UIViewController {
-        guard let window = window,
-              let rootViewController = window.rootViewController else { return UIViewController()}
-        return rootViewController
-    }
+    //    var rootViewController: UIViewController {
+    //        guard let window = window,
+    //              let rootViewController = window.rootViewController else { return UIViewController()}
+    //        return rootViewController
+    //    }
     
-    var tabBarController: UITabBarController? {
-        guard let window = window else { return nil }
-        if window.rootViewController is TabBarViewController {
-            return window.rootViewController as? TabBarViewController
-        }
-        return nil
-    }
+    //    var tabBarController: UITabBarController? {
+    //        guard let window = window else { return nil }
+    //        if window.rootViewController is TabBarViewController {
+    //            return window.rootViewController as? TabBarViewController
+    //        }
+    //        return nil
+    //    }
     
     //MARK: - Private methods
     private var window: UIWindow?
+    private let tabBarController: UITabBarController
+    private let presentationViewController: UIViewController
     
     //MARK: - Init
-    private init() {
+    init(tabBarController: UITabBarController, presentationViewController: UIViewController) {
+        self.tabBarController = tabBarController
+        self.presentationViewController = presentationViewController
+        
         let scene = UIApplication.shared.connectedScenes.first
         guard let sceneDelegate: SceneDelegate = (scene?.delegate as? SceneDelegate) else { return }
         window = sceneDelegate.window
@@ -46,14 +50,12 @@ final class RootCoordinator {
     
     //MARK: - Public methods
     func presentTabBarController() {
-        let vc = TabBarViewController()
-        window?.rootViewController = vc
+        window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
     }
     
     func presentPresentationViewController() {
-        let vc = PresentationViewController()
-        window?.rootViewController = vc
+        window?.rootViewController = presentationViewController
         window?.makeKeyAndVisible()
     }
 }
