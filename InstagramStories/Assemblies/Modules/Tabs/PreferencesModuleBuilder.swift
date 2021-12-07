@@ -10,8 +10,7 @@ import Swinject
 final class PreferencesModuleAssembly: Assembly {
     func assemble(container: Container) {
         container.register(PreferencesBuilder.self) { resolver in
-            let dataServiceFacade = resolver.resolve(DataServicesFacadeProtocol.self)
-            return PreferencesBuilder(dataServiceFacade: dataServiceFacade!)
+            return PreferencesBuilder()
         }
     }
 }

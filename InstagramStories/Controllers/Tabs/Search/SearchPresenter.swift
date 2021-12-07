@@ -5,10 +5,10 @@
 //  Created by Борис on 06.12.2021.
 //
 
-import Foundation
+import UIKit
 
-protocol SearchPresenterProtocol {
-    func viewDidLoad()
+
+protocol SearchPresenterProtocol: CommonPresenterProtocol {
     func fetchSearchingUsers(username: String)
 }
 
@@ -36,20 +36,25 @@ extension SearchPresenter: SearchPresenterProtocol {
         dataServicesFacade.fetchData (type: .recentUsers, completion: { [weak self] result in
             switch result {
             case .success(let users):
-                self?.view?.showUsers(users: users)
+//                self?.view?.showRecentUsers(users: users) // dont delete
+                
+                //TODO: Delete this
+                self?.view?.showRecentUsers(users: [InstagramUser(name: "Boris", instagramUsername: "verbitsky", userIcon: UIImage(systemName: "heart")!.pngData()!, posts: 230, subscribers: 2786, subscriptions: 3376, isOnFavorite: false, getNotifications: false, stories: [Story]())])
+                //--
             case .failure(let error):
                 self?.view?.showAlertController(title: "Error", message: error.localizedDescription)
+                
             }
         })
     }
     
     func fetchSearchingUsers(username: String) {
-        dataServicesFacade.fetchData(type: .search(username)) { result in
+        dataServicesFacade.fetchData(type: .search(username)) { [weak self] result in
             switch result {
-            case .success(_):
-                break
+            case .success(let users):
+                self?.view?.showSearchingUsers(users: users)
             case .failure(let error):
-                self.view?.showAlertController(title: "Error", message: error.localizedDescription)
+                self?.view?.showAlertController(title: "Error", message: error.localizedDescription)
             }
         }
     }

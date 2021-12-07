@@ -12,5 +12,5 @@ protocol ReachabilityManagerProtocol {
 final class ReachabilityManager: ReachabilityManagerProtocol {
     
     //MARK: - Public properties
-    var isNetworkAvailable = true
+    private(set) var isNetworkAvailable = true
 }

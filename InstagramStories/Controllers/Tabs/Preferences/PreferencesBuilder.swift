@@ -9,17 +9,9 @@ import UIKit.UIViewController
 
 final class PreferencesBuilder {
     
-    //MARK: - Private methods
-    private let dataServiceFacade: DataServicesFacadeProtocol
-    
-    //MARK: - Init
-    init(dataServiceFacade: DataServicesFacadeProtocol) {
-        self.dataServiceFacade = dataServiceFacade
-    }
-    
     func build() -> UIViewController {
-        let presenter = PreferencesPresenter(dataServicesFacade: dataServiceFacade)
-        let view = PreferencesViewController(presenter: presenter)
+        let presenter = PreferencesPresenter()
+        let view = PreferencesViewController(type: .preferences,presenter: presenter)
         presenter.injectView(view: view)
         
         return view

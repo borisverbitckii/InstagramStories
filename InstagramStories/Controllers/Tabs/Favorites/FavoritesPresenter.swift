@@ -5,10 +5,9 @@
 //  Created by Борис on 07.12.2021.
 //
 
-import Foundation
+import UIKit
 
-protocol FavoritesPresenterProtocol {
-    func viewDidLoad()
+protocol FavoritesPresenterProtocol: CommonPresenterProtocol {
 }
 
 final class FavoritesPresenter {
@@ -32,5 +31,16 @@ final class FavoritesPresenter {
 //MARK: - FavoritesPresenterProtocol
 extension FavoritesPresenter: FavoritesPresenterProtocol {
     func viewDidLoad() {
+        dataServicesFacade.fetchData(type: .favorites) { [weak self] result in
+            switch result{
+            case .success(let users):
+                
+                //TODO: Delete this
+                self?.view?.showFavoritesUsers(users: [InstagramUser(name: "Boris", instagramUsername: "verbitsky", userIcon: UIImage(systemName: "heart")!.pngData()!, posts: 230, subscribers: 2786, subscriptions: 3376, isOnFavorite: false, getNotifications: false, stories: [Story]())])
+                //--
+            case .failure(let error):
+                self?.view?.showAlertController(title: "Error", message: error.localizedDescription)
+            }
+        }
     }
 }

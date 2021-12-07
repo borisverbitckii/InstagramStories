@@ -5,8 +5,6 @@
 //  Created by Борис on 07.12.2021.
 //
 
-import Foundation
-
 protocol PresentationPresenterProtocol {
     func viewDidLoad()
 }

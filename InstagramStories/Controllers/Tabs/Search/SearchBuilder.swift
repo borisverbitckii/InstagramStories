@@ -20,7 +20,7 @@ final class SearchBuilder {
     //MARK: - Public methods
     func build() -> UIViewController {
         let presenter = SearchPresenter(dataServicesFacade: dataServiceFacade)
-        let view = SearchViewController(presenter: presenter)
+        let view = SearchViewController(type: .search,presenter: presenter)
         presenter.injectView(view: view)
         
         return view

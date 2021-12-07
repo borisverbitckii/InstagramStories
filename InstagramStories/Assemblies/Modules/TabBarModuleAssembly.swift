@@ -12,11 +12,9 @@ final class TabBarModuleAssembly: Assembly {
         container.register(TabBarViewController.self) { resolver in
             let searchBuilder = resolver.resolve(SearchBuilder.self)
             let favoritesViewController = resolver.resolve(FavoritesBuilder.self)
-            let preferencesViewController = resolver.resolve(PreferencesBuilder.self)
             
             return TabBarViewController(searchViewController: searchBuilder!.build(),
-                                        favoritesViewController: favoritesViewController!.build(),
-                                        preferencesViewController: preferencesViewController!.build())
+                                        favoritesViewController: favoritesViewController!.build())
         }
     }
 }

@@ -19,7 +19,7 @@ final class FavoritesBuilder {
     
     func build() -> UIViewController {
         let presenter = FavoritesPresenter(dataServicesFacade: dataServiceFacade)
-        let view = FavoritesViewController(presenter: presenter)
+        let view = FavoritesViewController(type: .favorites, presenter: presenter)
         presenter.injectView(view: view)
         
         return view

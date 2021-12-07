@@ -5,7 +5,7 @@
 //  Created by Борис on 06.12.2021.
 //
 
-import Foundation
+import Foundation.NSError
 
 enum FetchType {
     case recentUsers
@@ -71,7 +71,17 @@ extension DataServicesFacade: DataServicesFacadeProtocol {
                     }
                 }
         case .favorites:
-            break
+            
+            //TODO: Fix this
+            dataBaseManager.fetchInstagramUsers { result in
+                switch result{
+                case .success(let users):
+                    completion(.success(users))
+                case .failure(let error):
+                    print(#file, #line, error)
+                    completion(.failure(error))
+                }
+            }
         }
     }
 }
