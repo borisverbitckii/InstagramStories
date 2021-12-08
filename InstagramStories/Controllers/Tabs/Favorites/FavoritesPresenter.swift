@@ -14,10 +14,12 @@ final class FavoritesPresenter {
     
     //MARK: - Private properties
     private weak var view: FavoritesViewProtocol?
+    private weak var coordinator: CoordinatorProtocol?
     private let dataServicesFacade: DataServicesFacadeProtocol
     
     //MARK: - Init
-    init(dataServicesFacade: DataServicesFacadeProtocol) {
+    init(dataServicesFacade: DataServicesFacadeProtocol,
+         coordinator: CoordinatorProtocol) {
         self.dataServicesFacade = dataServicesFacade
     }
     

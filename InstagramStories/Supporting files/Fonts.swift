@@ -9,7 +9,7 @@ import UIKit.UIFont
 
 enum Fonts {
     case navBarLargeTitle
-    case navBarLitleTitle
+    case navBarLittleTitle
     case searchBarPlaceholder
     case instagramCellName
     case instagramCellNickname
@@ -20,7 +20,7 @@ enum Fonts {
         case .navBarLargeTitle:
             guard let font = UIFont(name: "Avenir-Heavy", size: 34) else { return UIFont() }
             return font
-        case .navBarLitleTitle:
+        case .navBarLittleTitle:
             guard let font = UIFont(name: "Avenir-Heavy", size: 16) else { return UIFont() }
             return font
         case .searchBarPlaceholder:

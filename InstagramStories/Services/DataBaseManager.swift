@@ -5,7 +5,7 @@
 //  Created by Борис on 06.12.2021.
 //
 
-protocol DataBaseManagerProtocol {
+protocol DataBaseManagerProtocol: ManagerProtocol {
     func fetchInstagramUsers(completion: @escaping (Result<[InstagramUser], Error>)->())
     func saveDataToDB(_ users: [InstagramUser])
     func removeDataFromDB()

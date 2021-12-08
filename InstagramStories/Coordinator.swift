@@ -7,20 +7,26 @@
 
 import UIKit.UIViewController
 
-final class RootCoordinator {
+protocol CoordinatorProtocol: AnyObject {
+    init(navigationController: UINavigationController)
+    func presentTabBarController()
+    func presentPresentationViewController()
+    func presentPreferences()
+}
+
+final class Coordinator {
     
     //MARK: - Private methods
     private var window: UIWindow?
-    private let tabBarController: UITabBarController
-    private let presentationViewController: UIViewController
+    private let navigationController: UINavigationController
+    private weak var moduleFactory: ModuleFactoryProtocol?
     
     //MARK: - Init
-    init(tabBarController: UITabBarController,
-         presentationViewController: UIViewController) {
-        self.tabBarController = tabBarController
-        self.presentationViewController = presentationViewController
+    init() {
+        self.navigationController = UINavigationController()
         
         let scene = UIApplication.shared.connectedScenes.first
+        
         guard let sceneDelegate: SceneDelegate = (scene?.delegate as? SceneDelegate) else { return }
         window = sceneDelegate.window
         
@@ -34,13 +40,20 @@ final class RootCoordinator {
     }
     
     //MARK: - Public methods
+    func injectModuleFactory(factory: ModuleFactoryProtocol) {
+        self.moduleFactory = factory
+    }
+    
     func presentTabBarController() {
-        window?.rootViewController = tabBarController
+        window?.rootViewController = moduleFactory?.buildTabBarController()
         window?.makeKeyAndVisible()
     }
     
     func presentPresentationViewController() {
-        window?.rootViewController = presentationViewController
+        window?.rootViewController = moduleFactory?.buildPresentationViewController()
         window?.makeKeyAndVisible()
+    }
+    
+    func presentPreferences() {
     }
 }

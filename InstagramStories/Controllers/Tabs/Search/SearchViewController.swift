@@ -92,14 +92,6 @@ final class SearchViewController: CommonViewController {
 //MARK: - SearchViewControllerProtocol
 
 extension SearchViewController: SearchViewProtocol {
-    func showAlertController(title: String, message: String) {
-        let alertController = UIAlertController(title: title,
-                                                message: message,
-                                                preferredStyle: .alert)
-        let okAction = UIAlertAction(title: "Ок", style: .default)
-        alertController.addAction(okAction)
-        present(alertController, animated: true)
-    }
     
     func showRecentUsers(users: [InstagramUser]) {
         recentUsers = users

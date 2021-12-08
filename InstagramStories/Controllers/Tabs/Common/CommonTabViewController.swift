@@ -56,7 +56,7 @@ class CommonViewController: UIViewController {
         let navBarAppearance = UINavigationBarAppearance()
         navBarAppearance.configureWithOpaqueBackground()
         navBarAppearance.largeTitleTextAttributes = [.font: Fonts.navBarLargeTitle.getFont()]
-        navBarAppearance.titleTextAttributes = [.font: Fonts.navBarLitleTitle.getFont()]
+        navBarAppearance.titleTextAttributes = [.font: Fonts.navBarLittleTitle.getFont()]
         navBarAppearance.backgroundColor = .white
         navBarAppearance.shadowColor = .clear
         navigationController?.navigationBar.standardAppearance = navBarAppearance
@@ -118,8 +118,7 @@ class CommonViewController: UIViewController {
     //MARK: - OBJC methods
     @objc func presentPreferences() {
         let preferencesViewController = PreferencesBuilder().build()
-        let navigationController = UINavigationController(rootViewController: preferencesViewController)
-        present(navigationController, animated: true)
+        navigationController?.pushViewController(preferencesViewController, animated: true)
     }
     
     @objc func handleSwipes(_ sender:UISwipeGestureRecognizer) {

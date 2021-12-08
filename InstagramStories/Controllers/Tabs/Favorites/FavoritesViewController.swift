@@ -52,15 +52,6 @@ extension FavoritesViewController: FavoritesViewProtocol {
     func showFavoritesUsers(users: [InstagramUser]) {
         favoritesUsers = users
     }
-    
-    func showAlertController(title: String, message: String) {
-        let alertController = UIAlertController(title: title,
-                                                message: message,
-                                                preferredStyle: .alert)
-        let okAction = UIAlertAction(title: "Ок", style: .default)
-        alertController.addAction(okAction)
-        present(alertController, animated: true)
-    }
 }
 
 extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {

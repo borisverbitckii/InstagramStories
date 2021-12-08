@@ -14,6 +14,12 @@ final class PreferencesPresenter {
     
     //MARK: - Private properties
     private weak var view: PreferencesViewProtocol?
+    private weak var coordinator: CoordinatorProtocol?
+    
+    //MARK: - Init
+    init(coordinator: CoordinatorProtocol) {
+        self.coordinator = coordinator
+    }
     
     //MARK: - Public methods
     func injectView(view: PreferencesViewProtocol) {

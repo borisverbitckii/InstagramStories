@@ -5,7 +5,7 @@
 //  Created by Борис on 06.12.2021.
 //
 
-protocol ReachabilityManagerProtocol {
+protocol ReachabilityManagerProtocol: ManagerProtocol {
     var isNetworkAvailable: Bool { get }
 }
 

@@ -11,8 +11,7 @@ import Swinject
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-    var rootCoordinator: RootCoordinator?
-    var assembler: Assembler?
+    var coordinator: Coordinator?
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         
@@ -21,8 +20,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
         
-        assembler = AppAssembler.assembler
-        rootCoordinator = assembler?.resolver.resolve(RootCoordinator.self)
+        let coordinator = Coordinator()
+        let managerFactory = ManagerFactory()
+        let dataServiceFacade =  DataServicesFacade(managerFactory: managerFactory)
+        
+        guard let coordinator = coordinator as? CoordinatorProtocol else { return }
+        
+        let moduleFactory = ModuleFactory(coordinator: coordinator,
+                                          dataServiceFacade: dataServiceFacade)
+        
+        coordinator.injectModuleFactory(factory: moduleFactory)
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

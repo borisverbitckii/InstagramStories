@@ -21,6 +21,9 @@ final class PreferencesViewController: CommonViewController {
     init(type: TabViewControllerType, presenter: PreferencesPresenterProtocol) {
         self.presenter = presenter
         super.init(type: type)
+        
+        tableView.delegate = self
+        tableView.dataSource = self
     }
     
     required init?(coder: NSCoder) {
@@ -31,9 +34,24 @@ final class PreferencesViewController: CommonViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        
+        navigationController?.navigationBar.barStyle = .black
+        navigationController?.navigationBar.tintColor = .black
+        
+        let navBarAppearance = UINavigationBarAppearance()
+        navBarAppearance.largeTitleTextAttributes = [.font: Fonts.searchBarCancelButton.getFont()]
+        navBarAppearance.titleTextAttributes = [.font: Fonts.searchBarCancelButton.getFont()]
+        
+        print(navigationItem)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        navigationController?.popViewController(animated: false)
     }
 }
 
+//MARK: - UITableViewDataSource, UITableViewDelegate
 extension PreferencesViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return settings.count
@@ -44,6 +62,10 @@ extension PreferencesViewController: UITableViewDataSource, UITableViewDelegate 
         let setting = settings[indexPath.row]
         cell.configure(setting: setting)
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }
 

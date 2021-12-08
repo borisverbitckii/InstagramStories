@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol NetworkManagerProtocol {
+protocol NetworkManagerProtocol: ManagerProtocol {
     func fetchInstagramUsers<T: Decodable>(username: String, completion: @escaping (Result<[T], Error>)->())
 }
 

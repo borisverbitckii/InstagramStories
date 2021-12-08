@@ -20,17 +20,11 @@ protocol DataServicesFacadeProtocol {
 final class DataServicesFacade {
     
     //MARK: - Private properties
-    private let reachabilityManager: ReachabilityManagerProtocol
-    private let networkManager: NetworkManagerProtocol
-    private let dataBaseManager: DataBaseManagerProtocol
+    private let managerFactory: ManagerFactoryProtocol
     
     //MARK: - Init
-    init(reachabilityManager: ReachabilityManagerProtocol,
-         networkManager: NetworkManagerProtocol,
-         dataBaseManager: DataBaseManagerProtocol){
-        self.networkManager = networkManager
-        self.reachabilityManager = reachabilityManager
-        self.dataBaseManager = dataBaseManager
+    init(managerFactory: ManagerFactoryProtocol){
+        self.managerFactory = managerFactory
     }
 }
 
@@ -41,7 +35,7 @@ extension DataServicesFacade: DataServicesFacadeProtocol {
         
         switch type {
         case .recentUsers:
-            dataBaseManager.fetchInstagramUsers { result in
+            managerFactory.getDataBaseManager().fetchInstagramUsers { result in
                 switch result{
                 case .success(let users):
                     completion(.success(users))
@@ -51,18 +45,18 @@ extension DataServicesFacade: DataServicesFacadeProtocol {
                 }
             }
         case .search(let username):
-            guard reachabilityManager.isNetworkAvailable else {
+            guard managerFactory.getReachabilityManager().isNetworkAvailable else {
                 completion(.failure(NSError(domain: "Network is not available", code: 0)))
                 return
             }
             
-            networkManager.fetchInstagramUsers(username: username) { [weak self] (result: Result<[InstagramUser],Error>) in
+            managerFactory.getNetworkManager().fetchInstagramUsers(username: username) { [weak self] (result: Result<[InstagramUser],Error>) in
                     switch result {
                     case .success(let users):
                         DispatchQueue.main.async {
                             completion(.success(users))
                         }
-                        self?.dataBaseManager.saveDataToDB(users)
+                        self?.managerFactory.getDataBaseManager().saveDataToDB(users)
                     case .failure(let error):
                         print(#file, #line, error)
                         DispatchQueue.main.async {
@@ -73,7 +67,7 @@ extension DataServicesFacade: DataServicesFacadeProtocol {
         case .favorites:
             
             //TODO: Fix this
-            dataBaseManager.fetchInstagramUsers { result in
+            managerFactory.getDataBaseManager().fetchInstagramUsers { result in
                 switch result{
                 case .success(let users):
                     completion(.success(users))
