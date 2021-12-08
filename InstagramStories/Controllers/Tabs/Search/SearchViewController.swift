@@ -74,6 +74,10 @@ final class SearchViewController: CommonViewController {
         searchController.searchBar.searchTextField.layer.masksToBounds = true
     }
     
+    override func presentPreferences() {
+        presenter?.presentPreferences()
+    }
+    
     //MARK: - Private methods
     private func setupSearchBar() {
         navigationItem.searchController = searchController

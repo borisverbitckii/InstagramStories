@@ -7,19 +7,22 @@
 
 import UIKit
 
-protocol FavoritesPresenterProtocol: CommonPresenterProtocol {
+protocol FavoritesPresenterProtocol {
+    func viewDidLoad()
+    func presentPreferences()
 }
 
 final class FavoritesPresenter {
     
     //MARK: - Private properties
     private weak var view: FavoritesViewProtocol?
-    private weak var coordinator: CoordinatorProtocol?
-    private let dataServicesFacade: DataServicesFacadeProtocol
+    private var coordinator: CoordinatorProtocol
+    private var dataServicesFacade: DataServicesFacadeProtocol
     
     //MARK: - Init
-    init(dataServicesFacade: DataServicesFacadeProtocol,
-         coordinator: CoordinatorProtocol) {
+    init(coordinator: CoordinatorProtocol,
+         dataServicesFacade: DataServicesFacadeProtocol) {
+        self.coordinator = coordinator
         self.dataServicesFacade = dataServicesFacade
     }
     
@@ -27,11 +30,11 @@ final class FavoritesPresenter {
     func injectView(view: FavoritesViewProtocol) {
         self.view = view
     }
-    
 }
 
 //MARK: - FavoritesPresenterProtocol
 extension FavoritesPresenter: FavoritesPresenterProtocol {
+    
     func viewDidLoad() {
         dataServicesFacade.fetchData(type: .favorites) { [weak self] result in
             switch result{
@@ -44,5 +47,11 @@ extension FavoritesPresenter: FavoritesPresenterProtocol {
                 self?.view?.showAlertController(title: "Error", message: error.localizedDescription)
             }
         }
+    }
+    
+    //MARK: Navigation
+    
+    func presentPreferences() {
+        coordinator.presentPreferences()
     }
 }

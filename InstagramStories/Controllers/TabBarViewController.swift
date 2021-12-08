@@ -50,6 +50,7 @@ final class TabBarViewController: UITabBarController {
     }
 }
 
+//MARK: - extension + UITabBarControllerDelegate
 extension TabBarViewController: UITabBarControllerDelegate {
     
     func tabBarController(_ tabBarController: UITabBarController, animationControllerForTransitionFrom fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
@@ -57,6 +58,7 @@ extension TabBarViewController: UITabBarControllerDelegate {
     }
 }
 
+//TODO: Change location
 class CustomTransition: NSObject, UIViewControllerAnimatedTransitioning {
     
     let viewControllers: [UIViewController]?

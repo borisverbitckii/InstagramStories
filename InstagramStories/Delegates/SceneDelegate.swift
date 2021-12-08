@@ -6,7 +6,6 @@
 //
 
 import UIKit.UIWindow
-import Swinject
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -20,16 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
         
-        let coordinator = Coordinator()
-        let managerFactory = ManagerFactory()
-        let dataServiceFacade =  DataServicesFacade(managerFactory: managerFactory)
-        
-        guard let coordinator = coordinator as? CoordinatorProtocol else { return }
-        
-        let moduleFactory = ModuleFactory(coordinator: coordinator,
-                                          dataServiceFacade: dataServiceFacade)
-        
-        coordinator.injectModuleFactory(factory: moduleFactory)
+        let _ = AppAssembly()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

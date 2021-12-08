@@ -8,20 +8,23 @@
 import UIKit
 
 
-protocol SearchPresenterProtocol: CommonPresenterProtocol {
+protocol SearchPresenterProtocol {
+    func viewDidLoad()
     func fetchSearchingUsers(username: String)
+    func presentPreferences()
 }
 
 final class SearchPresenter {
     
     //MARK: - Private properties
     private weak var view: SearchViewProtocol?
-    private weak var coordinator: CoordinatorProtocol?
-    private let dataServicesFacade: DataServicesFacadeProtocol
+    private var coordinator: CoordinatorProtocol
+    private var dataServicesFacade: DataServicesFacadeProtocol
     
     //MARK: - Init
-    init(dataServicesFacade: DataServicesFacadeProtocol,
-         coordinator: CoordinatorProtocol) {
+    init(coordinator: CoordinatorProtocol,
+         dataServicesFacade: DataServicesFacadeProtocol) {
+        self.coordinator = coordinator
         self.dataServicesFacade = dataServicesFacade
     }
     
@@ -34,6 +37,8 @@ final class SearchPresenter {
 //MARK: - SearchPresenterProtocol
 
 extension SearchPresenter: SearchPresenterProtocol {
+    
+    //MARK: - Public methods
     func viewDidLoad() {
         dataServicesFacade.fetchData (type: .recentUsers, completion: { [weak self] result in
             switch result {
@@ -59,5 +64,10 @@ extension SearchPresenter: SearchPresenterProtocol {
                 self?.view?.showAlertController(title: "Error", message: error.localizedDescription)
             }
         }
+    }
+    
+    //MARK: - Navigation
+    func presentPreferences() {
+        coordinator.presentPreferences()
     }
 }

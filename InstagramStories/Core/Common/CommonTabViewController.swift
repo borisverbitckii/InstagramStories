@@ -116,10 +116,7 @@ class CommonViewController: UIViewController {
     }
     
     //MARK: - OBJC methods
-    @objc func presentPreferences() {
-        let preferencesViewController = PreferencesBuilder().build()
-        navigationController?.pushViewController(preferencesViewController, animated: true)
-    }
+    @objc func presentPreferences() {} // for overriding
     
     @objc func handleSwipes(_ sender:UISwipeGestureRecognizer) {
         if sender.direction == .left {

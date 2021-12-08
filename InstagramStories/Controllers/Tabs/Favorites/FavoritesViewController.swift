@@ -44,6 +44,10 @@ final class FavoritesViewController: CommonViewController {
         super.viewDidLoad()
         presenter.viewDidLoad()
     }
+    
+    override func presentPreferences() {
+        presenter.presentPreferences()
+    }
 }
 
 

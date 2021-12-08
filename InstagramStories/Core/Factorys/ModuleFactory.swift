@@ -20,18 +20,20 @@ protocol ModuleFactoryProtocol: AnyObject {
 final class ModuleFactory: ModuleFactoryProtocol {
     
     //MARK: - Private properties
-    private let coordinator: Coordinator
+    private weak var coordinator: CoordinatorProtocol?
     private let dataServiceFacade: DataServicesFacadeProtocol
     
     //MARK: - Init
-    init(coordinator: Coordinator,
-         dataServiceFacade: DataServicesFacadeProtocol) {
+    init(dataServiceFacade: DataServicesFacadeProtocol) {
         self.dataServiceFacade = dataServiceFacade
-        self.coordinator = coordinator
     }
     
     
     //MARK: - Public methods
+    func injectCoordinator(coordinator: CoordinatorProtocol) {
+        self.coordinator = coordinator
+    }
+    
     func buildTabBarController() -> UIViewController {
         let searchVC = buildSearchViewController()
         let favoritesVC = buildFavoritesViewController()
@@ -44,8 +46,12 @@ final class ModuleFactory: ModuleFactoryProtocol {
     }
     
     func buildSearchViewController() -> CommonViewController {
-        let presenter = SearchPresenter(dataServicesFacade: dataServiceFacade,
-                                        coordinator: coordinator)
+        guard let coordinator = coordinator else {
+            return CommonViewController(type: .search)
+        }
+
+        let presenter = SearchPresenter(coordinator: coordinator,
+                                        dataServicesFacade: dataServiceFacade)
         let view = SearchViewController(type: .search,presenter: presenter)
         presenter.injectView(view: view)
         
@@ -53,7 +59,12 @@ final class ModuleFactory: ModuleFactoryProtocol {
     }
     
     func buildFavoritesViewController() -> CommonViewController {
-        let presenter = FavoritesPresenter(dataServicesFacade: dataServiceFacade, coordinator: coordinator)
+        guard let coordinator = coordinator else {
+            return CommonViewController(type: .favorites)
+        }
+        
+        let presenter = FavoritesPresenter(coordinator: coordinator,
+                                           dataServicesFacade: dataServiceFacade)
         let view = FavoritesViewController(type: .favorites, presenter: presenter)
         presenter.injectView(view: view)
         
@@ -61,6 +72,10 @@ final class ModuleFactory: ModuleFactoryProtocol {
     }
     
     func buildPreferencesViewController() -> CommonViewController {
+        guard let coordinator = coordinator else {
+            return CommonViewController(type: .preferences)
+        }
+        
         let presenter = PreferencesPresenter(coordinator: coordinator)
         let view = PreferencesViewController(type: .preferences,presenter: presenter)
         presenter.injectView(view: view)

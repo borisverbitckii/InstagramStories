@@ -8,7 +8,6 @@
 import UIKit.UIViewController
 
 protocol CoordinatorProtocol: AnyObject {
-    init(navigationController: UINavigationController)
     func presentTabBarController()
     func presentPresentationViewController()
     func presentPreferences()
@@ -19,12 +18,17 @@ final class Coordinator {
     //MARK: - Private methods
     private var window: UIWindow?
     private let navigationController: UINavigationController
-    private weak var moduleFactory: ModuleFactoryProtocol?
+    var moduleFactory: ModuleFactoryProtocol
     
     //MARK: - Init
-    init() {
+    init(moduleFactory: ModuleFactoryProtocol) {
+        self.moduleFactory = moduleFactory
         self.navigationController = UINavigationController()
-        
+    }
+    
+    //MARK: - Public methods
+    
+    func start() {
         let scene = UIApplication.shared.connectedScenes.first
         
         guard let sceneDelegate: SceneDelegate = (scene?.delegate as? SceneDelegate) else { return }
@@ -38,19 +42,19 @@ final class Coordinator {
         
         presentTabBarController()
     }
-    
-    //MARK: - Public methods
-    func injectModuleFactory(factory: ModuleFactoryProtocol) {
-        self.moduleFactory = factory
-    }
+}
+
+//MARK: - extension + CoordinatorProtocol
+
+extension Coordinator: CoordinatorProtocol {
     
     func presentTabBarController() {
-        window?.rootViewController = moduleFactory?.buildTabBarController()
+        window?.rootViewController = moduleFactory.buildTabBarController()
         window?.makeKeyAndVisible()
     }
     
     func presentPresentationViewController() {
-        window?.rootViewController = moduleFactory?.buildPresentationViewController()
+        window?.rootViewController = moduleFactory.buildPresentationViewController()
         window?.makeKeyAndVisible()
     }
     
