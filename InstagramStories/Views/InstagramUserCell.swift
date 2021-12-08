@@ -13,10 +13,19 @@ enum InstagramUserCellType {
     case remove
     case addToFavorites
 }
+
+protocol InstagramUserCellDelegate {
+    func trailingButtonTapped(type: InstagramUserCellType)
+}
     
 final class InstagramUserCell: UITableViewCell {
     
+    //MARK: - Public properties
+    var buttonDelegate: InstagramUserCellDelegate?
+    
     //MARK: - Private properties
+    private var type: InstagramUserCellType?
+    
     private let userIcon: UIImageView = {
         $0.contentMode = .scaleAspectFill
         return $0
@@ -41,6 +50,7 @@ final class InstagramUserCell: UITableViewCell {
     
     private let trailingButton: UIButton = {
         $0.contentMode = .scaleAspectFill
+        $0.addTarget(self, action: #selector(trailingButtonTapped), for: .touchUpInside)
         return $0
     }(UIButton())
     
@@ -62,6 +72,7 @@ final class InstagramUserCell: UITableViewCell {
     
     //MARK: - Public methods
     func configure(type: InstagramUserCellType,user: InstagramUser) {
+        self.type = type
         switch type {
         case .remove:
             trailingButton.setImage(Images.trailingCellButton(.remove).getImage(),
@@ -96,12 +107,19 @@ final class InstagramUserCell: UITableViewCell {
             .vCenter()
         
         stackViewForText.pin
-            .after(of: userIcon).margin(20)
+            .after(of: userIcon).margin(LocalConstants.stackViewLeadingInset)
             .before(of: trailingButton)
             .width(100)
             .vCenter()
             .height(contentView.frame.height - 30)
         
+    }
+    
+    //MARK: - OBJC methods
+    @objc private func trailingButtonTapped() {
+        if let type = type {
+            buttonDelegate?.trailingButtonTapped(type: type)
+        }
     }
 }
 
@@ -110,4 +128,5 @@ private enum LocalConstants {
     static let horizontalInset: CGFloat = 16
     static let userIconSize = CGSize(width: 50 , height: 50)
     static let deleteButtonSize = CGSize(width: 30, height: 30)
+    static let stackViewLeadingInset: CGFloat = 20
 }

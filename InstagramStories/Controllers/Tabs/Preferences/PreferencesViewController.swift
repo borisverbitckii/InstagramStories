@@ -8,18 +8,24 @@
 import UIKit.UIViewController
 
 protocol PreferencesViewProtocol: AnyObject {
-    
+    func showMenuItem(settings: [Setting])
+    func showAlertController(title: String, message: String)
 }
 
 final class PreferencesViewController: CommonViewController {
     
     //MARK: - Private properties
     private let presenter: PreferencesPresenterProtocol
-    private let settings = [Setting(name: "Общие"), Setting(name: "Настройка ленты постов")]
+    private var settings: [Setting] {
+        didSet {
+            tableView.reloadData()
+        }
+    }
     
     //MARK: - Init
     init(type: TabViewControllerType, presenter: PreferencesPresenterProtocol) {
         self.presenter = presenter
+        self.settings = [Setting]()
         super.init(type: type)
         
         tableView.delegate = self
@@ -33,21 +39,17 @@ final class PreferencesViewController: CommonViewController {
     //MARK: - Override methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        presenter.viewDidLoad()
         
-        navigationController?.navigationBar.barStyle = .black
+        view.backgroundColor = .white
+        tabBarController?.tabBar.isHidden = true
         navigationController?.navigationBar.tintColor = .black
         
-        let navBarAppearance = UINavigationBarAppearance()
-        navBarAppearance.largeTitleTextAttributes = [.font: Fonts.searchBarCancelButton.getFont()]
-        navBarAppearance.titleTextAttributes = [.font: Fonts.searchBarCancelButton.getFont()]
-        
-        print(navigationItem)
+        //TODO: Change back bar button font
     }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        navigationController?.popViewController(animated: false)
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        tabBarController?.tabBar.isHidden = false
     }
 }
 
@@ -71,5 +73,7 @@ extension PreferencesViewController: UITableViewDataSource, UITableViewDelegate 
 
 //MARK: - FavoritesViewProtocol
 extension PreferencesViewController: PreferencesViewProtocol {
-    
+    func showMenuItem(settings: [Setting]) {
+        self.settings = settings
+    }
 }

@@ -75,7 +75,8 @@ final class SearchViewController: CommonViewController {
     }
     
     override func presentPreferences() {
-        presenter?.presentPreferences()
+        guard let navController = navigationController else { return }
+        presenter?.presentPreferences(navigationController: navController)
     }
     
     //MARK: - Private methods
@@ -124,6 +125,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
         if searchingInstagramUsers.isEmpty {
             let user = recentUsers[indexPath.row]
             cell.configure(type: .remove, user: user)
+            cell.buttonDelegate = self
             return cell
         }
         
@@ -154,5 +156,18 @@ extension SearchViewController: UISearchControllerDelegate {
         guard let text = searchController.searchBar.text else { return }
         if text.isEmpty { return }
         presenter?.fetchSearchingUsers(username: text)
+    }
+}
+
+//MARK: - extension + InstagramUserCellDelegate
+
+extension SearchViewController: InstagramUserCellDelegate {
+    func trailingButtonTapped(type: InstagramUserCellType) {
+        switch type {
+        case .remove:
+            break
+        case .addToFavorites:
+            break
+        }
     }
 }

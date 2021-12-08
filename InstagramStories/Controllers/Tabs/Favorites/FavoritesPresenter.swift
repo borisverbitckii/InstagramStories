@@ -9,7 +9,7 @@ import UIKit
 
 protocol FavoritesPresenterProtocol {
     func viewDidLoad()
-    func presentPreferences()
+    func presentPreferences(navigationController: UINavigationController)
 }
 
 final class FavoritesPresenter {
@@ -17,13 +17,13 @@ final class FavoritesPresenter {
     //MARK: - Private properties
     private weak var view: FavoritesViewProtocol?
     private var coordinator: CoordinatorProtocol
-    private var dataServicesFacade: DataServicesFacadeProtocol
+    private var favoritesUseCase: FavoritesUseCaseProtocol
     
     //MARK: - Init
     init(coordinator: CoordinatorProtocol,
-         dataServicesFacade: DataServicesFacadeProtocol) {
+         favoritesUseCase: FavoritesUseCaseProtocol) {
         self.coordinator = coordinator
-        self.dataServicesFacade = dataServicesFacade
+        self.favoritesUseCase = favoritesUseCase
     }
     
     //MARK: - Public methods
@@ -36,7 +36,7 @@ final class FavoritesPresenter {
 extension FavoritesPresenter: FavoritesPresenterProtocol {
     
     func viewDidLoad() {
-        dataServicesFacade.fetchData(type: .favorites) { [weak self] result in
+        favoritesUseCase.fetchFavoritesUsersFromBD { [weak self] result in
             switch result{
             case .success(let users):
                 
@@ -51,7 +51,7 @@ extension FavoritesPresenter: FavoritesPresenterProtocol {
     
     //MARK: Navigation
     
-    func presentPreferences() {
-        coordinator.presentPreferences()
+    func presentPreferences(navigationController: UINavigationController) {
+        coordinator.presentPreferences(navigationController: navigationController)
     }
 }

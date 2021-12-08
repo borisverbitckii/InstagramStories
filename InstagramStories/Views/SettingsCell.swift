@@ -39,9 +39,13 @@ final class SettingsCell: UITableViewCell {
     
     private func layout() {
         settingName.pin
-            .left(safeAreaInsets.left)
+            .left(LocalConstants.leftLabelInset)
             .top()
             .bottom()
             .right(safeAreaInsets.right)
     }
+}
+
+private enum LocalConstants {
+    static let leftLabelInset: CGFloat = 30
 }

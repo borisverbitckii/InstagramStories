@@ -8,11 +8,11 @@
 import Foundation
 
 protocol NetworkManagerProtocol: ManagerProtocol {
-    func fetchInstagramUsers<T: Decodable>(username: String, completion: @escaping (Result<[T], Error>)->())
+    func fetchInstagramUsers<T: Decodable>(searchingTitle: String, completion: @escaping (Result<[T], Error>)->())
 }
 
 final class NetworkManager: NetworkManagerProtocol {
-    func fetchInstagramUsers<T: Decodable>(username: String, completion: @escaping (Result<[T], Error>)->()){
+    func fetchInstagramUsers<T: Decodable>(searchingTitle: String, completion: @escaping (Result<[T], Error>)->()){
         // create request with username
         let urlRequest = URLRequest(url: URL(string: "https://www.yandex.ru")!) // fix force unwrap
         URLSession.shared.dataTask(with: urlRequest) { data, response, error in

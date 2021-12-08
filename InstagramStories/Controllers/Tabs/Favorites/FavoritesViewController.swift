@@ -46,18 +46,20 @@ final class FavoritesViewController: CommonViewController {
     }
     
     override func presentPreferences() {
-        presenter.presentPreferences()
+        guard let navController = navigationController else { return }
+        presenter.presentPreferences(navigationController: navController)
     }
 }
 
 
-//MARK: - FavoritesViewProtocol
+//MARK: - extension + FavoritesViewProtocol
 extension FavoritesViewController: FavoritesViewProtocol {
     func showFavoritesUsers(users: [InstagramUser]) {
         favoritesUsers = users
     }
 }
 
+//MARK: - extension + UITableViewDataSource, UITableViewDelegate
 extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return favoritesUsers.count
@@ -69,6 +71,7 @@ extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
         
         let user = favoritesUsers[indexPath.row]
         cell.configure(type: .remove, user: user)
+        cell.buttonDelegate = self
         return cell
     }
     
@@ -79,5 +82,17 @@ extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return ConstantsForCommonViewController.cellHeight
+    }
+}
+
+//MARK: - extension + InstagramUserCellDelegate
+extension FavoritesViewController: InstagramUserCellDelegate {
+    func trailingButtonTapped(type: InstagramUserCellType) {
+        switch type {
+        case .remove:
+            break
+        case .addToFavorites:
+            break
+        }
     }
 }

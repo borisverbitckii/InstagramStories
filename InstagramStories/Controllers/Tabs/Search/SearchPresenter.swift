@@ -11,7 +11,7 @@ import UIKit
 protocol SearchPresenterProtocol {
     func viewDidLoad()
     func fetchSearchingUsers(username: String)
-    func presentPreferences()
+    func presentPreferences(navigationController: UINavigationController)
 }
 
 final class SearchPresenter {
@@ -19,13 +19,13 @@ final class SearchPresenter {
     //MARK: - Private properties
     private weak var view: SearchViewProtocol?
     private var coordinator: CoordinatorProtocol
-    private var dataServicesFacade: DataServicesFacadeProtocol
+    private var useCase: SearchUseCaseProtocol
     
     //MARK: - Init
     init(coordinator: CoordinatorProtocol,
-         dataServicesFacade: DataServicesFacadeProtocol) {
+         searchUseCase: SearchUseCaseProtocol) {
         self.coordinator = coordinator
-        self.dataServicesFacade = dataServicesFacade
+        self.useCase =  searchUseCase
     }
     
     //MARK: - Public methods
@@ -40,7 +40,7 @@ extension SearchPresenter: SearchPresenterProtocol {
     
     //MARK: - Public methods
     func viewDidLoad() {
-        dataServicesFacade.fetchData (type: .recentUsers, completion: { [weak self] result in
+        useCase.fetchRecentUsersFromBD { [weak self] result in
             switch result {
             case .success(let users):
 //                self?.view?.showRecentUsers(users: users) // dont delete
@@ -52,11 +52,11 @@ extension SearchPresenter: SearchPresenterProtocol {
                 self?.view?.showAlertController(title: "Error", message: error.localizedDescription)
                 
             }
-        })
+        }
     }
     
     func fetchSearchingUsers(username: String) {
-        dataServicesFacade.fetchData(type: .search(username)) { [weak self] result in
+        useCase.fetchInstagramUsersFromNetwork(searchingTitle: username) { [weak self] result in
             switch result {
             case .success(let users):
                 self?.view?.showSearchingUsers(users: users)
@@ -67,7 +67,7 @@ extension SearchPresenter: SearchPresenterProtocol {
     }
     
     //MARK: - Navigation
-    func presentPreferences() {
-        coordinator.presentPreferences()
+    func presentPreferences(navigationController: UINavigationController) {
+        coordinator.presentPreferences(navigationController: navigationController)
     }
 }

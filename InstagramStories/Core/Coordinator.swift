@@ -10,20 +10,18 @@ import UIKit.UIViewController
 protocol CoordinatorProtocol: AnyObject {
     func presentTabBarController()
     func presentPresentationViewController()
-    func presentPreferences()
+    func presentPreferences(navigationController: UINavigationController)
 }
 
 final class Coordinator {
     
     //MARK: - Private methods
     private var window: UIWindow?
-    private let navigationController: UINavigationController
     var moduleFactory: ModuleFactoryProtocol
     
     //MARK: - Init
     init(moduleFactory: ModuleFactoryProtocol) {
         self.moduleFactory = moduleFactory
-        self.navigationController = UINavigationController()
     }
     
     //MARK: - Public methods
@@ -58,6 +56,7 @@ extension Coordinator: CoordinatorProtocol {
         window?.makeKeyAndVisible()
     }
     
-    func presentPreferences() {
+    func presentPreferences(navigationController: UINavigationController) {
+        navigationController.pushViewController(moduleFactory.buildPreferencesViewController(), animated: true)
     }
 }
