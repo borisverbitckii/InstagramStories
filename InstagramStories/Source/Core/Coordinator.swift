@@ -10,7 +10,7 @@ import UIKit.UIViewController
 protocol CoordinatorProtocol: AnyObject {
     func presentTabBarController()
     func presentPresentationViewController()
-    func presentPreferences(navigationController: UINavigationController)
+    func presentPreferencesViewController(navigationController: UINavigationController)
 }
 
 final class Coordinator {
@@ -38,7 +38,7 @@ final class Coordinator {
             return
         }
         
-        presentTabBarController()
+        presentSplashViewController()
     }
 }
 
@@ -49,6 +49,10 @@ extension Coordinator: CoordinatorProtocol {
     func presentTabBarController() {
         window?.rootViewController = moduleFactory.buildTabBarController()
         window?.makeKeyAndVisible()
+        
+        guard let window = window else { return }
+        
+        UIView.transition(with: window, duration: 0.30, options: [.transitionCrossDissolve], animations: nil)
     }
     
     func presentPresentationViewController() {
@@ -56,7 +60,12 @@ extension Coordinator: CoordinatorProtocol {
         window?.makeKeyAndVisible()
     }
     
-    func presentPreferences(navigationController: UINavigationController) {
+    func presentPreferencesViewController(navigationController: UINavigationController) {
         navigationController.pushViewController(moduleFactory.buildPreferencesViewController(), animated: true)
+    }
+    
+    func presentSplashViewController() {
+        window?.rootViewController = moduleFactory.buildSplashViewController()
+        window?.makeKeyAndVisible()
     }
 }

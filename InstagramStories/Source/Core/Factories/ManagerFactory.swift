@@ -15,6 +15,7 @@ protocol ManagerFactoryProtocol {
     func getNetworkManager() -> NetworkManagerProtocol
     func getReachabilityManager() -> ReachabilityManagerProtocol
     func getDataBaseManager() -> DataBaseManagerProtocol
+    func getAuthManager() -> AuthManagerProtocol
 }
 
 final class ManagerFactory: ManagerFactoryProtocol {
@@ -28,5 +29,9 @@ final class ManagerFactory: ManagerFactoryProtocol {
     
     func getDataBaseManager() -> DataBaseManagerProtocol {
         return DataBaseManager()
+    }
+    
+    func getAuthManager() -> AuthManagerProtocol {
+        return AuthManager()
     }
 }

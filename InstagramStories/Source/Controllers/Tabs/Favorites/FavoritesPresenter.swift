@@ -16,8 +16,8 @@ final class FavoritesPresenter {
     
     //MARK: - Private properties
     private weak var view: FavoritesViewProtocol?
-    private var coordinator: CoordinatorProtocol
-    private var favoritesUseCase: FavoritesUseCaseProtocol
+    private let coordinator: CoordinatorProtocol
+    private let favoritesUseCase: FavoritesUseCaseProtocol
     
     //MARK: - Init
     init(coordinator: CoordinatorProtocol,
@@ -38,7 +38,7 @@ extension FavoritesPresenter: FavoritesPresenterProtocol {
     func viewDidLoad() {
         favoritesUseCase.fetchFavoritesUsersFromBD { [weak self] result in
             switch result{
-            case .success(let users):
+            case .success(_):
                 
                 //TODO: Delete this
                 self?.view?.showFavoritesUsers(users: [InstagramUser(name: "Boris", instagramUsername: "verbitsky", userIcon: UIImage(systemName: "heart")!.pngData()!, posts: 230, subscribers: 2786, subscriptions: 3376, isOnFavorite: false, getNotifications: false, stories: [Story]())])
@@ -52,6 +52,6 @@ extension FavoritesPresenter: FavoritesPresenterProtocol {
     //MARK: Navigation
     
     func presentPreferences(navigationController: UINavigationController) {
-        coordinator.presentPreferences(navigationController: navigationController)
+        coordinator.presentPreferencesViewController(navigationController: navigationController)
     }
 }

@@ -15,17 +15,21 @@ protocol ModuleFactoryProtocol: AnyObject {
     func buildPreferencesViewController() -> CommonViewController
     func buildUsernameAccountViewController() -> UIViewController
     func buildUsernameStoryViewController() -> UIViewController
+    func buildSplashViewController() -> UIViewController
 }
 
 final class ModuleFactory: ModuleFactoryProtocol {
     
     //MARK: - Private properties
     private weak var coordinator: CoordinatorProtocol?
-    private let repository: UseCasesRepositoryProtocol
+    private let useCasesRepository: UseCasesRepositoryProtocol
+    private let viewsFactory: ViewsFactoryProtocol
     
     //MARK: - Init
-    init(dataServiceFacade: UseCasesRepositoryProtocol) {
-        self.repository = dataServiceFacade
+    init(useCasesRepository: UseCasesRepositoryProtocol,
+         viewsFactory: ViewsFactoryProtocol) {
+        self.useCasesRepository = useCasesRepository
+        self.viewsFactory = viewsFactory
     }
     
     
@@ -50,7 +54,7 @@ final class ModuleFactory: ModuleFactoryProtocol {
     
     func buildSearchViewController() -> CommonViewController {
         guard let coordinator = coordinator,
-              let useCase = repository.getUseCase(type: .searchViewController) as? SearchViewControllerUseCase else {
+              let useCase = useCasesRepository.getUseCase(type: .searchViewController) as? SearchViewControllerUseCase else {
             return CommonViewController(type: .search)
         }
         let presenter = SearchPresenter(coordinator: coordinator,
@@ -63,7 +67,7 @@ final class ModuleFactory: ModuleFactoryProtocol {
     
     func buildFavoritesViewController() -> CommonViewController {
         guard let coordinator = coordinator,
-              let useCase = repository.getUseCase(type: .favoritesViewController) as? FavoritesViewControllerUseCase else {
+              let useCase = useCasesRepository.getUseCase(type: .favoritesViewController) as? FavoritesViewControllerUseCase else {
             return CommonViewController(type: .favorites)
         }
         
@@ -77,7 +81,7 @@ final class ModuleFactory: ModuleFactoryProtocol {
     
     func buildPreferencesViewController() -> CommonViewController {
         guard let coordinator = coordinator,
-              let useCase = repository.getUseCase(type: .preferencesViewController) as? PreferencesViewControllerUseCase else {
+              let useCase = useCasesRepository.getUseCase(type: .preferencesViewController) as? PreferencesViewControllerUseCase else {
             return CommonViewController(type: .preferences)
         }
         
@@ -94,5 +98,18 @@ final class ModuleFactory: ModuleFactoryProtocol {
     
     func buildUsernameStoryViewController() -> UIViewController {
         return UIViewController()
+    }
+    
+    func buildSplashViewController() -> UIViewController {
+        guard let coordinator = coordinator,
+              let useCase = useCasesRepository.getUseCase(type: .splashViewController) as? SplashUseCaseProtocol else {
+            return CommonViewController(type: .preferences)
+        }
+        
+        let presenter = SplashPresenter(coordinator: coordinator, useCase: useCase)
+        let view = SplashViewController(presenter: presenter, activityIndicator: viewsFactory.getCustomActivityIndicator())
+        presenter.injectView(view: view)
+        
+        return view
     }
 }

@@ -11,6 +11,7 @@ enum UseCaseType {
     case searchViewController
     case favoritesViewController
     case preferencesViewController
+    case splashViewController
 }
 
 protocol UseCasesRepositoryProtocol {
@@ -37,6 +38,8 @@ final class UseCasesRepository: UseCasesRepositoryProtocol {
             return FavoritesViewControllerUseCase(dataBaseManager: managerFactory.getDataBaseManager())
         case .preferencesViewController:
             return PreferencesViewControllerUseCase()
+        case .splashViewController:
+            return SplashViewControllerUseCase(authManager: managerFactory.getAuthManager())
         }
     }
 }

@@ -18,8 +18,8 @@ final class SearchPresenter {
     
     //MARK: - Private properties
     private weak var view: SearchViewProtocol?
-    private var coordinator: CoordinatorProtocol
-    private var useCase: SearchUseCaseProtocol
+    private let coordinator: CoordinatorProtocol
+    private let useCase: SearchUseCaseProtocol
     
     //MARK: - Init
     init(coordinator: CoordinatorProtocol,
@@ -42,9 +42,8 @@ extension SearchPresenter: SearchPresenterProtocol {
     func viewDidLoad() {
         useCase.fetchRecentUsersFromBD { [weak self] result in
             switch result {
-            case .success(let users):
+            case .success(_):
 //                self?.view?.showRecentUsers(users: users) // dont delete
-                
                 //TODO: Delete this
                 self?.view?.showRecentUsers(users: [InstagramUser(name: "Boris", instagramUsername: "verbitsky", userIcon: UIImage(systemName: "heart")!.pngData()!, posts: 230, subscribers: 2786, subscriptions: 3376, isOnFavorite: false, getNotifications: false, stories: [Story]())])
                 //--
@@ -68,6 +67,6 @@ extension SearchPresenter: SearchPresenterProtocol {
     
     //MARK: - Navigation
     func presentPreferences(navigationController: UINavigationController) {
-        coordinator.presentPreferences(navigationController: navigationController)
+        coordinator.presentPreferencesViewController(navigationController: navigationController)
     }
 }

@@ -44,24 +44,22 @@ final class SearchViewControllerUseCase: UseCase, SearchUseCaseProtocol {
     
     func fetchInstagramUsersFromNetwork(searchingTitle: String,
                                         completion: @escaping (Result <[InstagramUser], Error>)->()) {
-        guard reachabilityManager.isNetworkAvailable else {
-            completion(.failure(NSError(domain: "Network is not available", code: 0)))
-            return
-        }
-        
-        networkManager.fetchInstagramUsers(searchingTitle: searchingTitle) { [weak self] (result: Result<[InstagramUser],Error>) in
-            switch result {
-            case .success(let users):
-                DispatchQueue.main.async {
-                    completion(.success(users))
-                }
-                self?.dataBaseManager.saveDataToDB(users)
-            case .failure(let error):
-                print(#file, #line, error)
-                DispatchQueue.main.async {
-                    completion(.failure(error))
+
+        reachabilityManager.checkIsNetworkIsAvailable(completion: { [weak self] in
+            self?.networkManager.fetchInstagramUsers(searchingTitle: searchingTitle) { [weak self] (result: Result<[InstagramUser],Error>) in
+                switch result {
+                case .success(let users):
+                    DispatchQueue.main.async {
+                        completion(.success(users))
+                    }
+                    self?.dataBaseManager.saveDataToDB(users)
+                case .failure(let error):
+                    print(#file, #line, error)
+                    DispatchQueue.main.async {
+                        completion(.failure(error))
+                    }
                 }
             }
-        }
+        })
     }
 }

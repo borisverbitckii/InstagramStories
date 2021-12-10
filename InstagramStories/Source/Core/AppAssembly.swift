@@ -13,13 +13,15 @@ final class AppAssembly {
     private let coordinator: Coordinator
     private let managerFactory: ManagerFactory
     private let useCasesRepository: UseCasesRepositoryProtocol
+    private let viewsFactory: ViewsFactoryProtocol
     private let moduleFactory: ModuleFactory
     
     //MARK: - Init
     init() {
         self.managerFactory = ManagerFactory()
         self.useCasesRepository = UseCasesRepository(managerFactory: managerFactory)
-        self.moduleFactory = ModuleFactory(dataServiceFacade: useCasesRepository)
+        self.viewsFactory = ViewsFactory()
+        self.moduleFactory = ModuleFactory(useCasesRepository: useCasesRepository,viewsFactory: viewsFactory)
         self.coordinator = Coordinator(moduleFactory: moduleFactory)
         self.moduleFactory.injectCoordinator(coordinator: coordinator)
         coordinator.start()
