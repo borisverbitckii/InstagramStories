@@ -30,6 +30,7 @@ final class InstagramUserCell: UITableViewCell {
     
     //MARK: - Private properties
     private var type: InstagramUserCellType?
+    private let activityIndicator: CustomActivityIndicator
     
     private let userIcon: UIImageView = {
         $0.contentMode = .scaleAspectFill
@@ -62,6 +63,8 @@ final class InstagramUserCell: UITableViewCell {
     
     //MARK: - Init
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        self.activityIndicator = ViewsFactory().getCustomActivityIndicator()
+        activityIndicator.size = .medium
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         addSubviews()
     }
@@ -78,6 +81,7 @@ final class InstagramUserCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        activityIndicator.isHidden = false
         type = nil
         trailingButton.setImage(UIImage(), for: .normal)
         userIcon.image = nil
@@ -94,6 +98,7 @@ final class InstagramUserCell: UITableViewCell {
             trailingButton.setImage(Images.trailingCellButton(.remove).getImage(),
                                     for: .normal)
             userIcon.image = Images.userImageIsEmpty.getImage()
+            self.activityIndicator.isHidden = true
         case .addToFavorites:
             trailingButton.setImage(Images.trailingCellButton(.addToFavorites).getImage(),
                                     for: .normal)
@@ -106,6 +111,7 @@ final class InstagramUserCell: UITableViewCell {
                     case .success(let image):
                         DispatchQueue.main.async {
                             guard let self = self else { return }
+                            self.activityIndicator.isHidden = true
                             UIView.transition(with: self.userIcon,
                                               duration: 0.25,
                                               options: .transitionCrossDissolve,
@@ -128,6 +134,7 @@ final class InstagramUserCell: UITableViewCell {
         stackViewForText.addArrangedSubview(nickNameLabel)
         contentView.addSubview(stackViewForText)
         contentView.addSubview(trailingButton)
+        userIcon.addSubview(activityIndicator)
         contentView.addSubview(userIcon)
     }
     
@@ -136,6 +143,9 @@ final class InstagramUserCell: UITableViewCell {
             .left(LocalConstants.horizontalInset)
             .vCenter()
             .size(LocalConstants.userIconSize)
+        
+        activityIndicator.pin
+            .center()
         
         userIcon.layer.cornerRadius = userIcon.frame.height / 2
         

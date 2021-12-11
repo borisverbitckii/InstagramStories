@@ -16,7 +16,7 @@ protocol SearchViewProtocol: AnyObject {
 
 final class SearchViewController: CommonViewController {
     
-    //MARK: - Public properties
+    //MARK: - Private properties
     private var recentUsers: [InstagramUser] {
         didSet{
             tableView.reloadWithFade()
@@ -25,6 +25,7 @@ final class SearchViewController: CommonViewController {
     private var searchingInstagramUsers : [InstagramUser] { // for search results
         didSet {
             tableView.reloadWithFade()
+            activityIndicatorContainerShadow.isHidden = true
         }
     }
     
@@ -33,8 +34,9 @@ final class SearchViewController: CommonViewController {
         return text.isEmpty
     }
     
-    //MARK: - Private properties
-    private var presenter: SearchPresenterProtocol?
+    private var previousValue = ""
+    
+    private let presenter: SearchPresenterProtocol?
     
     // UI elements
     private let searchController: UISearchController = {
@@ -43,11 +45,31 @@ final class SearchViewController: CommonViewController {
         return $0
     }(UISearchController(searchResultsController: nil))
     
+    private var activityIndicator: CustomActivityIndicator?
+    private let activityIndicatorContainer: UIView = {
+        $0.clipsToBounds = true
+        $0.layer.cornerRadius = LocalConstants.activityIndicatorContainerCornerRadius
+        $0.backgroundColor = .white
+        return $0
+    }(UIView())
+    
+    private let activityIndicatorContainerShadow: UIView = {
+        Utils.addShadow(type: .navBar, layer: $0.layer)
+        $0.isHidden = true
+        return $0
+    }(UIView())
+    
     //MARK: - Init
-    init(type: TabViewControllerType, presenter: SearchPresenterProtocol) {
+    init(type: TabViewControllerType,
+         presenter: SearchPresenterProtocol,
+         viewsFactory: ViewsFactoryProtocol) {
         self.recentUsers = [InstagramUser]()
         self.searchingInstagramUsers = [InstagramUser]()
         self.presenter = presenter
+        self.activityIndicator = viewsFactory.getCustomActivityIndicator()
+        if let activityIndicator = activityIndicator {
+            activityIndicator.size = .medium
+        }
         
         super.init(type: type)
         
@@ -68,6 +90,8 @@ final class SearchViewController: CommonViewController {
         presenter?.viewDidLoad()
         setupSearchBar()
         view.backgroundColor = .white
+        addSubviews()
+        layout()
     }
     
     override func viewWillLayoutSubviews() {
@@ -75,7 +99,29 @@ final class SearchViewController: CommonViewController {
         searchController.searchBar.searchTextField.layer.masksToBounds = true
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        activityIndicatorContainerShadow.isHidden = true
+    }
+    
     //MARK: - Private methods
+    private func addSubviews() {
+        activityIndicatorContainerShadow.addSubview(activityIndicatorContainer)
+        guard let activityIndicator = activityIndicator else { return }
+        activityIndicatorContainer.addSubview(activityIndicator)
+        view.addSubview(activityIndicatorContainerShadow)
+    }
+    
+    private func layout() {
+        activityIndicatorContainer.pin
+            //TODO: FIX THIS
+            .size(CGSize(width: 50, height:  50)) // fix this
+            .center()
+        
+        activityIndicator?.pin.center()
+        activityIndicatorContainerShadow.pin.sizeToFit().center()
+    }
+    
     private func setupSearchBar() {
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
@@ -92,7 +138,6 @@ final class SearchViewController: CommonViewController {
 }
 
 //MARK: - SearchViewControllerProtocol
-
 extension SearchViewController: SearchViewProtocol {
     
     func showRecentUsers(users: [InstagramUser]) {
@@ -156,9 +201,12 @@ extension SearchViewController: UISearchResultsUpdating {
 //MARK: - UISearchControllerDelegate
 extension SearchViewController: UISearchControllerDelegate {
     func updateSearchResults(for searchController: UISearchController) {
-        guard let text = searchController.searchBar.text else { return }
-        if text.isEmpty { return }
+        guard let text = searchController.searchBar.text,
+              !text.isEmpty,
+              previousValue != text else { return }
+        activityIndicatorContainerShadow.isHidden = false
         presenter?.fetchSearchingUsers(username: text)
+        previousValue = text
     }
 }
 
@@ -188,4 +236,8 @@ extension SearchViewController: InstagramUserCellImageDelegate {
     func fetchImage(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> ()) {
         presenter?.fetchImage(stringURL: stringURL, completion: completion)
     }
+}
+
+private enum LocalConstants {
+    static let activityIndicatorContainerCornerRadius: CGFloat = 10
 }

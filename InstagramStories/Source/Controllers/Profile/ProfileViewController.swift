@@ -8,10 +8,16 @@
 import UIKit
 
 protocol ProfileViewProtocol: AnyObject {
-    
+    func showUser(_ user: InstagramUser)
 }
 
 final class ProfileViewController: UIViewController {
+    
+    private var user: InstagramUser? {
+        didSet {
+            title = user?.name
+        }
+    }
     
     //MARK: - Private properties
     private let presenter: ProfilePresenterProtocol
@@ -33,11 +39,13 @@ final class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         presenter.viewDidLoad()
-        view.backgroundColor = .darkGray
+        view.backgroundColor = .white
     }
 }
 
 //MARK: - extension + ProfileViewProtocol
 extension ProfileViewController: ProfileViewProtocol {
-    
+    func showUser(_ user: InstagramUser) {
+        self.user = user
+    }
 }

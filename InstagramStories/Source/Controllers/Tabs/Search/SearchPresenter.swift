@@ -81,6 +81,6 @@ extension SearchPresenter: SearchPresenterProtocol {
     //MARK: - Navigation
     func presentProfile(with user: InstagramUser) {
         guard let transitionHandler = transitionHandler else { return }
-        coordinator.presentProfileViewController(transitionHandler: transitionHandler)
+        coordinator.presentProfileViewController(transitionHandler: transitionHandler,with: user)
     }
 }

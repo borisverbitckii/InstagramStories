@@ -14,7 +14,7 @@ enum ShadowType {
 
 struct Utils {
     
-    static func addShadow(for type: ShadowType, layer: CALayer) {
+    static func addShadow(type: ShadowType, layer: CALayer) {
         layer.shadowColor = UIColor.black.cgColor
         
         switch type {

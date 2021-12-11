@@ -43,7 +43,8 @@ final class CustomActivityIndicator: UIView {
     init() {
         super.init(frame: .zero)
         addSubview(activityIndicator)
-        activityIndicator.play()
+        activityIndicator.play(fromProgress: 0, toProgress: 1, loopMode: .loop)
+        activityIndicator.backgroundBehavior = .pauseAndRestore
     }
     
     required init?(coder: NSCoder) {

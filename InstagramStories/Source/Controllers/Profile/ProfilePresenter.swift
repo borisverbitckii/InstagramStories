@@ -15,6 +15,7 @@ final class ProfilePresenter {
     private weak var view: ProfileViewProtocol?
     private let coordinator: CoordinatorProtocol
     private let useCase: ProfileUseCaseProtocol
+    private var user: InstagramUser?
     
     //MARK: - Init
     init(coordinator: CoordinatorProtocol,
@@ -27,11 +28,16 @@ final class ProfilePresenter {
     func injectView(view: ProfileViewProtocol) {
         self.view = view
     }
+    
+    func injectUser(_ user: InstagramUser) {
+        self.user = user
+    }
 }
 
 //MARK: - extension + ProfilePresenterProtocol
 extension ProfilePresenter: ProfilePresenterProtocol {
     func viewDidLoad() {
-        
+        guard let user = user else { return }
+        view?.showUser(user)
     }
 }

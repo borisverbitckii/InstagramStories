@@ -70,7 +70,7 @@ class CommonViewController: UIViewController {
         }
     
         if let layer = navigationController?.navigationBar.layer {
-            Utils.addShadow(for: .navBar, layer: layer)
+            Utils.addShadow(type: .navBar, layer: layer)
         }
     }
     

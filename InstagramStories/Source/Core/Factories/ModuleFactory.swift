@@ -16,7 +16,7 @@ protocol ModuleFactoryProtocol: AnyObject {
     func buildPreferencesNaviationController() -> UINavigationController
     func buildUsernameStoryViewController() -> UIViewController
     func buildSplashViewController() -> UIViewController
-    func buildProfileViewController() -> UIViewController
+    func buildProfileViewController(with user: InstagramUser) -> UIViewController
 }
 
 final class ModuleFactory: ModuleFactoryProtocol {
@@ -63,7 +63,9 @@ final class ModuleFactory: ModuleFactoryProtocol {
         let presenter = SearchPresenter(coordinator: coordinator,
                                         searchUseCase: useCase,
                                         secret: secret)
-        let view = SearchViewController(type: .search,presenter: presenter)
+        let view = SearchViewController(type: .search,
+                                        presenter: presenter,
+                                        viewsFactory: viewsFactory)
         presenter.injectView(view: view)
         let navigationController = UINavigationController(rootViewController: view)
         presenter.injectTransitionHandler(view: navigationController)
@@ -110,7 +112,7 @@ final class ModuleFactory: ModuleFactoryProtocol {
         return view
     }
     
-    func buildProfileViewController() -> UIViewController {
+    func buildProfileViewController(with user: InstagramUser) -> UIViewController {
         guard let coordinator = coordinator,
               let useCase = useCasesRepository.getUseCase(type: .profileViewController) as? ProfileUseCaseProtocol else {
             return UIViewController()
@@ -118,6 +120,7 @@ final class ModuleFactory: ModuleFactoryProtocol {
         
         let presenter = ProfilePresenter(coordinator: coordinator, useCase: useCase)
         let view = ProfileViewController(presenter: presenter, viewsFactory: viewsFactory)
+        presenter.injectUser(user)
         presenter.injectView(view: view)
         
         return view

@@ -11,7 +11,7 @@ import Swiftagram
 protocol CoordinatorProtocol: AnyObject {
     func presentTabBarController(secret: Secret)
     func presentPresentationViewController()
-    func presentProfileViewController(transitionHandler: TransitionProtocol)
+    func presentProfileViewController(transitionHandler: TransitionProtocol, with user: InstagramUser)
 }
 
 final class Coordinator {
@@ -54,7 +54,7 @@ extension Coordinator: CoordinatorProtocol {
         guard let window = window else { return }
         
         UIView.transition(with: window,
-                          duration: LocalConstans.tabBarTransitionDuration,
+                          duration: LocalConstants.tabBarTransitionDuration,
                           options: [.transitionCrossDissolve],
                           animations: nil)
     }
@@ -69,12 +69,12 @@ extension Coordinator: CoordinatorProtocol {
         window?.makeKeyAndVisible()
     }
     
-    func presentProfileViewController(transitionHandler: TransitionProtocol) {
-        transitionHandler.pushViewControllerWithHandler(moduleFactory.buildProfileViewController(),
+    func presentProfileViewController(transitionHandler: TransitionProtocol, with user: InstagramUser) {
+        transitionHandler.pushViewControllerWithHandler(moduleFactory.buildProfileViewController(with: user),
                                                         animated: true)
     }
 }
 
-enum LocalConstans {
-    static let tabBarTransitionDuration: TimeInterval = 0.30
+private enum LocalConstants {
+    static let tabBarTransitionDuration: TimeInterval = 0.45
 }
