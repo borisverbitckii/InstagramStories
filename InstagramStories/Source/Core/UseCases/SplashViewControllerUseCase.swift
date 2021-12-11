@@ -9,7 +9,6 @@ import Swiftagram
 
 protocol SplashUseCaseProtocol {
     func authInInstagram(completion: @escaping(Result<Secret,Error>) -> ())
-    
 }
 
 final class SplashViewControllerUseCase: UseCase {

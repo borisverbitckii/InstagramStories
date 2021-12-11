@@ -14,20 +14,26 @@ enum InstagramUserCellType {
     case addToFavorites
 }
 
-protocol InstagramUserCellDelegate {
+protocol InstagramUserCellButtonDelegate {
     func trailingButtonTapped(type: InstagramUserCellType)
+}
+ 
+protocol InstagramUserCellImageDelegate {
+    func fetchImage(stringURL: String, completion: @escaping (Result<UIImage,Error>)->())
 }
     
 final class InstagramUserCell: UITableViewCell {
     
     //MARK: - Public properties
-    var buttonDelegate: InstagramUserCellDelegate?
+    var buttonDelegate: InstagramUserCellButtonDelegate?
+    var imageDelegate: InstagramUserCellImageDelegate?
     
     //MARK: - Private properties
     private var type: InstagramUserCellType?
     
     private let userIcon: UIImageView = {
         $0.contentMode = .scaleAspectFill
+        $0.clipsToBounds = true
         return $0
     }(UIImageView())
     
@@ -70,20 +76,50 @@ final class InstagramUserCell: UITableViewCell {
         layout()
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        type = nil
+        trailingButton.setImage(UIImage(), for: .normal)
+        userIcon.image = nil
+        nameLabel.text = ""
+        nickNameLabel.text = ""
+    }
+    
     //MARK: - Public methods
     func configure(type: InstagramUserCellType,user: InstagramUser) {
+        
         self.type = type
         switch type {
         case .remove:
             trailingButton.setImage(Images.trailingCellButton(.remove).getImage(),
                                     for: .normal)
+            userIcon.image = Images.userImageIsEmpty.getImage()
         case .addToFavorites:
             trailingButton.setImage(Images.trailingCellButton(.addToFavorites).getImage(),
                                     for: .normal)
+            
+            let queue = DispatchQueue(label: "image", qos: .userInteractive)
+            
+            queue.async { [weak self] in
+                self?.imageDelegate?.fetchImage(stringURL: user.userIconURL, completion: { result in
+                    switch result {
+                    case .success(let image):
+                        DispatchQueue.main.async {
+                            guard let self = self else { return }
+                            UIView.transition(with: self.userIcon,
+                                              duration: 0.25,
+                                              options: .transitionCrossDissolve,
+                                              animations: { self.userIcon.image = image })
+                        }
+                    case .failure(_):
+                        //TODO: Change this
+                        break
+                    }
+                })
+            }
         }
         nameLabel.text = user.name
         nickNameLabel.text = "@" + user.instagramUsername
-        userIcon.image = UIImage(data: user.userIcon)
     }
     
     //MARK: - Private methods
@@ -101,6 +137,8 @@ final class InstagramUserCell: UITableViewCell {
             .vCenter()
             .size(LocalConstants.userIconSize)
         
+        userIcon.layer.cornerRadius = userIcon.frame.height / 2
+        
         trailingButton.pin
             .right(LocalConstants.horizontalInset)
             .size(LocalConstants.deleteButtonSize)
@@ -109,7 +147,6 @@ final class InstagramUserCell: UITableViewCell {
         stackViewForText.pin
             .after(of: userIcon).margin(LocalConstants.stackViewLeadingInset)
             .before(of: trailingButton)
-            .width(100)
             .vCenter()
             .height(contentView.frame.height - 30)
         

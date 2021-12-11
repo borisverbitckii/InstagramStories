@@ -51,8 +51,6 @@ class CommonViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.barTintColor = .white
         
-//        navigationItem.rightBarButtonItem = UIBarButtonItem(image: Images.navBarSettingsButton.getImage(), style: .done, target: nil, action: nil)
-        
         let navBarAppearance = UINavigationBarAppearance()
         navBarAppearance.configureWithOpaqueBackground()
         navBarAppearance.largeTitleTextAttributes = [.font: Fonts.navBarLargeTitle.getFont()]
@@ -65,14 +63,8 @@ class CommonViewController: UIViewController {
         switch type{
         case .search:
             navigationItem.title = Text.navTitle(.search).getText()
-            navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .search,
-                                                                target: self,
-                                                                action: #selector(presentPreferences))
         case .favorites:
             navigationItem.title = Text.navTitle(.favorites).getText()
-            navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .search,
-                                                                target: self,
-                                                                action: #selector(presentPreferences))
         case .preferences:
             navigationItem.title = Text.navTitle(.preferences).getText()
         }
@@ -116,7 +108,6 @@ class CommonViewController: UIViewController {
     }
     
     //MARK: - OBJC methods
-    @objc func presentPreferences() {} // for overriding
     
     @objc func handleSwipes(_ sender:UISwipeGestureRecognizer) {
         if sender.direction == .left {

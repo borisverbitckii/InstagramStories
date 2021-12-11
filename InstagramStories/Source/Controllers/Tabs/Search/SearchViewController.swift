@@ -19,12 +19,12 @@ final class SearchViewController: CommonViewController {
     //MARK: - Public properties
     private var recentUsers: [InstagramUser] {
         didSet{
-            tableView.reloadData()
+            tableView.reloadWithFade()
         }
     }
     private var searchingInstagramUsers : [InstagramUser] { // for search results
         didSet {
-            tableView.reloadData()
+            tableView.reloadWithFade()
         }
     }
     
@@ -52,6 +52,7 @@ final class SearchViewController: CommonViewController {
         super.init(type: type)
         
         //Delegates
+        searchController.searchBar.delegate = self
         searchController.searchResultsUpdater = self
         tableView.delegate = self
         tableView.dataSource = self
@@ -74,11 +75,6 @@ final class SearchViewController: CommonViewController {
         searchController.searchBar.searchTextField.layer.masksToBounds = true
     }
     
-    override func presentPreferences() {
-        guard let navController = navigationController else { return }
-        presenter?.presentPreferences(navigationController: navController)
-    }
-    
     //MARK: - Private methods
     private func setupSearchBar() {
         navigationItem.searchController = searchController
@@ -91,6 +87,7 @@ final class SearchViewController: CommonViewController {
         UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self]).font = Fonts.searchBarPlaceholder.getFont()
         definesPresentationContext = true
         
+        searchController.searchBar.searchTextField.autocapitalizationType = .none
     }
 }
 
@@ -121,22 +118,28 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
         
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ConstantsForCommonViewController.reuseIdentifier,
                                                  for: indexPath) as? InstagramUserCell else { return UITableViewCell() }
-        
         if searchingInstagramUsers.isEmpty {
             let user = recentUsers[indexPath.row]
-            cell.configure(type: .remove, user: user)
             cell.buttonDelegate = self
+            cell.imageDelegate = self
+            cell.configure(type: .remove, user: user)
             return cell
         }
         
         let user = searchingInstagramUsers[indexPath.row]
+        cell.buttonDelegate = self
+        cell.imageDelegate = self
         cell.configure(type: .addToFavorites, user: user)
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        // rootCoordinator
+        if !searchingInstagramUsers.isEmpty{
+            presenter?.presentProfile(with: searchingInstagramUsers[indexPath.row])
+        } else {
+            presenter?.presentProfile(with: recentUsers[indexPath.row])
+        }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -159,9 +162,16 @@ extension SearchViewController: UISearchControllerDelegate {
     }
 }
 
-//MARK: - extension + InstagramUserCellDelegate
+//MARK: - extension + UISearchBarDelegate
+extension SearchViewController: UISearchBarDelegate {
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchingInstagramUsers.removeAll()
+    }
+}
 
-extension SearchViewController: InstagramUserCellDelegate {
+//MARK: - extension + InstagramUserCellDelegate
+extension SearchViewController: InstagramUserCellButtonDelegate {
+    
     func trailingButtonTapped(type: InstagramUserCellType) {
         switch type {
         case .remove:
@@ -169,5 +179,13 @@ extension SearchViewController: InstagramUserCellDelegate {
         case .addToFavorites:
             break
         }
+    }
+}
+
+//MARK: - extension + InstagramUserCellImageDelegate
+extension SearchViewController: InstagramUserCellImageDelegate {
+    
+    func fetchImage(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> ()) {
+        presenter?.fetchImage(stringURL: stringURL, completion: completion)
     }
 }

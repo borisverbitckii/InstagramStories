@@ -9,22 +9,26 @@ import UIKit.UITabBarController
 
 final class TabBarViewController: UITabBarController {
     
-    private let navigationControllerForSearch: UIViewController
-    private let navigationControllerForFavorites : UIViewController
+    private let navigationControllerForSearch: UINavigationController
+    private let navigationControllerForFavorites : UINavigationController
+    private let navigationControllerForPreferences: UINavigationController
     
     //MARK: - Init
-    init(searchViewController: UIViewController,
-         favoritesViewController : UIViewController) {
-
-        self.navigationControllerForSearch = UINavigationController(rootViewController: searchViewController)
-        self.navigationControllerForFavorites = UINavigationController(rootViewController: favoritesViewController)
+    init(navigationControllerForSearch: UINavigationController,
+         navigationControllerForFavorites : UINavigationController,
+         navigationControllerForPreferences: UINavigationController) {
+        self.navigationControllerForSearch = navigationControllerForSearch
+        self.navigationControllerForFavorites = navigationControllerForFavorites
+        self.navigationControllerForPreferences = navigationControllerForPreferences
         
         super.init(nibName: nil, bundle: nil)
         
         setupTabBarItems()
         setupTabBar()
         
-        setViewControllers([navigationControllerForSearch, navigationControllerForFavorites], animated: true)
+        setViewControllers([navigationControllerForSearch,
+                            navigationControllerForFavorites,
+                            navigationControllerForPreferences], animated: true)
         
         delegate = self
     }
@@ -41,6 +45,9 @@ final class TabBarViewController: UITabBarController {
         navigationControllerForFavorites.tabBarItem = UITabBarItem(title: "Favorites",
                                                                    image: Images.favoritesTabIcon.getImage(),
                                                                    selectedImage: Images.favoritesTabIcon.getImage())
+        navigationControllerForPreferences.tabBarItem = UITabBarItem(title: "Preferences",
+                                                                   image: Images.preferencesTabIcon.getImage(),
+                                                                   selectedImage: Images.preferencesTabIcon.getImage())
     }
     
     private func setupTabBar() {

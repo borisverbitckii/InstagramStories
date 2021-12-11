@@ -39,7 +39,7 @@ extension SplashPresenter: SplashPresenterProtocol {
             switch result {
             case .success(let secret):
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    self?.coordinator.presentTabBarController()
+                    self?.coordinator.presentTabBarController(secret: secret)
                 }
             case .failure(let error):
                 self?.view?.showAlertController(title: "Error", message: error.localizedDescription)

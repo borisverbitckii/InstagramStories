@@ -8,20 +8,20 @@
 import UIKit.UIImage
 
 enum Images {
-    case navBarSettingsButton
     case searchTabIcon
     case favoritesTabIcon
-    
+    case preferencesTabIcon
     case trailingCellButton(InstagramUserCellType)
+    case userImageIsEmpty
     
     func getImage() -> UIImage? {
         switch self {
-        case .navBarSettingsButton:
-            return UIImage(named: "heart")
         case .searchTabIcon:
-            return UIImage(named: "heart")
+            return UIImage(systemName: "heart")
         case .favoritesTabIcon:
-            return UIImage(named: "heart")
+            return UIImage(systemName: "heart")
+        case .preferencesTabIcon:
+            return UIImage(systemName: "heart")
         case .trailingCellButton(let cellType):
             switch cellType {
             case .remove:
@@ -29,6 +29,8 @@ enum Images {
             case .addToFavorites:
                 return UIImage(systemName: "heart")
             }
+        case .userImageIsEmpty:
+            return UIImage(systemName: "heart")
         }
     }
 }

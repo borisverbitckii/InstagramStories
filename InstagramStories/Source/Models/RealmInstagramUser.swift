@@ -13,10 +13,12 @@ final class RealmInstagramUser: Object {
     //MARK: - Public properties
     @objc dynamic let name: String
     @objc dynamic let instagramUsername: String
-    @objc dynamic let userIcon: Data
+    @objc dynamic let id: Int
+    @objc dynamic var userIconURL: String
     @objc dynamic let posts: Int
     @objc dynamic let subscribers: Int
     @objc dynamic let subscription: Int
+    @objc dynamic let isPrivate: Bool
     @objc dynamic var isOnFavorite: Bool
     @objc dynamic var getNotifications: Bool
     
@@ -26,10 +28,12 @@ final class RealmInstagramUser: Object {
     init(instagramUser: InstagramUser) {
         self.name = instagramUser.name
         self.instagramUsername = instagramUser.instagramUsername
-        self.userIcon = instagramUser.userIcon
+        self.id = instagramUser.id
+        self.userIconURL = instagramUser.userIconURL
         self.posts = instagramUser.posts
         self.subscribers = instagramUser.subscribers
         self.subscription = instagramUser.subscriptions
+        self.isPrivate = instagramUser.isPrivate
         self.isOnFavorite = instagramUser.isOnFavorite
         self.getNotifications = instagramUser.getNotifications
         
@@ -43,12 +47,10 @@ final class RealmStory: Object {
     //MARK: - Public methods
     @objc dynamic let time: Int
     @objc dynamic let content: Data
-    @objc dynamic let isFavorite: Bool
     
     //MARK: - Init
     init(story: Story) {
         self.time = story.time
         self.content = story.content
-        self.isFavorite = story.isFavorite
     }
 }

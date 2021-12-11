@@ -9,7 +9,6 @@ import UIKit
 
 protocol FavoritesPresenterProtocol {
     func viewDidLoad()
-    func presentPreferences(navigationController: UINavigationController)
 }
 
 final class FavoritesPresenter {
@@ -41,7 +40,7 @@ extension FavoritesPresenter: FavoritesPresenterProtocol {
             case .success(_):
                 
                 //TODO: Delete this
-                self?.view?.showFavoritesUsers(users: [InstagramUser(name: "Boris", instagramUsername: "verbitsky", userIcon: UIImage(systemName: "heart")!.pngData()!, posts: 230, subscribers: 2786, subscriptions: 3376, isOnFavorite: false, getNotifications: false, stories: [Story]())])
+                self?.view?.showFavoritesUsers(users: [InstagramUser(name: "Boris", instagramUsername: "verbitsky",id: 100, userIconURL: "", posts: 230, subscribers: 2786, subscriptions: 3376,isPrivate: false, stories: [Story]())])
                 //--
             case .failure(let error):
                 self?.view?.showAlertController(title: "Error", message: error.localizedDescription)
@@ -50,8 +49,4 @@ extension FavoritesPresenter: FavoritesPresenterProtocol {
     }
     
     //MARK: Navigation
-    
-    func presentPreferences(navigationController: UINavigationController) {
-        coordinator.presentPreferencesViewController(navigationController: navigationController)
-    }
 }

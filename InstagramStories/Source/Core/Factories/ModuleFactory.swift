@@ -6,16 +6,17 @@
 //
 
 import UIKit.UIViewController
+import Swiftagram
 
 protocol ModuleFactoryProtocol: AnyObject {
-    func buildTabBarController() -> UIViewController
+    func buildTabBarController(secret: Secret) -> UIViewController
     func buildPresentationViewController() -> UIViewController
-    func buildSearchViewController() -> CommonViewController
-    func buildFavoritesViewController() -> CommonViewController
-    func buildPreferencesViewController() -> CommonViewController
-    func buildUsernameAccountViewController() -> UIViewController
+    func buildSearchNavigationController(secret: Secret) -> UINavigationController
+    func buildFavoritesNavigationController() -> UINavigationController
+    func buildPreferencesNaviationController() -> UINavigationController
     func buildUsernameStoryViewController() -> UIViewController
     func buildSplashViewController() -> UIViewController
+    func buildProfileViewController() -> UIViewController
 }
 
 final class ModuleFactory: ModuleFactoryProtocol {
@@ -38,11 +39,13 @@ final class ModuleFactory: ModuleFactoryProtocol {
         self.coordinator = coordinator
     }
     
-    func buildTabBarController() -> UIViewController {
-        let searchVC = buildSearchViewController()
-        let favoritesVC = buildFavoritesViewController()
-        return TabBarViewController(searchViewController: searchVC,
-                                    favoritesViewController: favoritesVC)
+    func buildTabBarController(secret: Secret) -> UIViewController {
+        let searchVC = buildSearchNavigationController(secret: secret)
+        let favoritesVC = buildFavoritesNavigationController()
+        let preferencesVC = buildPreferencesNaviationController()
+        return TabBarViewController(navigationControllerForSearch: searchVC,
+                                    navigationControllerForFavorites: favoritesVC,
+                                    navigationControllerForPreferences: preferencesVC)
     }
     
     func buildPresentationViewController() -> UIViewController {
@@ -52,64 +55,76 @@ final class ModuleFactory: ModuleFactoryProtocol {
         return view
     }
     
-    func buildSearchViewController() -> CommonViewController {
+    func buildSearchNavigationController(secret: Secret) -> UINavigationController {
         guard let coordinator = coordinator,
               let useCase = useCasesRepository.getUseCase(type: .searchViewController) as? SearchViewControllerUseCase else {
-            return CommonViewController(type: .search)
+            return UINavigationController()
         }
         let presenter = SearchPresenter(coordinator: coordinator,
-                                        searchUseCase: useCase)
+                                        searchUseCase: useCase,
+                                        secret: secret)
         let view = SearchViewController(type: .search,presenter: presenter)
         presenter.injectView(view: view)
-        
-        return view
+        let navigationController = UINavigationController(rootViewController: view)
+        presenter.injectTransitionHandler(view: navigationController)
+        return navigationController
     }
     
-    func buildFavoritesViewController() -> CommonViewController {
+    func buildFavoritesNavigationController() -> UINavigationController {
         guard let coordinator = coordinator,
               let useCase = useCasesRepository.getUseCase(type: .favoritesViewController) as? FavoritesViewControllerUseCase else {
-            return CommonViewController(type: .favorites)
+            return UINavigationController()
         }
         
         let presenter = FavoritesPresenter(coordinator: coordinator,
                                            favoritesUseCase: useCase)
         let view = FavoritesViewController(type: .favorites, presenter: presenter)
         presenter.injectView(view: view)
-        
-        return view
+        let navigationController = UINavigationController(rootViewController: view)
+        return navigationController
     }
     
-    func buildPreferencesViewController() -> CommonViewController {
+    func buildPreferencesNaviationController() -> UINavigationController {
         guard let coordinator = coordinator,
               let useCase = useCasesRepository.getUseCase(type: .preferencesViewController) as? PreferencesViewControllerUseCase else {
-            return CommonViewController(type: .preferences)
+            return UINavigationController()
         }
         
         let presenter = PreferencesPresenter(coordinator: coordinator,preferencesUseCase: useCase)
         let view = PreferencesViewController(type: .preferences,presenter: presenter)
         presenter.injectView(view: view)
+        let navigationController = UINavigationController(rootViewController: view)
+        return navigationController
+    }
+
+    func buildSplashViewController() -> UIViewController {
+        guard let coordinator = coordinator,
+              let useCase = useCasesRepository.getUseCase(type: .splashViewController) as? SplashUseCaseProtocol else {
+            return UIViewController()
+        }
+        
+        let presenter = SplashPresenter(coordinator: coordinator, useCase: useCase)
+        let view = SplashViewController(presenter: presenter, viewsFactory: viewsFactory)
+        presenter.injectView(view: view)
         
         return view
     }
     
-    func buildUsernameAccountViewController() -> UIViewController {
-        return UIViewController()
+    func buildProfileViewController() -> UIViewController {
+        guard let coordinator = coordinator,
+              let useCase = useCasesRepository.getUseCase(type: .profileViewController) as? ProfileUseCaseProtocol else {
+            return UIViewController()
+        }
+        
+        let presenter = ProfilePresenter(coordinator: coordinator, useCase: useCase)
+        let view = ProfileViewController(presenter: presenter, viewsFactory: viewsFactory)
+        presenter.injectView(view: view)
+        
+        return view
     }
     
     func buildUsernameStoryViewController() -> UIViewController {
         return UIViewController()
     }
     
-    func buildSplashViewController() -> UIViewController {
-        guard let coordinator = coordinator,
-              let useCase = useCasesRepository.getUseCase(type: .splashViewController) as? SplashUseCaseProtocol else {
-            return CommonViewController(type: .preferences)
-        }
-        
-        let presenter = SplashPresenter(coordinator: coordinator, useCase: useCase)
-        let view = SplashViewController(presenter: presenter, activityIndicator: viewsFactory.getCustomActivityIndicator())
-        presenter.injectView(view: view)
-        
-        return view
-    }
 }

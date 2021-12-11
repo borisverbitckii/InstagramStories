@@ -13,6 +13,8 @@ enum Errors {
     case needTwoFactorAuth
     case somethingWrongWithAuth
     case cantSaveSecret
+    case urlNotValid
+    case cantDownloadStory
     
     var error: NSError {
         switch self {
@@ -26,6 +28,10 @@ enum Errors {
             return NSError(domain: "Something wrong with auth", code: 3)
         case .cantSaveSecret:
             return NSError(domain: "Cant save secret", code: 4)
+        case .urlNotValid:
+            return NSError(domain: "URL is not valid", code: 5)
+        case .cantDownloadStory:
+            return NSError(domain: "Cant download story", code: 6)
         }
     }
 }

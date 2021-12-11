@@ -42,7 +42,6 @@ final class PreferencesViewController: CommonViewController {
         presenter.viewDidLoad()
         
         view.backgroundColor = .white
-        tabBarController?.tabBar.isHidden = true
         navigationController?.navigationBar.tintColor = .black
         
         //TODO: Change back bar button font

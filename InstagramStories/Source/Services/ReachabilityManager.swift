@@ -17,7 +17,7 @@ final class ReachabilityManager: ReachabilityManagerProtocol {
         if isNetworkIsAvailable {
             completion()
         } else {
-            print(#file, #line, Errors.networkIsNotAvailable)
+//            print(#file, #line, Errors.networkIsNotAvailable)
         }
     }
 }

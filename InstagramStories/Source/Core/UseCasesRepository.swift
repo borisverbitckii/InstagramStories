@@ -1,5 +1,5 @@
 //
-//  ServicesFacade.swift
+//  UseCasesRepository.swift
 //  InstagramStories
 //
 //  Created by Борис on 06.12.2021.
@@ -12,11 +12,15 @@ enum UseCaseType {
     case favoritesViewController
     case preferencesViewController
     case splashViewController
+    case profileViewController
 }
 
 protocol UseCasesRepositoryProtocol {
     func getUseCase(type: UseCaseType) -> UseCase
 }
+
+/// Only for  inheritance
+class UseCase {}
 
 final class UseCasesRepository: UseCasesRepositoryProtocol {
     
@@ -40,6 +44,8 @@ final class UseCasesRepository: UseCasesRepositoryProtocol {
             return PreferencesViewControllerUseCase()
         case .splashViewController:
             return SplashViewControllerUseCase(authManager: managerFactory.getAuthManager())
+        case .profileViewController:
+            return ProfileViewControllerUseCase()
         }
     }
 }

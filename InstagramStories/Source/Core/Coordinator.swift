@@ -6,11 +6,12 @@
 //
 
 import UIKit.UIViewController
+import Swiftagram
 
 protocol CoordinatorProtocol: AnyObject {
-    func presentTabBarController()
+    func presentTabBarController(secret: Secret)
     func presentPresentationViewController()
-    func presentPreferencesViewController(navigationController: UINavigationController)
+    func presentProfileViewController(transitionHandler: TransitionProtocol)
 }
 
 final class Coordinator {
@@ -46,13 +47,16 @@ final class Coordinator {
 
 extension Coordinator: CoordinatorProtocol {
     
-    func presentTabBarController() {
-        window?.rootViewController = moduleFactory.buildTabBarController()
+    func presentTabBarController(secret: Secret) {
+        window?.rootViewController = moduleFactory.buildTabBarController(secret: secret)
         window?.makeKeyAndVisible()
         
         guard let window = window else { return }
         
-        UIView.transition(with: window, duration: 0.30, options: [.transitionCrossDissolve], animations: nil)
+        UIView.transition(with: window,
+                          duration: LocalConstans.tabBarTransitionDuration,
+                          options: [.transitionCrossDissolve],
+                          animations: nil)
     }
     
     func presentPresentationViewController() {
@@ -60,12 +64,17 @@ extension Coordinator: CoordinatorProtocol {
         window?.makeKeyAndVisible()
     }
     
-    func presentPreferencesViewController(navigationController: UINavigationController) {
-        navigationController.pushViewController(moduleFactory.buildPreferencesViewController(), animated: true)
-    }
-    
     func presentSplashViewController() {
         window?.rootViewController = moduleFactory.buildSplashViewController()
         window?.makeKeyAndVisible()
     }
+    
+    func presentProfileViewController(transitionHandler: TransitionProtocol) {
+        transitionHandler.pushViewControllerWithHandler(moduleFactory.buildProfileViewController(),
+                                                        animated: true)
+    }
+}
+
+enum LocalConstans {
+    static let tabBarTransitionDuration: TimeInterval = 0.30
 }

@@ -44,11 +44,6 @@ final class FavoritesViewController: CommonViewController {
         super.viewDidLoad()
         presenter.viewDidLoad()
     }
-    
-    override func presentPreferences() {
-        guard let navController = navigationController else { return }
-        presenter.presentPreferences(navigationController: navController)
-    }
 }
 
 
@@ -86,7 +81,8 @@ extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
 }
 
 //MARK: - extension + InstagramUserCellDelegate
-extension FavoritesViewController: InstagramUserCellDelegate {
+extension FavoritesViewController: InstagramUserCellButtonDelegate {
+    
     func trailingButtonTapped(type: InstagramUserCellType) {
         switch type {
         case .remove:

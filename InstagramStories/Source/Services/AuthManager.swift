@@ -24,7 +24,7 @@ extension AuthManager: AuthManagerProtocol {
     //MARK: - Public methods
     func checkAuthorization(completion: @escaping(Secret?)->()) {
         do {
-            if let secret = try KeychainStorage<Secret>().items().first {
+            if let secret = try KeychainStorage<Secret>().items().last {
                 completion(secret)
             } else {
                 completion(nil)
@@ -43,28 +43,28 @@ extension AuthManager: AuthManagerProtocol {
                        password: password)
                 .authenticate()
                 .sink(receiveCompletion: {
-                        switch $0 {
-                        case .failure(let error):
-                            print(error)
-                            switch error {
-                            case Authenticator.Error.twoFactorChallenge(_):
-                                DispatchQueue.main.async {
-                                    completion(.failure(Errors.needTwoFactorAuth.error))
-                                }
-                                break
-                            default:
-                                DispatchQueue.main.async {
-                                    completion(.failure(Errors.somethingWrongWithAuth.error))
-                                }
-                                break
+                    switch $0 {
+                    case .failure(let error):
+                        print(#file, #line, error)
+                        switch error {
+                        case Authenticator.Error.twoFactorChallenge(_):
+                            DispatchQueue.main.async {
+                                completion(.failure(Errors.needTwoFactorAuth.error))
                             }
+                            break
                         default:
                             DispatchQueue.main.async {
                                 completion(.failure(Errors.somethingWrongWithAuth.error))
                             }
                             break
                         }
-                      },
+                    default:
+                        DispatchQueue.main.async {
+                            completion(.failure(Errors.somethingWrongWithAuth.error))
+                        }
+                        break
+                    }
+                },
                       receiveValue: { [weak self] secret in
                     self?.storeSecret(secret)
                     DispatchQueue.main.async {

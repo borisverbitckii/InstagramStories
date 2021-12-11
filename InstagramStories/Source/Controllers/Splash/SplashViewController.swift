@@ -15,13 +15,14 @@ final class SplashViewController: UIViewController {
     
     //MARK: - Private properties
     private let presenter: SplashPresenterProtocol
-    private let activityIndicator: CustomActivityIndicator
+    private let viewsFactory: ViewsFactoryProtocol
+    private var activityIndicator: CustomActivityIndicator?
     
     //MARK: - Init
     init(presenter: SplashPresenterProtocol,
-         activityIndicator: CustomActivityIndicator) {
+         viewsFactory: ViewsFactoryProtocol) {
         self.presenter = presenter
-        self.activityIndicator = activityIndicator
+        self.viewsFactory = viewsFactory
         super.init(nibName: nil, bundle: nil)
         view.backgroundColor = .white
     }
@@ -34,18 +35,21 @@ final class SplashViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         presenter.viewDidLoad()
-        activityIndicator.size = .large
+        activityIndicator = viewsFactory.getCustomActivityIndicator()
+        activityIndicator?.size = .large
         addSubviews()
         layout()
     }
     
     //MARK: - Private methods
     private func addSubviews() {
-        view.addSubview(activityIndicator)
+        if let activityIndicator = activityIndicator {
+            view.addSubview(activityIndicator)
+        }
     }
     
     private func layout() {
-        activityIndicator.pin
+        activityIndicator?.pin
             .center()
     }
 }
