@@ -25,7 +25,7 @@ final class SearchViewController: CommonViewController {
     private var searchingInstagramUsers : [InstagramUser] { // for search results
         didSet {
             tableView.reloadWithFade()
-            activityIndicatorContainerShadow.isHidden = true
+            activityIndicator?.hide()
         }
     }
     
@@ -46,18 +46,6 @@ final class SearchViewController: CommonViewController {
     }(UISearchController(searchResultsController: nil))
     
     private var activityIndicator: CustomActivityIndicator?
-    private let activityIndicatorContainer: UIView = {
-        $0.clipsToBounds = true
-        $0.layer.cornerRadius = LocalConstants.activityIndicatorContainerCornerRadius
-        $0.backgroundColor = .white
-        return $0
-    }(UIView())
-    
-    private let activityIndicatorContainerShadow: UIView = {
-        Utils.addShadow(type: .navBar, layer: $0.layer)
-        $0.isHidden = true
-        return $0
-    }(UIView())
     
     //MARK: - Init
     init(type: TabViewControllerType,
@@ -68,7 +56,8 @@ final class SearchViewController: CommonViewController {
         self.presenter = presenter
         self.activityIndicator = viewsFactory.getCustomActivityIndicator()
         if let activityIndicator = activityIndicator {
-            activityIndicator.size = .medium
+            activityIndicator.type = .withBackgroundView(.medium)
+            activityIndicator.hide()
         }
         
         super.init(type: type)
@@ -101,25 +90,17 @@ final class SearchViewController: CommonViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        activityIndicatorContainerShadow.isHidden = true
+        activityIndicator?.hide()
     }
     
     //MARK: - Private methods
     private func addSubviews() {
-        activityIndicatorContainerShadow.addSubview(activityIndicatorContainer)
         guard let activityIndicator = activityIndicator else { return }
-        activityIndicatorContainer.addSubview(activityIndicator)
-        view.addSubview(activityIndicatorContainerShadow)
+        view.addSubview(activityIndicator)
     }
     
     private func layout() {
-        activityIndicatorContainer.pin
-            //TODO: FIX THIS
-            .size(CGSize(width: 50, height:  50)) // fix this
-            .center()
-        
         activityIndicator?.pin.center()
-        activityIndicatorContainerShadow.pin.sizeToFit().center()
     }
     
     private func setupSearchBar() {
@@ -204,7 +185,7 @@ extension SearchViewController: UISearchControllerDelegate {
         guard let text = searchController.searchBar.text,
               !text.isEmpty,
               previousValue != text else { return }
-        activityIndicatorContainerShadow.isHidden = false
+        activityIndicator?.show()
         presenter?.fetchSearchingUsers(username: text)
         previousValue = text
     }
@@ -214,6 +195,7 @@ extension SearchViewController: UISearchControllerDelegate {
 extension SearchViewController: UISearchBarDelegate {
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchingInstagramUsers.removeAll()
+        presenter?.stopFetching()
     }
 }
 
@@ -236,8 +218,4 @@ extension SearchViewController: InstagramUserCellImageDelegate {
     func fetchImage(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> ()) {
         presenter?.fetchImage(stringURL: stringURL, completion: completion)
     }
-}
-
-private enum LocalConstants {
-    static let activityIndicatorContainerCornerRadius: CGFloat = 10
 }

@@ -17,6 +17,7 @@ protocol NetworkManagerProtocol: ManagerProtocol {
     func fetchStoriesURLs(userID: String, secret: Secret, completion: @escaping (Result<[String],Error>)->())
     func fetchStoryData(urlString: String, completion: @escaping (Result<Data, Error>)->())
     func fetchImageData(urlString: String, completion: @escaping (Result<Data, Error>)->())
+    func stopLastOperation()
 }
 
 final class NetworkManager {
@@ -151,6 +152,10 @@ extension NetworkManager: NetworkManagerProtocol {
                 completion(.success(data))
             }
         }.resume()
+    }
+    
+    func stopLastOperation() {
+        bin.removeAll()
     }
 }
 

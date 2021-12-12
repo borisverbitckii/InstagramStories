@@ -64,7 +64,7 @@ final class InstagramUserCell: UITableViewCell {
     //MARK: - Init
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         self.activityIndicator = ViewsFactory().getCustomActivityIndicator()
-        activityIndicator.size = .medium
+        activityIndicator.type = .defaultActivityIndicator(.medium)
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         addSubviews()
     }
@@ -113,7 +113,7 @@ final class InstagramUserCell: UITableViewCell {
                             guard let self = self else { return }
                             self.activityIndicator.isHidden = true
                             UIView.transition(with: self.userIcon,
-                                              duration: 0.25,
+                                              duration: LocalConstants.animationDuration,
                                               options: .transitionCrossDissolve,
                                               animations: { self.userIcon.image = image })
                         }
@@ -176,4 +176,6 @@ private enum LocalConstants {
     static let userIconSize = CGSize(width: 50 , height: 50)
     static let deleteButtonSize = CGSize(width: 30, height: 30)
     static let stackViewLeadingInset: CGFloat = 20
+    
+    static let animationDuration: TimeInterval = 0.45
 }

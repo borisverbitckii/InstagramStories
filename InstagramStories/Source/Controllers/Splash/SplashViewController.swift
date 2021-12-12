@@ -36,7 +36,7 @@ final class SplashViewController: UIViewController {
         super.viewDidLoad()
         presenter.viewDidLoad()
         activityIndicator = viewsFactory.getCustomActivityIndicator()
-        activityIndicator?.size = .large
+        activityIndicator?.type = .withBackgroundView(.medium)
         addSubviews()
         layout()
     }

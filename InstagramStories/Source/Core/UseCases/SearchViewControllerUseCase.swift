@@ -15,6 +15,7 @@ protocol SearchUseCaseProtocol {
                                         completion: @escaping (Result <[InstagramUser], Error>)->())
     func saveUserToRecents(user: InstagramUser)
     func fetchImage(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> ())
+    func stopLastOperation() 
 }
 
 final class SearchViewControllerUseCase: UseCase, SearchUseCaseProtocol {
@@ -107,5 +108,9 @@ final class SearchViewControllerUseCase: UseCase, SearchUseCaseProtocol {
                 }
             })
         }
+    }
+    
+    func stopLastOperation() {
+        networkManager.stopLastOperation()
     }
 }

@@ -14,6 +14,7 @@ protocol SearchPresenterProtocol {
     func fetchSearchingUsers(username: String)
     func fetchImage(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> ())
     func presentProfile(with user: InstagramUser)
+    func stopFetching()
 }
 
 final class SearchPresenter {
@@ -76,6 +77,10 @@ extension SearchPresenter: SearchPresenterProtocol {
                 self?.view?.showAlertController(title: "Error", message: error.localizedDescription)
             }
         }
+    }
+    
+    func stopFetching() {
+        useCase.stopLastOperation()
     }
     
     //MARK: - Navigation
