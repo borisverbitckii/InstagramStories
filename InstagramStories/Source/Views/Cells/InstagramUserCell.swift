@@ -65,6 +65,7 @@ final class InstagramUserCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         self.activityIndicator = ViewsFactory().getCustomActivityIndicator()
         activityIndicator.type = .defaultActivityIndicator(.medium)
+        activityIndicator.hide()
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         addSubviews()
     }
@@ -81,7 +82,7 @@ final class InstagramUserCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        activityIndicator.isHidden = false
+        activityIndicator.show()
         type = nil
         trailingButton.setImage(UIImage(), for: .normal)
         userIcon.image = nil
@@ -98,10 +99,8 @@ final class InstagramUserCell: UITableViewCell {
             trailingButton.setImage(Images.trailingCellButton(.remove).getImage(),
                                     for: .normal)
             userIcon.image = Images.userImageIsEmpty.getImage()
-            self.activityIndicator.isHidden = true
+            self.activityIndicator.hide()
         case .addToFavorites:
-            trailingButton.setImage(Images.trailingCellButton(.addToFavorites).getImage(),
-                                    for: .normal)
             
             let queue = DispatchQueue(label: "image", qos: .userInteractive)
             
@@ -111,11 +110,20 @@ final class InstagramUserCell: UITableViewCell {
                     case .success(let image):
                         DispatchQueue.main.async {
                             guard let self = self else { return }
-                            self.activityIndicator.isHidden = true
+                            self.activityIndicator.hide()
                             UIView.transition(with: self.userIcon,
                                               duration: LocalConstants.animationDuration,
                                               options: .transitionCrossDissolve,
-                                              animations: { self.userIcon.image = image })
+                                              animations: {
+                                self.trailingButton.setImage(Images.trailingCellButton(.addToFavorites).getImage(),
+                                                        for: .normal)
+                                self.userIcon.image = image })
+                            UIView.transition(with: self.trailingButton,
+                                              duration: LocalConstants.animationDuration,
+                                              options: .transitionCrossDissolve,
+                                              animations: {
+                                self.trailingButton.setImage(Images.trailingCellButton(.addToFavorites).getImage(),
+                                                        for: .normal)})
                         }
                     case .failure(_):
                         //TODO: Change this

@@ -62,6 +62,9 @@ final class SearchViewController: CommonViewController {
         
         super.init(type: type)
         
+        tableView.register(SearchHeader.self,
+                           forHeaderFooterViewReuseIdentifier: LocalConstants.headerReuseIdentifier)
+        
         //Delegates
         searchController.searchBar.delegate = self
         searchController.searchResultsUpdater = self
@@ -133,6 +136,8 @@ extension SearchViewController: SearchViewProtocol {
 
 //MARK: - UITableViewDelegate, UITableViewDataSource
 extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
+
+    // Rows
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if searchingInstagramUsers.isEmpty {
             return recentUsers.count
@@ -171,7 +176,22 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return ConstantsForCommonViewController.cellHeight
     }
-
+    
+    // Header
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return LocalConstants.headerHeight
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        if !searchingInstagramUsers.isEmpty {
+            guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: LocalConstants.headerReuseIdentifier) as? SearchHeader else { return nil }
+            header.configure(title: Text.searchHeaderTitle(.searchResult).getText())
+            return header
+        }
+        guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: LocalConstants.headerReuseIdentifier) as? SearchHeader else { return nil }
+        header.configure(title: Text.searchHeaderTitle(.recent).getText())
+        return header
+    }
 }
 
 //MARK: - UISearchResultsUpdating
@@ -218,4 +238,9 @@ extension SearchViewController: InstagramUserCellImageDelegate {
     func fetchImage(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> ()) {
         presenter?.fetchImage(stringURL: stringURL, completion: completion)
     }
+}
+
+private enum LocalConstants {
+    static let headerReuseIdentifier = "header"
+    static let headerHeight: CGFloat = 40
 }

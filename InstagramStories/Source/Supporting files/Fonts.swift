@@ -14,6 +14,7 @@ enum Fonts {
     case instagramCellName
     case instagramCellNickname
     case searchBarCancelButton
+    case searchHeader
     
     func getFont() -> UIFont {
         switch self{
@@ -34,6 +35,9 @@ enum Fonts {
             return font
         case .searchBarCancelButton:
             guard let font = UIFont(name: "Avenir-Heavy", size: 14) else { return UIFont() }
+            return font
+        case .searchHeader:
+            guard let font = UIFont(name: "Avenir-Heavy", size: 16) else { return UIFont() }
             return font
         }
     }

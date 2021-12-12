@@ -77,6 +77,7 @@ extension AuthManager: AuthManagerProtocol {
     //MARK: - Private methods
     private func storeSecret(_ secret: Secret) {
         do {
+            try KeychainStorage<Secret>().empty()
             try KeychainStorage<Secret>().store(secret)
         } catch {
             print(#file, #line, Errors.cantSaveSecret)

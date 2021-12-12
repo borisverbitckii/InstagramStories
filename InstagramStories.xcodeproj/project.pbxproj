@@ -33,6 +33,7 @@
 		A12C900F275EF85E005CD963 /* PreferencesPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12C900E275EF85E005CD963 /* PreferencesPresenter.swift */; };
 		A12C9014275EF967005CD963 /* PresentationPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12C9013275EF967005CD963 /* PresentationPresenter.swift */; };
 		A12C9020275F1802005CD963 /* InstagramUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12C901F275F1802005CD963 /* InstagramUserCell.swift */; };
+		A12FF001276629D400F6C3B4 /* SearchHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12FF000276629D400F6C3B4 /* SearchHeader.swift */; };
 		A14483822760968B00F52710 /* FavoritesViewControllerUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = A14483812760968B00F52710 /* FavoritesViewControllerUseCase.swift */; };
 		A155B4C127634130005CA2C0 /* CustomActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A155B4C027634130005CA2C0 /* CustomActivityIndicator.swift */; };
 		A155B4C32763426E005CA2C0 /* ViewsFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = A155B4C22763426E005CA2C0 /* ViewsFactory.swift */; };
@@ -113,6 +114,7 @@
 		A12C900E275EF85E005CD963 /* PreferencesPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesPresenter.swift; sourceTree = "<group>"; };
 		A12C9013275EF967005CD963 /* PresentationPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentationPresenter.swift; sourceTree = "<group>"; };
 		A12C901F275F1802005CD963 /* InstagramUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstagramUserCell.swift; sourceTree = "<group>"; };
+		A12FF000276629D400F6C3B4 /* SearchHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchHeader.swift; sourceTree = "<group>"; };
 		A14483812760968B00F52710 /* FavoritesViewControllerUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesViewControllerUseCase.swift; sourceTree = "<group>"; };
 		A155B4C027634130005CA2C0 /* CustomActivityIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomActivityIndicator.swift; sourceTree = "<group>"; };
 		A155B4C22763426E005CA2C0 /* ViewsFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewsFactory.swift; sourceTree = "<group>"; };
@@ -247,6 +249,7 @@
 		A12C901E275F17F2005CD963 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				A12FF000276629D400F6C3B4 /* SearchHeader.swift */,
 				A128A3FB276314FF00CAAF9B /* Cells */,
 			);
 			path = Views;
@@ -605,6 +608,7 @@
 				A10B9816275F5180005E4083 /* Utils.swift in Sources */,
 				A12C9020275F1802005CD963 /* InstagramUserCell.swift in Sources */,
 				A128A4062763195A00CAAF9B /* Constants.swift in Sources */,
+				A12FF001276629D400F6C3B4 /* SearchHeader.swift in Sources */,
 				A1DBE2A0275E2B5A0075176C /* RealmInstagramUser.swift in Sources */,
 				A128A4042763186300CAAF9B /* AuthManager.swift in Sources */,
 				A11E4F352764FF6D00F88122 /* ProfileViewControllerUseCase.swift in Sources */,
