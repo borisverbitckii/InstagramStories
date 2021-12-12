@@ -8,7 +8,7 @@
 import UIKit
 import PinLayout
 
-final class SettingsCell: UITableViewCell {
+final class SettingsCell: UICollectionViewCell {
     
     //MARK: - Private properties
     private let settingName: UILabel = {
@@ -17,8 +17,8 @@ final class SettingsCell: UITableViewCell {
     }(UILabel())
     
     //MARK: - Init
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         addSubview(settingName)
     }
     

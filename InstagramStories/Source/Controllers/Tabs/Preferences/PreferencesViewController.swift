@@ -18,7 +18,7 @@ final class PreferencesViewController: CommonViewController {
     private let presenter: PreferencesPresenterProtocol
     private var settings: [Setting] {
         didSet {
-            tableView.reloadData()
+            collectionView.reloadWithFade()
         }
     }
     
@@ -28,8 +28,8 @@ final class PreferencesViewController: CommonViewController {
         self.settings = [Setting]()
         super.init(type: type)
         
-        tableView.delegate = self
-        tableView.dataSource = self
+        collectionView.delegate = self
+        collectionView.dataSource = self
     }
     
     required init?(coder: NSCoder) {
@@ -52,27 +52,35 @@ final class PreferencesViewController: CommonViewController {
     }
 }
 
-//MARK: - UITableViewDataSource, UITableViewDelegate
-extension PreferencesViewController: UITableViewDataSource, UITableViewDelegate {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return settings.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: ConstantsForCommonViewController.reuseIdentifier, for: indexPath) as? SettingsCell else { return UITableViewCell() }
-        let setting = settings[indexPath.row]
-        cell.configure(setting: setting)
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-    }
-}
-
 //MARK: - FavoritesViewProtocol
 extension PreferencesViewController: PreferencesViewProtocol {
     func showMenuItem(settings: [Setting]) {
         self.settings = settings
     }
+}
+
+//MARK: - UICollectionViewDataSource, UICollectionViewDelegate
+extension PreferencesViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return settings.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ConstantsForCommonViewController.reuseIdentifier, for: indexPath) as? SettingsCell else { return UICollectionViewCell() }
+        let setting = settings[indexPath.row]
+        cell.configure(setting: setting)
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: true)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: collectionView.frame.width, height: LocalConstants.cellHeight)
+    }
+}
+
+private enum LocalConstants {
+    static let cellHeight: CGFloat = 40
 }

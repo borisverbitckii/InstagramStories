@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class SearchHeader: UITableViewHeaderFooterView {
+final class HeaderReusableView: UICollectionReusableView {
     
     //MARK: - Private properties
     private let titleLabel : UILabel = {
@@ -15,18 +15,10 @@ final class SearchHeader: UITableViewHeaderFooterView {
         return $0
     }(UILabel())
     
-    private let containerShadowView: UIView = {
-        $0.clipsToBounds = true
-        $0.layer.cornerRadius = 20
-        $0.backgroundColor = .white
-        return $0
-    }(UIView())
-    
     //MARK: - Init
-    override init(reuseIdentifier: String?) {
-        super.init(reuseIdentifier: reuseIdentifier)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         addSubviews()
-        Utils.addShadow(type: .navBar, layer: layer)
     }
     
     required init?(coder: NSCoder) {
@@ -42,12 +34,12 @@ final class SearchHeader: UITableViewHeaderFooterView {
     //MARK: - Public methods
     func configure(title: String) {
         titleLabel.text = title
+        layout()
     }
     
     //MARK: - Private methods
     private func addSubviews() {
-        contentView.addSubview(containerShadowView)
-        containerShadowView.addSubview(titleLabel)
+        addSubview(titleLabel)
     }
     
     private func layout() {
@@ -55,17 +47,12 @@ final class SearchHeader: UITableViewHeaderFooterView {
             .left(LocalConstants.titleLeftInset)
             .vCenter()
             .sizeToFit()
-        
-        containerShadowView.pin
-            .left(LocalConstants.shadowContainerLeftInset)
-            .right(LocalConstants.shadowContainerRightInset)
-            .top()
-            .bottom()
     }
 }
 
 private enum LocalConstants {
-    static let titleLeftInset: CGFloat = 16
+    static let titleLeftInset: CGFloat = 32
     static let shadowContainerLeftInset: CGFloat = 16
     static let shadowContainerRightInset: CGFloat = 16
+    static let headerCornerRadius: CGFloat = 20
 }

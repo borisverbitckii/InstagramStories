@@ -19,7 +19,7 @@ final class FavoritesViewController: CommonViewController {
     
     private var favoritesUsers: [InstagramUser] {
         didSet{
-            tableView.reloadData()
+            collectionView.reloadWithFade()
         }
     }
     
@@ -31,8 +31,8 @@ final class FavoritesViewController: CommonViewController {
         
         super.init(type: type)
         
-        tableView.delegate = self
-        tableView.dataSource = self
+        collectionView.delegate = self
+        collectionView.dataSource = self
     }
     
     required init?(coder: NSCoder) {
@@ -54,15 +54,20 @@ extension FavoritesViewController: FavoritesViewProtocol {
     }
 }
 
-//MARK: - extension + UITableViewDataSource, UITableViewDelegate
-extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+//MARK: - extension + UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout
+extension FavoritesViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return favoritesUsers.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: ConstantsForCommonViewController.reuseIdentifier,
-                                                 for: indexPath) as? InstagramUserCell else { return UITableViewCell() }
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return favoritesUsers.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ConstantsForCommonViewController.reuseIdentifier,
+                                                 for: indexPath) as? InstagramUserCell else { return UICollectionViewCell() }
         
         let user = favoritesUsers[indexPath.row]
         cell.configure(type: .remove, user: user)
@@ -70,13 +75,16 @@ extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
         return cell
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: true)
         // rootCoordinator
     }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: collectionView.frame.width, height: ConstantsForCommonViewController.cellHeight)
+    }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return ConstantsForCommonViewController.cellHeight
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        return .zero
     }
 }
 

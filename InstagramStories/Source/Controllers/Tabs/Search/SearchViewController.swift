@@ -19,12 +19,12 @@ final class SearchViewController: CommonViewController {
     //MARK: - Private properties
     private var recentUsers: [InstagramUser] {
         didSet{
-            tableView.reloadWithFade()
+            collectionView.reloadWithFade()
         }
     }
     private var searchingInstagramUsers : [InstagramUser] { // for search results
         didSet {
-            tableView.reloadWithFade()
+            collectionView.reloadWithFade()
             activityIndicator?.hide()
         }
     }
@@ -61,15 +61,16 @@ final class SearchViewController: CommonViewController {
         }
         
         super.init(type: type)
-        
-        tableView.register(SearchHeader.self,
-                           forHeaderFooterViewReuseIdentifier: LocalConstants.headerReuseIdentifier)
+    
+        collectionView.register(HeaderReusableView.self,
+                                forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+                                withReuseIdentifier: LocalConstants.headerReuseIdentifier)
         
         //Delegates
         searchController.searchBar.delegate = self
         searchController.searchResultsUpdater = self
-        tableView.delegate = self
-        tableView.dataSource = self
+        collectionView.delegate = self
+        collectionView.dataSource = self
     }
     
     required init?(coder: NSCoder) {
@@ -134,21 +135,20 @@ extension SearchViewController: SearchViewProtocol {
 }
 
 
-//MARK: - UITableViewDelegate, UITableViewDataSource
-extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
+//MARK: - UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout
+extension SearchViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
 
     // Rows
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if searchingInstagramUsers.isEmpty {
             return recentUsers.count
         }
         return searchingInstagramUsers.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: ConstantsForCommonViewController.reuseIdentifier,
-                                                 for: indexPath) as? InstagramUserCell else { return UITableViewCell() }
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ConstantsForCommonViewController.reuseIdentifier,
+                                                 for: indexPath) as? InstagramUserCell else { return UICollectionViewCell() }
         if searchingInstagramUsers.isEmpty {
             let user = recentUsers[indexPath.row]
             cell.buttonDelegate = self
@@ -164,8 +164,8 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
         return cell
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: true)
         if !searchingInstagramUsers.isEmpty{
             presenter?.presentProfile(with: searchingInstagramUsers[indexPath.row])
         } else {
@@ -173,24 +173,27 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return ConstantsForCommonViewController.cellHeight
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: collectionView.frame.width - 32, height: ConstantsForCommonViewController.cellHeight)
     }
     
     // Header
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return LocalConstants.headerHeight
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        
+        guard let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind,
+                                                                               withReuseIdentifier: LocalConstants.headerReuseIdentifier,
+                                                                               for: indexPath) as? HeaderReusableView else { return UICollectionReusableView() }
+        
+        if !searchingInstagramUsers.isEmpty {
+            headerView.configure(title: Text.searchHeaderTitle(.searchResult).getText())
+            return headerView
+        }
+        headerView.configure(title: Text.searchHeaderTitle(.recent).getText())
+        return headerView
     }
     
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        if !searchingInstagramUsers.isEmpty {
-            guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: LocalConstants.headerReuseIdentifier) as? SearchHeader else { return nil }
-            header.configure(title: Text.searchHeaderTitle(.searchResult).getText())
-            return header
-        }
-        guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: LocalConstants.headerReuseIdentifier) as? SearchHeader else { return nil }
-        header.configure(title: Text.searchHeaderTitle(.recent).getText())
-        return header
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        return CGSize(width: collectionView.frame.width, height: LocalConstants.headerHeight)
     }
 }
 

@@ -5,7 +5,7 @@
 //  Created by Борис on 07.12.2021.
 //
 
-import UIKit.UITableViewCell
+import UIKit.UICollectionViewCell
 import UIKit.UIImageView
 import UIKit.UIButton
 
@@ -22,7 +22,7 @@ protocol InstagramUserCellImageDelegate {
     func fetchImage(stringURL: String, completion: @escaping (Result<UIImage,Error>)->())
 }
     
-final class InstagramUserCell: UITableViewCell {
+final class InstagramUserCell: UICollectionViewCell {
     
     //MARK: - Public properties
     var buttonDelegate: InstagramUserCellButtonDelegate?
@@ -30,7 +30,7 @@ final class InstagramUserCell: UITableViewCell {
     
     //MARK: - Private properties
     private var type: InstagramUserCellType?
-    private let activityIndicator: CustomActivityIndicator
+    private var activityIndicator: CustomActivityIndicator
     
     private let userIcon: UIImageView = {
         $0.contentMode = .scaleAspectFill
@@ -62,12 +62,15 @@ final class InstagramUserCell: UITableViewCell {
     }(UIButton())
     
     //MARK: - Init
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+    override init(frame: CGRect) {
         self.activityIndicator = ViewsFactory().getCustomActivityIndicator()
         activityIndicator.type = .defaultActivityIndicator(.medium)
         activityIndicator.hide()
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        super.init(frame: frame)
         addSubviews()
+        backgroundColor = .white
+        layer.cornerRadius = 35
+        Utils.addShadow(type: .navBar, layer: layer)
     }
     
     required init?(coder: NSCoder) {

@@ -1,13 +1,13 @@
 //
-//  extension+UITableView.swift
+//  extension+UICollectionView.swift
 //  InstagramStories
 //
 //  Created by Борис on 11.12.2021.
 //
 
-import UIKit.UITableView
+import UIKit.UICollectionView
 
-extension UITableView {
+extension UICollectionView {
     func reloadWithFade () {
         UIView.transition(with: self,
                           duration: 0.45,

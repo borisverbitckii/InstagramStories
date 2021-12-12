@@ -18,12 +18,16 @@ class CommonViewController: UIViewController {
     
     //MARK: - Public properties
     var type: TabViewControllerType
-    let tableView : UITableView = {
-        $0.contentInset = ConstantsForCommonViewController.tableViewContentInsets
-        $0.separatorStyle = .none
+    let collectionView : UICollectionView = {
+        let flowLayout = UICollectionViewFlowLayout()
+        flowLayout.minimumLineSpacing = ConstantsForCommonViewController.itemSpacing
+        flowLayout.scrollDirection = .vertical
+        
+        $0.collectionViewLayout = flowLayout
+        $0.contentInset = ConstantsForCommonViewController.collectionViewContentInsets
         $0.keyboardDismissMode = .onDrag
         return $0
-    }(UITableView())
+    }(UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout()))
     
     //MARK: - Init
     init(type: TabViewControllerType) {
@@ -40,7 +44,7 @@ class CommonViewController: UIViewController {
         super.viewDidLoad()
         setupNavigationBar()
         setupGestureViewControllerTransition()
-        registerTableViewCell()
+        registerCollectionViewCell()
         addSubviews()
         layout()
         view.backgroundColor = .white
@@ -84,26 +88,23 @@ class CommonViewController: UIViewController {
     }
     
     private func addSubviews() {
-        view.addSubview(tableView)
+        view.addSubview(collectionView)
     }
     
     private func layout() {
-        tableView.pin
+        collectionView.pin
             .top()
             .bottom()
             .left()
             .right()
     }
     
-    private func registerTableViewCell() {
+    private func registerCollectionViewCell() {
         switch type{
-            
         case .search, .favorites:
-            tableView.register(InstagramUserCell.self,
-                               forCellReuseIdentifier: ConstantsForCommonViewController.reuseIdentifier)
+            collectionView.register(InstagramUserCell.self, forCellWithReuseIdentifier: ConstantsForCommonViewController.reuseIdentifier)
         case .preferences:
-            tableView.register(SettingsCell.self,
-                               forCellReuseIdentifier: ConstantsForCommonViewController.reuseIdentifier)
+            collectionView.register(SettingsCell.self, forCellWithReuseIdentifier: ConstantsForCommonViewController.reuseIdentifier)
         }
     }
     
@@ -120,7 +121,8 @@ class CommonViewController: UIViewController {
 }
 
 enum ConstantsForCommonViewController {
-    static let tableViewContentInsets = UIEdgeInsets(top: 5, left: 0, bottom: 0, right: 0)
+    static let collectionViewContentInsets = UIEdgeInsets(top: 10, left: 0, bottom: 20, right: 0)
     static let reuseIdentifier  = "reuseIdentifier"
     static let cellHeight: CGFloat = 70
+    static let itemSpacing: CGFloat = 20
 }
