@@ -70,7 +70,7 @@ extension FavoritesViewController: UICollectionViewDataSource, UICollectionViewD
                                                  for: indexPath) as? InstagramUserCell else { return UICollectionViewCell() }
         
         let user = favoritesUsers[indexPath.row]
-        cell.configure(type: .remove, user: user)
+        cell.configure(type: .fromDB, user: user)
         cell.buttonDelegate = self
         return cell
     }
@@ -93,9 +93,9 @@ extension FavoritesViewController: InstagramUserCellButtonDelegate {
     
     func trailingButtonTapped(type: InstagramUserCellType) {
         switch type {
-        case .remove:
+        case .fromDB:
             break
-        case .addToFavorites:
+        case .fromNetwork:
             break
         }
     }

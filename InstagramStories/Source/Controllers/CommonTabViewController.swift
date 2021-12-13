@@ -19,13 +19,13 @@ class CommonViewController: UIViewController {
     //MARK: - Public properties
     var type: TabViewControllerType
     let collectionView : UICollectionView = {
-        let flowLayout = UICollectionViewFlowLayout()
+        let flowLayout = CustomCollectionViewFlowLayout()
         flowLayout.minimumLineSpacing = ConstantsForCommonViewController.itemSpacing
         flowLayout.scrollDirection = .vertical
         flowLayout.sectionInset = ConstantsForCommonViewController.sectionInsets
         flowLayout.sectionHeadersPinToVisibleBounds = true
         
-        $0.collectionViewLayout = flowLayout
+        $0.setCollectionViewLayout(flowLayout, animated: false)
         $0.contentInset = ConstantsForCommonViewController.collectionViewContentInsets
         $0.keyboardDismissMode = .onDrag
         return $0
@@ -76,7 +76,7 @@ class CommonViewController: UIViewController {
         }
     
         if let layer = navigationController?.navigationBar.layer {
-            Utils.addShadow(type: .navBar, layer: layer)
+            Utils.addShadow(type: .shadowIsUnder, layer: layer)
         }
     }
     

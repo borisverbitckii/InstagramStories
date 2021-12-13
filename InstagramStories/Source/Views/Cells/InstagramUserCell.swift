@@ -10,8 +10,8 @@ import UIKit.UIImageView
 import UIKit.UIButton
 
 enum InstagramUserCellType {
-    case remove
-    case addToFavorites
+    case fromDB
+    case fromNetwork
 }
 
 protocol InstagramUserCellButtonDelegate {
@@ -70,8 +70,7 @@ final class InstagramUserCell: UICollectionViewCell {
         addSubviews()
         backgroundColor = .white
         layer.cornerRadius = LocalConstants.cellCornerRadius
-        Utils.addShadow(type: .navBar, layer: layer)
-        alpha = 0
+        Utils.addShadow(type: .shadowIsUnder, layer: layer)
     }
     
     required init?(coder: NSCoder) {
@@ -92,26 +91,19 @@ final class InstagramUserCell: UICollectionViewCell {
         userIcon.image = nil
         nameLabel.text = ""
         nickNameLabel.text = ""
-        alpha = 0
     }
     
     //MARK: - Public methods
     func configure(type: InstagramUserCellType,user: InstagramUser) {
-        
-        UIView.transition(with: self, duration: LocalConstants.animationDuration, options: .transitionCrossDissolve) {
-            self.alpha = 1
-        }
-
         self.type = type
         switch type {
-        case .remove:
-            trailingButton.setImage(Images.trailingCellButton(.remove).getImage(),
+        case .fromDB:
+            trailingButton.setImage(Images.trailingCellButton(.fromDB).getImage(),
                                     for: .normal)
             userIcon.image = Images.userImageIsEmpty.getImage()
             self.activityIndicator.hide()
-        case .addToFavorites:
-            
-            self.trailingButton.setImage(Images.trailingCellButton(.addToFavorites).getImage(),
+        case .fromNetwork:
+            self.trailingButton.setImage(Images.trailingCellButton(.fromNetwork).getImage(),
                                     for: .normal)
             
             let queue = DispatchQueue(label: "image", qos: .userInteractive)
@@ -146,7 +138,7 @@ final class InstagramUserCell: UICollectionViewCell {
         stackViewForText.addArrangedSubview(nickNameLabel)
         contentView.addSubview(stackViewForText)
         contentView.addSubview(trailingButton)
-        userIcon.addSubview(activityIndicator)
+        contentView.addSubview(activityIndicator)
         contentView.addSubview(userIcon)
     }
     
@@ -156,8 +148,7 @@ final class InstagramUserCell: UICollectionViewCell {
             .vCenter()
             .size(LocalConstants.userIconSize)
         
-        activityIndicator.pin
-            .center()
+        activityIndicator.frame = userIcon.frame
         
         userIcon.layer.cornerRadius = userIcon.frame.height / 2
         

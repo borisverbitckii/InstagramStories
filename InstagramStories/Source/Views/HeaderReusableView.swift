@@ -27,7 +27,7 @@ final class HeaderReusableView: UICollectionReusableView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubviews()
-        Utils.addShadow(type: .navBar, layer: layer)
+        Utils.addShadow(type: .shadowIsUnder, layer: layer)
     }
     
     required init?(coder: NSCoder) {

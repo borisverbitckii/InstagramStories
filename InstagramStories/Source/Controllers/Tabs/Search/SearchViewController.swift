@@ -152,14 +152,14 @@ extension SearchViewController: UICollectionViewDataSource, UICollectionViewDele
             let user = recentUsers[indexPath.row]
             cell.buttonDelegate = self
             cell.imageDelegate = self
-            cell.configure(type: .remove, user: user)
+            cell.configure(type: .fromDB, user: user)
             return cell
         }
         
         let user = searchingInstagramUsers[indexPath.row]
         cell.buttonDelegate = self
         cell.imageDelegate = self
-        cell.configure(type: .addToFavorites, user: user)
+        cell.configure(type: .fromNetwork, user: user)
         return cell
     }
     
@@ -198,11 +198,6 @@ extension SearchViewController: UICollectionViewDataSource, UICollectionViewDele
 
 //MARK: - UISearchResultsUpdating
 extension SearchViewController: UISearchResultsUpdating {
-    
-}
-
-//MARK: - UISearchControllerDelegate
-extension SearchViewController: UISearchControllerDelegate {
     func updateSearchResults(for searchController: UISearchController) {
         guard let text = searchController.searchBar.text,
               !text.isEmpty,
@@ -226,9 +221,9 @@ extension SearchViewController: InstagramUserCellButtonDelegate {
     
     func trailingButtonTapped(type: InstagramUserCellType) {
         switch type {
-        case .remove:
+        case .fromDB:
             break
-        case .addToFavorites:
+        case .fromNetwork:
             break
         }
     }

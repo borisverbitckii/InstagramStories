@@ -8,8 +8,8 @@
 import UIKit.UIColor
 
 enum ShadowType {
-    case tabBar
-    case navBar
+    case shadowIdAbove
+    case shadowIsUnder
 }
 
 struct Utils {
@@ -18,9 +18,9 @@ struct Utils {
         layer.shadowColor = UIColor.black.cgColor
         
         switch type {
-        case .tabBar:
+        case .shadowIdAbove:
             layer.shadowOffset = CGSize(width: 0.0, height: -2.0)
-        case .navBar:
+        case .shadowIsUnder:
             layer.shadowOffset = CGSize(width: 0.0, height: 2.0)
         }
         

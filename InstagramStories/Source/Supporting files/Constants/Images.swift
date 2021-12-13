@@ -24,9 +24,9 @@ enum Images {
             return UIImage(systemName: "heart")
         case .trailingCellButton(let cellType):
             switch cellType {
-            case .remove:
+            case .fromDB:
                 return  UIImage(systemName: "xmark.circle")
-            case .addToFavorites:
+            case .fromNetwork:
                 return UIImage(systemName: "heart")
             }
         case .userImageIsEmpty:
