@@ -80,7 +80,7 @@ extension FavoritesViewController: UICollectionViewDataSource, UICollectionViewD
         // rootCoordinator
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.frame.width, height: ConstantsForCommonViewController.cellHeight)
+        return CGSize(width: collectionView.frame.width - 32, height: ConstantsForCommonViewController.cellHeight)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {

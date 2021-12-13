@@ -82,5 +82,5 @@ extension PreferencesViewController: UICollectionViewDataSource, UICollectionVie
 }
 
 private enum LocalConstants {
-    static let cellHeight: CGFloat = 40
+    static let cellHeight: CGFloat = 25
 }

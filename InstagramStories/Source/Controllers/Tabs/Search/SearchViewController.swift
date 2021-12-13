@@ -40,7 +40,6 @@ final class SearchViewController: CommonViewController {
     
     // UI elements
     private let searchController: UISearchController = {
-        $0.searchBar.placeholder = Text.searchBarPlaceholderText.getText()
         $0.obscuresBackgroundDuringPresentation = false
         return $0
     }(UISearchController(searchResultsController: nil))
@@ -115,10 +114,10 @@ final class SearchViewController: CommonViewController {
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).title = cancelButtonText()
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = .black
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).setTitleTextAttributes([.font: Fonts.searchBarCancelButton.getFont()], for: .normal)
-        UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self]).font = Fonts.searchBarPlaceholder.getFont()
         definesPresentationContext = true
         
         searchController.searchBar.searchTextField.autocapitalizationType = .none
+        searchController.searchBar.searchTextField.attributedPlaceholder = NSAttributedString(string: Text.searchBarPlaceholderText.getText(), attributes: [.foregroundColor : Palette.searchPlaceholderText.color, .font : Fonts.searchBarPlaceholder.getFont()])
     }
 }
 
@@ -245,5 +244,5 @@ extension SearchViewController: InstagramUserCellImageDelegate {
 
 private enum LocalConstants {
     static let headerReuseIdentifier = "header"
-    static let headerHeight: CGFloat = 40
+    static let headerHeight: CGFloat = 30
 }

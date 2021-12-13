@@ -12,13 +12,22 @@ final class HeaderReusableView: UICollectionReusableView {
     //MARK: - Private properties
     private let titleLabel : UILabel = {
         $0.font =  Fonts.searchHeader.getFont()
+        $0.textColor = Palette.headerTitle.color
         return $0
     }(UILabel())
+    
+    private let containerView: UIView = {
+        $0.layer.cornerRadius = LocalConstants.headerCornerRadius
+        $0.clipsToBounds = true
+        $0.backgroundColor = .white
+        return $0
+    }(UIView())
     
     //MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubviews()
+        Utils.addShadow(type: .navBar, layer: layer)
     }
     
     required init?(coder: NSCoder) {
@@ -39,20 +48,27 @@ final class HeaderReusableView: UICollectionReusableView {
     
     //MARK: - Private methods
     private func addSubviews() {
-        addSubview(titleLabel)
+        containerView.addSubview(titleLabel)
+        addSubview(containerView)
     }
     
     private func layout() {
         titleLabel.pin
-            .left(LocalConstants.titleLeftInset)
+            .left(LocalConstants.leftInset)
             .vCenter()
             .sizeToFit()
+        
+        containerView.pin
+            .left(LocalConstants.leftInset)
+            .top()
+            .bottom()
+            .width(titleLabel.intrinsicContentSize.width + 32)
     }
 }
 
 private enum LocalConstants {
-    static let titleLeftInset: CGFloat = 32
+    static let leftInset: CGFloat = 16
     static let shadowContainerLeftInset: CGFloat = 16
     static let shadowContainerRightInset: CGFloat = 16
-    static let headerCornerRadius: CGFloat = 20
+    static let headerCornerRadius: CGFloat = 15
 }

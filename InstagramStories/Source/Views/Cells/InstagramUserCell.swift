@@ -69,8 +69,9 @@ final class InstagramUserCell: UICollectionViewCell {
         super.init(frame: frame)
         addSubviews()
         backgroundColor = .white
-        layer.cornerRadius = 35
+        layer.cornerRadius = LocalConstants.cellCornerRadius
         Utils.addShadow(type: .navBar, layer: layer)
+        alpha = 0
     }
     
     required init?(coder: NSCoder) {
@@ -91,11 +92,16 @@ final class InstagramUserCell: UICollectionViewCell {
         userIcon.image = nil
         nameLabel.text = ""
         nickNameLabel.text = ""
+        alpha = 0
     }
     
     //MARK: - Public methods
     func configure(type: InstagramUserCellType,user: InstagramUser) {
         
+        UIView.transition(with: self, duration: LocalConstants.animationDuration, options: .transitionCrossDissolve) {
+            self.alpha = 1
+        }
+
         self.type = type
         switch type {
         case .remove:
@@ -104,6 +110,9 @@ final class InstagramUserCell: UICollectionViewCell {
             userIcon.image = Images.userImageIsEmpty.getImage()
             self.activityIndicator.hide()
         case .addToFavorites:
+            
+            self.trailingButton.setImage(Images.trailingCellButton(.addToFavorites).getImage(),
+                                    for: .normal)
             
             let queue = DispatchQueue(label: "image", qos: .userInteractive)
             
@@ -116,17 +125,9 @@ final class InstagramUserCell: UICollectionViewCell {
                             self.activityIndicator.hide()
                             UIView.transition(with: self.userIcon,
                                               duration: LocalConstants.animationDuration,
-                                              options: .transitionCrossDissolve,
+                                            options: .transitionCrossDissolve,
                                               animations: {
-                                self.trailingButton.setImage(Images.trailingCellButton(.addToFavorites).getImage(),
-                                                        for: .normal)
                                 self.userIcon.image = image })
-                            UIView.transition(with: self.trailingButton,
-                                              duration: LocalConstants.animationDuration,
-                                              options: .transitionCrossDissolve,
-                                              animations: {
-                                self.trailingButton.setImage(Images.trailingCellButton(.addToFavorites).getImage(),
-                                                        for: .normal)})
                         }
                     case .failure(_):
                         //TODO: Change this
@@ -187,6 +188,7 @@ private enum LocalConstants {
     static let userIconSize = CGSize(width: 50 , height: 50)
     static let deleteButtonSize = CGSize(width: 30, height: 30)
     static let stackViewLeadingInset: CGFloat = 20
+    static let cellCornerRadius: CGFloat = 35
     
     static let animationDuration: TimeInterval = 0.45
 }

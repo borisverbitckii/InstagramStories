@@ -22,6 +22,8 @@ class CommonViewController: UIViewController {
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.minimumLineSpacing = ConstantsForCommonViewController.itemSpacing
         flowLayout.scrollDirection = .vertical
+        flowLayout.sectionInset = ConstantsForCommonViewController.sectionInsets
+        flowLayout.sectionHeadersPinToVisibleBounds = true
         
         $0.collectionViewLayout = flowLayout
         $0.contentInset = ConstantsForCommonViewController.collectionViewContentInsets
@@ -120,9 +122,34 @@ class CommonViewController: UIViewController {
     }
 }
 
+//MARK: - extension + UIScrollViewDelegate
+extension CommonViewController: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.panGestureRecognizer.translation(in: scrollView).y < 0 {
+            changeTabBar(hidden: true, animated: true)
+        }
+        else{
+            changeTabBar(hidden: false, animated: true)
+        }
+    }
+
+    private func changeTabBar(hidden: Bool, animated: Bool) {
+        let tabBar = self.tabBarController?.tabBar
+        let offset = hidden ? UIScreen.main.bounds.size.height : UIScreen.main.bounds.size.height - (tabBar?.frame.size.height ?? 0)
+        if offset == tabBar?.frame.origin.y { return }
+        let duration: TimeInterval = (animated ? ConstantsForCommonViewController.tabBarAnimationDuration : 0.0)
+        UIView.animate(withDuration: duration, delay: 0,
+                       options: .curveEaseInOut,
+                       animations: { tabBar?.frame.origin.y = offset },
+                       completion: nil)
+    }
+                       }
+
 enum ConstantsForCommonViewController {
-    static let collectionViewContentInsets = UIEdgeInsets(top: 10, left: 0, bottom: 20, right: 0)
+    static let collectionViewContentInsets = UIEdgeInsets(top: 20, left: 0, bottom: -50, right: 0)
+    static let sectionInsets = UIEdgeInsets(top: 10, left: 0, bottom: 0, right: 0)
     static let reuseIdentifier  = "reuseIdentifier"
     static let cellHeight: CGFloat = 70
-    static let itemSpacing: CGFloat = 20
+    static let itemSpacing: CGFloat = 15
+    static let tabBarAnimationDuration: TimeInterval = 0.45
 }
