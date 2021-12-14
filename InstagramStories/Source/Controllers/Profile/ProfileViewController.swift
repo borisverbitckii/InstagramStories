@@ -15,7 +15,8 @@ final class ProfileViewController: UIViewController {
     
     private var user: InstagramUser? {
         didSet {
-            title = user?.name
+            guard let instagramUsername = user?.instagramUsername else { return }
+            title = "@" + instagramUsername
         }
     }
     
@@ -39,7 +40,15 @@ final class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         presenter.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = Palette.white.color
+        navigationItem.largeTitleDisplayMode = .never
+        navigationController?.navigationBar.topItem?.backButtonTitle = ""
+        navigationController?.navigationBar.tintColor = Palette.black.color
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationItem.largeTitleDisplayMode = .always
     }
 }
 

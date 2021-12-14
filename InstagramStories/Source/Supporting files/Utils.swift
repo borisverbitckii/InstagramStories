@@ -8,17 +8,17 @@
 import UIKit.UIColor
 
 enum ShadowType {
-    case shadowIdAbove
+    case shadowIsAbove
     case shadowIsUnder
 }
 
 struct Utils {
     
     static func addShadow(type: ShadowType, layer: CALayer) {
-        layer.shadowColor = UIColor.black.cgColor
+        layer.shadowColor = Palette.black.color.cgColor
         
         switch type {
-        case .shadowIdAbove:
+        case .shadowIsAbove:
             layer.shadowOffset = CGSize(width: 0.0, height: -2.0)
         case .shadowIsUnder:
             layer.shadowOffset = CGSize(width: 0.0, height: 2.0)

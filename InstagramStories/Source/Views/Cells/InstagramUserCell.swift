@@ -40,7 +40,7 @@ final class InstagramUserCell: UICollectionViewCell {
     
     private let nickNameLabel: UILabel = {
         $0.font = Fonts.instagramCellNickname.getFont()
-        $0.textColor = .gray
+        $0.textColor = Palette.gray.color
         return $0
     }(UILabel())
     
@@ -68,10 +68,9 @@ final class InstagramUserCell: UICollectionViewCell {
         activityIndicator.hide()
         super.init(frame: frame)
         addSubviews()
-        backgroundColor = .white
+        backgroundColor = Palette.white.color
         layer.cornerRadius = LocalConstants.cellCornerRadius
         Utils.addShadow(type: .shadowIsUnder, layer: layer)
-        activityIndicator.show()
     }
     
     required init?(coder: NSCoder) {
@@ -86,7 +85,6 @@ final class InstagramUserCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        activityIndicator.show()
         type = nil
         trailingButton.setImage(UIImage(), for: .normal)
         userIcon.image = nil
@@ -115,6 +113,7 @@ final class InstagramUserCell: UICollectionViewCell {
                 activityIndicator.hide()
                 fetchImage(for: user)
             } else {
+                activityIndicator.show()
                 fetchImage(for: user)
             }
         }

@@ -69,23 +69,12 @@ final class CustomActivityIndicator: UIView {
     
     func show() {
         self.activityIndicator.play(fromProgress: 0, toProgress: 1, loopMode: .loop)
-        self.isHidden = false
-        UIView.transition(with: self,
-                          duration: LocalConstants.animationDuration,
-                          options: .curveEaseOut) { [weak self] in
-            self?.alpha = 1
-        }
+        showWithFade(with: LocalConstants.animationDuration)
     }
     
     func hide() {
         self.activityIndicator.pause()
-        UIView.transition(with: self,
-                          duration: LocalConstants.animationDuration,
-                          options: .curveEaseOut) { [weak self] in
-            self?.alpha = 0
-        } completion: { _ in
-            self.isHidden = true
-        }
+        hideWithFade(with: LocalConstants.animationDuration)
     }
     
     //MARK: - Private methods

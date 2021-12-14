@@ -19,7 +19,7 @@ final class HeaderReusableView: UICollectionReusableView {
     private let containerView: UIView = {
         $0.layer.cornerRadius = LocalConstants.headerCornerRadius
         $0.clipsToBounds = true
-        $0.backgroundColor = .white
+        $0.backgroundColor = Palette.white.color
         return $0
     }(UIView())
     

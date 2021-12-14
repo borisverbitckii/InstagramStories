@@ -67,6 +67,7 @@
 		A1F2830A27608F00008F093C /* SearchViewControllerUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F2830927608F00008F093C /* SearchViewControllerUseCase.swift */; };
 		A1F3E61B27678DAA0039E547 /* CustomFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F3E61A27678DAA0039E547 /* CustomFlowLayout.swift */; };
 		A1F3E61D2767C6B30039E547 /* extension+UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F3E61C2767C6B30039E547 /* extension+UIColor.swift */; };
+		A1F3E61F27688F480039E547 /* extension+UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F3E61E27688F480039E547 /* extension+UIView.swift */; };
 		A1F6BA02276062D1004B3ECA /* ManagerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F6BA01276062D1004B3ECA /* ManagerFactory.swift */; };
 		A1F6BA05276068AB004B3ECA /* AppAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F6BA04276068AB004B3ECA /* AppAssembly.swift */; };
 		A1FD9E332760A05D0076BE38 /* PreferencesViewControllerUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1FD9E322760A05D0076BE38 /* PreferencesViewControllerUseCase.swift */; };
@@ -152,6 +153,7 @@
 		A1F2830927608F00008F093C /* SearchViewControllerUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewControllerUseCase.swift; sourceTree = "<group>"; };
 		A1F3E61A27678DAA0039E547 /* CustomFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomFlowLayout.swift; sourceTree = "<group>"; };
 		A1F3E61C2767C6B30039E547 /* extension+UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "extension+UIColor.swift"; sourceTree = "<group>"; };
+		A1F3E61E27688F480039E547 /* extension+UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "extension+UIView.swift"; sourceTree = "<group>"; };
 		A1F6BA01276062D1004B3ECA /* ManagerFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagerFactory.swift; sourceTree = "<group>"; };
 		A1F6BA04276068AB004B3ECA /* AppAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAssembly.swift; sourceTree = "<group>"; };
 		A1FD9E322760A05D0076BE38 /* PreferencesViewControllerUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesViewControllerUseCase.swift; sourceTree = "<group>"; };
@@ -192,6 +194,7 @@
 			isa = PBXGroup;
 			children = (
 				A1F3E61C2767C6B30039E547 /* extension+UIColor.swift */,
+				A1F3E61E27688F480039E547 /* extension+UIView.swift */,
 				A10B982327605183005E4083 /* extension+UIViewController.swift */,
 				A11E4F362765069200F88122 /* extension+UINavigationController.swift */,
 				A11E4F2D2764FB2700F88122 /* extension+UICollectionView.swift */,
@@ -658,6 +661,7 @@
 				A1DBE2B7275E2C850075176C /* PreferencesViewController.swift in Sources */,
 				A10B98282760586F005E4083 /* ModuleFactory.swift in Sources */,
 				A10B9818275F5929005E4083 /* CommonTabViewController.swift in Sources */,
+				A1F3E61F27688F480039E547 /* extension+UIView.swift in Sources */,
 				A128A4002763154400CAAF9B /* SplashPresenter.swift in Sources */,
 				A11E4F302764FD4E00F88122 /* ProfileViewController.swift in Sources */,
 				A10B9814275F2D9D005E4083 /* Text.swift in Sources */,

@@ -31,8 +31,30 @@ class CommonViewController: UIViewController {
         return $0
     }(UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout()))
     
+    var scrollButtonIsHidden = true {
+        didSet {
+            if scrollButtonIsHidden {
+                scrollToTopButtonContainer.isHidden = true
+            } else {
+                scrollToTopButtonContainer.isHidden = false
+            }
+        }
+    }
+    
     //MARK: - Private methods
     private var previousValueForScrollViewGesture: CGFloat = 0
+    
+    private let scrollToTopButtonContainer: UIView = {
+        $0.isHidden = true
+        Utils.addShadow(type: .shadowIsUnder, layer: $0.layer)
+        return $0
+    }(UIView())
+    private let scrollToTopButton: UIButton = {
+        $0.backgroundColor = Palette.white.color
+        $0.addTarget(self, action: #selector(scrollToTopButtonTapped), for: .touchUpInside)
+        $0.clipsToBounds = true
+        return $0
+    }(UIButton(type: .custom))
     
     //MARK: - Init
     init(type: TabViewControllerType) {
@@ -53,6 +75,25 @@ class CommonViewController: UIViewController {
         addSubviews()
         layout()
         view.backgroundColor = .white
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(keyboardWillShow),
+                                               name: UIResponder.keyboardWillShowNotification,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(keyboardWillHide),
+                                               name: UIResponder.keyboardWillHideNotification,
+                                               object: nil)
+    }
+    
+    //MARK: - Public methods
+    func scrollToTop(animated: Bool = true ) {
+        let headerAttributes = UICollectionViewLayoutAttributes()
+        var offsetY = headerAttributes.frame.origin.y - collectionView.contentInset.top
+        offsetY -= collectionView.safeAreaInsets.top
+        collectionView.setContentOffset(CGPoint(x: 0, y: offsetY), animated: animated)
+        
+        changeTabBar(hidden: false, animated: true)
     }
     
     //MARK: - Private methods
@@ -94,6 +135,8 @@ class CommonViewController: UIViewController {
     
     private func addSubviews() {
         view.addSubview(collectionView)
+        scrollToTopButtonContainer.addSubview(scrollToTopButton)
+        view.addSubview(scrollToTopButtonContainer)
     }
     
     private func layout() {
@@ -102,6 +145,19 @@ class CommonViewController: UIViewController {
             .bottom()
             .left()
             .right()
+        
+        scrollToTopButtonContainer.pin
+            .size(ConstantsForCommonViewController.scrollToTopButtonSize)
+            .right(ConstantsForCommonViewController.scrollToTopButtonRightInset)
+            .bottom(ConstantsForCommonViewController.scrollToTopButtonBottomInset + (tabBarController?.tabBar.frame.height ?? 0))
+        
+        scrollToTopButton.pin
+            .left()
+            .right()
+            .top()
+            .bottom()
+        
+        scrollToTopButton.layer.cornerRadius = scrollToTopButton.frame.height / 2
     }
     
     private func registerCollectionViewCell() {
@@ -113,7 +169,38 @@ class CommonViewController: UIViewController {
         }
     }
     
+    private func animateScrollToTopButton(isHidden: Bool) {
+        isHidden ? scrollToTopButtonContainer.hideWithFade(with: ConstantsForCommonViewController.scrollToTopButtonHideWithFadeDuration) : scrollToTopButtonContainer.showWithFade(with: ConstantsForCommonViewController.scrollToTopButtonShowWithFadeDuration)
+    }
+    
     //MARK: - OBJC methods
+    
+    @objc private func keyboardWillShow(notification: NSNotification) {
+        guard let keyboardFrameValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
+        
+        let keyboardRectangle = keyboardFrameValue.cgRectValue
+        let keyboardHeight = keyboardRectangle.height
+        scrollToTopButton.frame.origin = CGPoint(x: 0, y: -keyboardHeight )
+//        + (tabBarController?.tabBar.frame.height ?? 0)
+    }
+    
+    @objc private func keyboardWillHide(notification: NSNotification) {
+        scrollToTopButton.frame.origin = .zero
+    }
+    
+    @objc func scrollToTopButtonTapped() {
+        UIView.animate(withDuration: ConstantsForCommonViewController.scrollToTopButtonPushAnimationDuration,
+                       animations: { [weak self] in
+            self?.scrollToTopButton.transform = CGAffineTransform(scaleX: ConstantsForCommonViewController.scrollToTopButtonPushAnimationScaleFactor,
+                                                                  y:ConstantsForCommonViewController.scrollToTopButtonPushAnimationScaleFactor)
+            self?.scrollToTop()
+        },
+                       completion: { [weak self] _ in
+            UIView.animate(withDuration: ConstantsForCommonViewController.scrollToTopButtonPushAnimationToDefault) {
+                self?.scrollToTopButton.transform = CGAffineTransform.identity
+            }
+        })
+    }
     
     @objc func handleSwipes(_ sender:UISwipeGestureRecognizer) {
         if sender.direction == .left {
@@ -129,20 +216,20 @@ class CommonViewController: UIViewController {
 extension CommonViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         
-        switch scrollView.panGestureRecognizer.state {
-        case .possible, .began, .ended, .cancelled, .failed:
-            break
-        case .changed:
-            guard previousValueForScrollViewGesture != scrollView.panGestureRecognizer.translation(in: scrollView).y else { return }
-            if scrollView.panGestureRecognizer.translation(in: scrollView).y < 0 {
-                changeTabBar(hidden: true, animated: true)
-            } else if scrollView.panGestureRecognizer.translation(in: scrollView).y > 0 {
-                changeTabBar(hidden: false, animated: true)
-            }
-            previousValueForScrollViewGesture = scrollView.panGestureRecognizer.translation(in: scrollView).y
-        @unknown default:
-            break
+        if scrollView.contentOffset.y > 10 {
+            animateScrollToTopButton(isHidden: false)
+        } else {
+            animateScrollToTopButton(isHidden: true)
         }
+        
+        guard previousValueForScrollViewGesture != scrollView.panGestureRecognizer.translation(in: scrollView).y else { return }
+        
+        if scrollView.panGestureRecognizer.translation(in: scrollView).y < 0 {
+            changeTabBar(hidden: true, animated: true)
+        } else if scrollView.panGestureRecognizer.translation(in: scrollView).y > 0 {
+            changeTabBar(hidden: false, animated: true)
+        }
+        previousValueForScrollViewGesture = scrollView.panGestureRecognizer.translation(in: scrollView).y
     }
     
     func changeTabBar(hidden: Bool, animated: Bool) {
@@ -152,16 +239,25 @@ extension CommonViewController: UIScrollViewDelegate {
         UIView.animate(withDuration: duration, delay: 0,
                        options: .curveEaseInOut,
                        animations: { [weak self] in
+            self?.scrollToTopButtonContainer.frame.origin.y = offset - (self?.tabBarController?.tabBar.frame.height ?? 0)
             self?.tabBarController?.tabBar.frame.origin.y = offset },
                        completion: nil)
     }
 }
 
 enum ConstantsForCommonViewController {
-    static let collectionViewContentInsets = UIEdgeInsets(top: 20, left: 0, bottom: -50, right: 0)
+    static let collectionViewContentInsets = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 0)
     static let sectionInsets = UIEdgeInsets(top: 10, left: 0, bottom: 0, right: 0)
     static let reuseIdentifier  = "reuseIdentifier"
     static let cellHeight: CGFloat = 70
     static let itemSpacing: CGFloat = 15
     static let tabBarAnimationDuration: TimeInterval = 0.35
+    static let scrollToTopButtonRightInset: CGFloat = 16
+    static let scrollToTopButtonBottomInset: CGFloat = 20
+    static let scrollToTopButtonSize = CGSize(width: 70, height: 70)
+    static let scrollToTopButtonPushAnimationDuration: TimeInterval = 0.1
+    static let scrollToTopButtonPushAnimationToDefault: TimeInterval = 0.45
+    static let scrollToTopButtonPushAnimationScaleFactor: CGFloat = 0.9
+    static let scrollToTopButtonShowWithFadeDuration : TimeInterval = 0.6
+    static let scrollToTopButtonHideWithFadeDuration : TimeInterval = 0.2
 }

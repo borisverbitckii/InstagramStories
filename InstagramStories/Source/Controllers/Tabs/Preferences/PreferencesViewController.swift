@@ -41,8 +41,8 @@ final class PreferencesViewController: CommonViewController {
         super.viewDidLoad()
         presenter.viewDidLoad()
         
-        view.backgroundColor = .white
-        navigationController?.navigationBar.tintColor = .black
+        view.backgroundColor = Palette.white.color
+        navigationController?.navigationBar.tintColor = Palette.black.color
         
         //TODO: Change back bar button font
     }

@@ -7,6 +7,7 @@
 
 import UIKit
 import PinLayout
+import SwiftUI
 
 protocol SearchViewProtocol: AnyObject {
     func showRecentUsers(users: [InstagramUser])
@@ -35,7 +36,6 @@ final class SearchViewController: CommonViewController {
     }
     
     private var previousValue = ""
-    
     private let presenter: SearchPresenterProtocol?
     
     // UI elements
@@ -80,8 +80,8 @@ final class SearchViewController: CommonViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         presenter?.viewDidLoad()
+        view.backgroundColor = Palette.white.color
         setupSearchBar()
-        view.backgroundColor = .white
         addSubviews()
         layout()
     }
@@ -91,9 +91,19 @@ final class SearchViewController: CommonViewController {
         searchController.searchBar.searchTextField.layer.masksToBounds = true
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        changeTabBar(hidden: false, animated: true)
+    }
+    
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         activityIndicator?.hide()
+    }
+    
+    override func scrollToTopButtonTapped() {
+        super.scrollToTopButtonTapped()
+        scrollToTop()
     }
     
     //MARK: - Private methods
@@ -112,7 +122,7 @@ final class SearchViewController: CommonViewController {
         
         let cancelButtonText = Text.searchBarCancelButton.getText
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).title = cancelButtonText()
-        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = .black
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = Palette.black.color
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).setTitleTextAttributes([.font: Fonts.searchBarCancelButton.getFont()], for: .normal)
         definesPresentationContext = true
         
@@ -120,14 +130,13 @@ final class SearchViewController: CommonViewController {
         searchController.searchBar.searchTextField.font = Fonts.searchBarPlaceholder.getFont()
         searchController.searchBar.searchTextField.textColor = Palette.lightGray.color
         searchController.searchBar.searchTextField.attributedPlaceholder = NSAttributedString(string: Text.searchBarPlaceholderText.getText(), attributes: [.foregroundColor : Palette.lightGray.color, .font : Fonts.searchBarPlaceholder.getFont()])
-    }
-    
-    private func scrollToTop() {
-        let headerAttributes = UICollectionViewLayoutAttributes()
-        var offsetY = headerAttributes.frame.origin.y - collectionView.contentInset.top
-        offsetY -= collectionView.safeAreaInsets.top
-
-        collectionView.setContentOffset(CGPoint(x: 0, y: offsetY), animated: true)
+        
+        // searchBar textField background colod
+        if let textField = searchController.searchBar.value(forKey: "searchField") as? UITextField {
+            let backgroundView = textField.subviews.first
+            backgroundView?.subviews.forEach({ $0.removeFromSuperview() })
+            searchController.searchBar.searchTextField.backgroundColor = Palette.superLightGray.color
+        }
     }
 }
 
@@ -140,7 +149,7 @@ extension SearchViewController: SearchViewProtocol {
     
     func showSearchingUsers(users: [InstagramUser]) {
         searchingInstagramUsers = users
-        scrollToTop()
+        scrollToTop(animated: false)
     }
 }
 
@@ -150,7 +159,9 @@ extension SearchViewController: UICollectionViewDataSource, UICollectionViewDele
 
     // Rows
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if searchingInstagramUsers.isEmpty {
+        if !searchBarIsEmpty && searchingInstagramUsers.isEmpty {
+            return 0
+        } else if searchingInstagramUsers.isEmpty {
             return recentUsers.count
         }
         return searchingInstagramUsers.count
@@ -193,11 +204,15 @@ extension SearchViewController: UICollectionViewDataSource, UICollectionViewDele
                                                                                withReuseIdentifier: LocalConstants.headerReuseIdentifier,
                                                                                for: indexPath) as? HeaderReusableView else { return UICollectionReusableView() }
         
-        if !searchingInstagramUsers.isEmpty {
+        if !searchBarIsEmpty && searchingInstagramUsers.isEmpty {
             headerView.configure(title: Text.searchHeaderTitle(.searchResult).getText())
             return headerView
+        } else if searchingInstagramUsers.isEmpty {
+            headerView.configure(title: Text.searchHeaderTitle(.recent).getText())
+            return headerView
         }
-        headerView.configure(title: Text.searchHeaderTitle(.recent).getText())
+        
+        headerView.configure(title: Text.searchHeaderTitle(.searchResult).getText())
         return headerView
     }
     
@@ -224,6 +239,8 @@ extension SearchViewController: UISearchBarDelegate {
         presenter?.stopFetching()
         searchingInstagramUsers = []
         changeTabBar(hidden: false, animated: true)
+        previousValue = ""
+        collectionView.setContentOffset(collectionView.contentOffset, animated:false)
     }
 }
 

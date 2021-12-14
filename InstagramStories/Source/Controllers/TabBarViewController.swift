@@ -51,9 +51,9 @@ final class TabBarViewController: UITabBarController {
     }
     
     private func setupTabBar() {
-        Utils.addShadow(type: .shadowIdAbove, layer: tabBar.layer)
+        Utils.addShadow(type: .shadowIsAbove, layer: tabBar.layer)
 
-        self.tabBar.backgroundColor = UIColor.white
+        self.tabBar.backgroundColor = Palette.white.color
     }
 }
 
