@@ -53,10 +53,7 @@ extension NetworkManager: NetworkManagerProtocol {
                     guard let usersArray = users.users else { return }
                     var instagramUsers = [InstagramUser]()
                     
-                    let group = DispatchGroup()
-                    
                     for user in usersArray {
-                        group.enter()
                         let instagramUser = InstagramUser(name: user["fullName"].string() ?? "",
                                                           instagramUsername: user["username"].string() ?? "",
                                                           id: user["pk"].int() ?? 0,
@@ -68,9 +65,9 @@ extension NetworkManager: NetworkManagerProtocol {
                                                           isPrivate: user["isPrivate"].bool() ?? false,
                                                           stories: nil)
                         instagramUsers.append(instagramUser)
-                        group.leave()
                     }
-                    group.notify(queue: DispatchQueue.main) {
+                    
+                    DispatchQueue.main.async {
                         completion(.success(instagramUsers))
                     }
                 }

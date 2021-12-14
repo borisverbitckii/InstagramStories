@@ -24,10 +24,10 @@ extension AuthManager: AuthManagerProtocol {
     //MARK: - Public methods
     func checkAuthorization(completion: @escaping(Secret?)->()) {
         do {
-            if let secret = try KeychainStorage<Secret>().items().last {
-                completion(secret)
-            } else {
+            if UserDefaults.standard.value(forKey: "UUID") == nil {
                 completion(nil)
+            } else if let secret = try KeychainStorage<Secret>().items().last {
+                completion(secret)
             }
         } catch {
             print(#file, #line, Errors.noSecretIntoKeychainStorage.error)

@@ -117,7 +117,17 @@ final class SearchViewController: CommonViewController {
         definesPresentationContext = true
         
         searchController.searchBar.searchTextField.autocapitalizationType = .none
-        searchController.searchBar.searchTextField.attributedPlaceholder = NSAttributedString(string: Text.searchBarPlaceholderText.getText(), attributes: [.foregroundColor : Palette.searchPlaceholderText.color, .font : Fonts.searchBarPlaceholder.getFont()])
+        searchController.searchBar.searchTextField.font = Fonts.searchBarPlaceholder.getFont()
+        searchController.searchBar.searchTextField.textColor = Palette.lightGray.color
+        searchController.searchBar.searchTextField.attributedPlaceholder = NSAttributedString(string: Text.searchBarPlaceholderText.getText(), attributes: [.foregroundColor : Palette.lightGray.color, .font : Fonts.searchBarPlaceholder.getFont()])
+    }
+    
+    private func scrollToTop() {
+        let headerAttributes = UICollectionViewLayoutAttributes()
+        var offsetY = headerAttributes.frame.origin.y - collectionView.contentInset.top
+        offsetY -= collectionView.safeAreaInsets.top
+
+        collectionView.setContentOffset(CGPoint(x: 0, y: offsetY), animated: true)
     }
 }
 
@@ -130,6 +140,7 @@ extension SearchViewController: SearchViewProtocol {
     
     func showSearchingUsers(users: [InstagramUser]) {
         searchingInstagramUsers = users
+        scrollToTop()
     }
 }
 
@@ -148,17 +159,16 @@ extension SearchViewController: UICollectionViewDataSource, UICollectionViewDele
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ConstantsForCommonViewController.reuseIdentifier,
                                                  for: indexPath) as? InstagramUserCell else { return UICollectionViewCell() }
+        cell.buttonDelegate = self
+        cell.imageDelegate = self
+        
         if searchingInstagramUsers.isEmpty {
             let user = recentUsers[indexPath.row]
-            cell.buttonDelegate = self
-            cell.imageDelegate = self
             cell.configure(type: .fromDB, user: user)
             return cell
         }
         
         let user = searchingInstagramUsers[indexPath.row]
-        cell.buttonDelegate = self
-        cell.imageDelegate = self
         cell.configure(type: .fromNetwork, user: user)
         return cell
     }
@@ -211,8 +221,9 @@ extension SearchViewController: UISearchResultsUpdating {
 //MARK: - extension + UISearchBarDelegate
 extension SearchViewController: UISearchBarDelegate {
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchingInstagramUsers.removeAll()
         presenter?.stopFetching()
+        searchingInstagramUsers = []
+        changeTabBar(hidden: false, animated: true)
     }
 }
 

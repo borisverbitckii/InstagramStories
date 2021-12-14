@@ -31,6 +31,9 @@ class CommonViewController: UIViewController {
         return $0
     }(UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout()))
     
+    //MARK: - Private methods
+    private var previousValueForScrollViewGesture: CGFloat = 0
+    
     //MARK: - Init
     init(type: TabViewControllerType) {
         self.type = type
@@ -125,25 +128,34 @@ class CommonViewController: UIViewController {
 //MARK: - extension + UIScrollViewDelegate
 extension CommonViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView.panGestureRecognizer.translation(in: scrollView).y < 0 {
-            changeTabBar(hidden: true, animated: true)
-        }
-        else{
-            changeTabBar(hidden: false, animated: true)
+        
+        switch scrollView.panGestureRecognizer.state {
+        case .possible, .began, .ended, .cancelled, .failed:
+            break
+        case .changed:
+            guard previousValueForScrollViewGesture != scrollView.panGestureRecognizer.translation(in: scrollView).y else { return }
+            if scrollView.panGestureRecognizer.translation(in: scrollView).y < 0 {
+                changeTabBar(hidden: true, animated: true)
+            } else if scrollView.panGestureRecognizer.translation(in: scrollView).y > 0 {
+                changeTabBar(hidden: false, animated: true)
+            }
+            previousValueForScrollViewGesture = scrollView.panGestureRecognizer.translation(in: scrollView).y
+        @unknown default:
+            break
         }
     }
-
-    private func changeTabBar(hidden: Bool, animated: Bool) {
-        let tabBar = self.tabBarController?.tabBar
-        let offset = hidden ? UIScreen.main.bounds.size.height : UIScreen.main.bounds.size.height - (tabBar?.frame.size.height ?? 0)
-        if offset == tabBar?.frame.origin.y { return }
+    
+    func changeTabBar(hidden: Bool, animated: Bool) {
+        let offset = hidden ? UIScreen.main.bounds.size.height : UIScreen.main.bounds.size.height - (tabBarController?.tabBar.frame.size.height ?? 0)
+        if offset == tabBarController?.tabBar.frame.origin.y { return }
         let duration: TimeInterval = (animated ? ConstantsForCommonViewController.tabBarAnimationDuration : 0.0)
         UIView.animate(withDuration: duration, delay: 0,
                        options: .curveEaseInOut,
-                       animations: { tabBar?.frame.origin.y = offset },
+                       animations: { [weak self] in
+            self?.tabBarController?.tabBar.frame.origin.y = offset },
                        completion: nil)
     }
-                       }
+}
 
 enum ConstantsForCommonViewController {
     static let collectionViewContentInsets = UIEdgeInsets(top: 20, left: 0, bottom: -50, right: 0)
@@ -151,5 +163,5 @@ enum ConstantsForCommonViewController {
     static let reuseIdentifier  = "reuseIdentifier"
     static let cellHeight: CGFloat = 70
     static let itemSpacing: CGFloat = 15
-    static let tabBarAnimationDuration: TimeInterval = 0.45
+    static let tabBarAnimationDuration: TimeInterval = 0.35
 }

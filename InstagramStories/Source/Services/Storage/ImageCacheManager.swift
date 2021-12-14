@@ -14,6 +14,14 @@ protocol ImageCacheManagerProtocol {
 
 final class ImageCacheManager: ImageCacheManagerProtocol {
     
+    static func isAlreadyCached(stringURL: String) -> Bool {
+        guard let url = URL(string: stringURL) else { return false }
+        if URLCache.shared.cachedResponse(for: URLRequest(url: url)) != nil {
+            return true
+        }
+        return false
+    }
+    
     func saveImageToCache(imageData: Data, response: URLResponse) {
         guard let responseURL = response.url else { return }
         let cachedResponse = CachedURLResponse(response: response, data: imageData)

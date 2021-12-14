@@ -11,6 +11,7 @@ protocol TransitionProtocol: AnyObject {
     func pushViewControllerWithHandler(_ viewController: UIViewController, animated: Bool)
 }
 
+//MARK: - extension + TransitionProtocol
 extension UINavigationController: TransitionProtocol {
     func pushViewControllerWithHandler(_ viewController: UIViewController, animated: Bool) {
         self.pushViewController(viewController, animated: true)

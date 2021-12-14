@@ -8,13 +8,15 @@
 import UIKit.UIColor
 
 enum Palette {
-    case headerTitle
-    case searchPlaceholderText
+    case lightGray
+    case searchBarTintColor // not sure needed
     
     var color: UIColor {
         switch self {
-        case .headerTitle, .searchPlaceholderText:
+        case .lightGray:
             return .black.withAlphaComponent(0.3)
+        case .searchBarTintColor:
+            return UIColor(hexString: "04FAB3")
         }
     }
 }
