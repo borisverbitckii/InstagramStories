@@ -30,7 +30,11 @@ final class InstagramUserCell: UICollectionViewCell {
     
     //MARK: - Private properties
     private var type: InstagramUserCellType?
-    private var activityIndicator: CustomActivityIndicator
+    private var activityIndicator: CustomActivityIndicator = {
+        $0.type = .defaultActivityIndicator(.medium)
+        $0.hide()
+        return $0
+    }(CustomActivityIndicator())
     
     private let userIcon: UIImageView = {
         $0.contentMode = .scaleAspectFill
@@ -63,9 +67,6 @@ final class InstagramUserCell: UICollectionViewCell {
     
     //MARK: - Init
     override init(frame: CGRect) {
-        self.activityIndicator = ViewsFactory().getCustomActivityIndicator()
-        activityIndicator.type = .defaultActivityIndicator(.medium)
-        activityIndicator.hide()
         super.init(frame: frame)
         addSubviews()
         backgroundColor = Palette.white.color

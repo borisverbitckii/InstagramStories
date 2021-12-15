@@ -24,7 +24,7 @@ extension AuthManager: AuthManagerProtocol {
     //MARK: - Public methods
     func checkAuthorization(completion: @escaping(Secret?)->()) {
         do {
-            if UserDefaults.standard.value(forKey: "UUID") == nil {
+            if UserDefaults.standard.value(forKey: "UUID") == nil { //TODO: fix auth bug
                 completion(nil)
             } else if let secret = try KeychainStorage<Secret>().items().last {
                 completion(secret)
@@ -48,21 +48,21 @@ extension AuthManager: AuthManagerProtocol {
                         print(#file, #line, error)
                         switch error {
                         case Authenticator.Error.twoFactorChallenge(_):
+                            print(#file, #line, Errors.somethingWrongWithAuth)
                             DispatchQueue.main.async {
                                 completion(.failure(Errors.needTwoFactorAuth.error))
                             }
-                            break
                         default:
+                            print(#file, #line, Errors.somethingWrongWithAuth)
                             DispatchQueue.main.async {
                                 completion(.failure(Errors.somethingWrongWithAuth.error))
                             }
-                            break
                         }
                     default:
+                        print(#file, #line, Errors.somethingWrongWithAuth)
                         DispatchQueue.main.async {
                             completion(.failure(Errors.somethingWrongWithAuth.error))
                         }
-                        break
                     }
                 },
                       receiveValue: { [weak self] secret in

@@ -38,7 +38,6 @@
 		A12FF00527671DB700F6C3B4 /* CustomTranstition.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12FF00427671DB700F6C3B4 /* CustomTranstition.swift */; };
 		A14483822760968B00F52710 /* FavoritesViewControllerUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = A14483812760968B00F52710 /* FavoritesViewControllerUseCase.swift */; };
 		A155B4C127634130005CA2C0 /* CustomActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A155B4C027634130005CA2C0 /* CustomActivityIndicator.swift */; };
-		A155B4C32763426E005CA2C0 /* ViewsFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = A155B4C22763426E005CA2C0 /* ViewsFactory.swift */; };
 		A155B4C6276346D3005CA2C0 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = A155B4C5276346D3005CA2C0 /* Lottie */; };
 		A155B4C827637364005CA2C0 /* ImageCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A155B4C727637364005CA2C0 /* ImageCacheManager.swift */; };
 		A18F1370275E3C2D003D3651 /* SearchPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A18F136F275E3C2D003D3651 /* SearchPresenter.swift */; };
@@ -62,12 +61,14 @@
 		A1DBE2B5275E2C780075176C /* FavoritesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DBE2B4275E2C780075176C /* FavoritesViewController.swift */; };
 		A1DBE2B7275E2C850075176C /* PreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DBE2B6275E2C850075176C /* PreferencesViewController.swift */; };
 		A1DBE2B9275E2C980075176C /* PresentationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DBE2B8275E2C980075176C /* PresentationViewController.swift */; };
-		A1DBE2BB275E2CAE0075176C /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DBE2BA275E2CAE0075176C /* TabBarViewController.swift */; };
+		A1DBE2BB275E2CAE0075176C /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DBE2BA275E2CAE0075176C /* TabBarController.swift */; };
 		A1DBE2C2275E32B50075176C /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A1DBE2C1275E32B50075176C /* Launch Screen.storyboard */; };
 		A1F2830A27608F00008F093C /* SearchViewControllerUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F2830927608F00008F093C /* SearchViewControllerUseCase.swift */; };
-		A1F3E61B27678DAA0039E547 /* CustomFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F3E61A27678DAA0039E547 /* CustomFlowLayout.swift */; };
 		A1F3E61D2767C6B30039E547 /* extension+UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F3E61C2767C6B30039E547 /* extension+UIColor.swift */; };
 		A1F3E61F27688F480039E547 /* extension+UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F3E61E27688F480039E547 /* extension+UIView.swift */; };
+		A1F3E6232768C78E0039E547 /* ScrollToTopButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F3E6222768C78E0039E547 /* ScrollToTopButton.swift */; };
+		A1F3E625276996130039E547 /* CustomTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F3E624276996130039E547 /* CustomTabBar.swift */; };
+		A1F3E6272769A5D80039E547 /* CustomCollectionViewFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F3E6262769A5D80039E547 /* CustomCollectionViewFlowLayout.swift */; };
 		A1F6BA02276062D1004B3ECA /* ManagerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F6BA01276062D1004B3ECA /* ManagerFactory.swift */; };
 		A1F6BA05276068AB004B3ECA /* AppAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F6BA04276068AB004B3ECA /* AppAssembly.swift */; };
 		A1FD9E332760A05D0076BE38 /* PreferencesViewControllerUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1FD9E322760A05D0076BE38 /* PreferencesViewControllerUseCase.swift */; };
@@ -124,7 +125,6 @@
 		A12FF00427671DB700F6C3B4 /* CustomTranstition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTranstition.swift; sourceTree = "<group>"; };
 		A14483812760968B00F52710 /* FavoritesViewControllerUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesViewControllerUseCase.swift; sourceTree = "<group>"; };
 		A155B4C027634130005CA2C0 /* CustomActivityIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomActivityIndicator.swift; sourceTree = "<group>"; };
-		A155B4C22763426E005CA2C0 /* ViewsFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewsFactory.swift; sourceTree = "<group>"; };
 		A155B4C727637364005CA2C0 /* ImageCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCacheManager.swift; sourceTree = "<group>"; };
 		A18F136F275E3C2D003D3651 /* SearchPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchPresenter.swift; sourceTree = "<group>"; };
 		A1DBE26C275E2B040075176C /* InstagramStories.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InstagramStories.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -148,12 +148,14 @@
 		A1DBE2B4275E2C780075176C /* FavoritesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesViewController.swift; sourceTree = "<group>"; };
 		A1DBE2B6275E2C850075176C /* PreferencesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesViewController.swift; sourceTree = "<group>"; };
 		A1DBE2B8275E2C980075176C /* PresentationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentationViewController.swift; sourceTree = "<group>"; };
-		A1DBE2BA275E2CAE0075176C /* TabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarViewController.swift; sourceTree = "<group>"; };
+		A1DBE2BA275E2CAE0075176C /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		A1DBE2C1275E32B50075176C /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		A1F2830927608F00008F093C /* SearchViewControllerUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewControllerUseCase.swift; sourceTree = "<group>"; };
-		A1F3E61A27678DAA0039E547 /* CustomFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomFlowLayout.swift; sourceTree = "<group>"; };
 		A1F3E61C2767C6B30039E547 /* extension+UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "extension+UIColor.swift"; sourceTree = "<group>"; };
 		A1F3E61E27688F480039E547 /* extension+UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "extension+UIView.swift"; sourceTree = "<group>"; };
+		A1F3E6222768C78E0039E547 /* ScrollToTopButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollToTopButton.swift; sourceTree = "<group>"; };
+		A1F3E624276996130039E547 /* CustomTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBar.swift; sourceTree = "<group>"; };
+		A1F3E6262769A5D80039E547 /* CustomCollectionViewFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCollectionViewFlowLayout.swift; sourceTree = "<group>"; };
 		A1F6BA01276062D1004B3ECA /* ManagerFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagerFactory.swift; sourceTree = "<group>"; };
 		A1F6BA04276068AB004B3ECA /* AppAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAssembly.swift; sourceTree = "<group>"; };
 		A1FD9E322760A05D0076BE38 /* PreferencesViewControllerUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesViewControllerUseCase.swift; sourceTree = "<group>"; };
@@ -262,6 +264,7 @@
 			isa = PBXGroup;
 			children = (
 				A12FF000276629D400F6C3B4 /* HeaderReusableView.swift */,
+				A1F3E6222768C78E0039E547 /* ScrollToTopButton.swift */,
 				A128A3FB276314FF00CAAF9B /* Cells */,
 			);
 			path = Views;
@@ -393,7 +396,8 @@
 				A12FF00627671DEC00F6C3B4 /* Constants */,
 				A10B982227605170005E4083 /* Extensions */,
 				A12FF00427671DB700F6C3B4 /* CustomTranstition.swift */,
-				A1F3E61A27678DAA0039E547 /* CustomFlowLayout.swift */,
+				A1F3E624276996130039E547 /* CustomTabBar.swift */,
+				A1F3E6262769A5D80039E547 /* CustomCollectionViewFlowLayout.swift */,
 				A10B9815275F5180005E4083 /* Utils.swift */,
 			);
 			path = "Supporting files";
@@ -406,7 +410,7 @@
 				A128A3FE2763153700CAAF9B /* Splash */,
 				A12C9012275EF91F005CD963 /* Presentation */,
 				A1DBE2B3275E2C660075176C /* Tabs */,
-				A1DBE2BA275E2CAE0075176C /* TabBarViewController.swift */,
+				A1DBE2BA275E2CAE0075176C /* TabBarController.swift */,
 				A11E4F312764FDC200F88122 /* Profile */,
 			);
 			path = Controllers;
@@ -462,7 +466,6 @@
 			isa = PBXGroup;
 			children = (
 				A10B98272760586F005E4083 /* ModuleFactory.swift */,
-				A155B4C22763426E005CA2C0 /* ViewsFactory.swift */,
 				A1F6BA01276062D1004B3ECA /* ManagerFactory.swift */,
 			);
 			path = Factories;
@@ -621,13 +624,12 @@
 				A12FF00527671DB700F6C3B4 /* CustomTranstition.swift in Sources */,
 				A1DBE270275E2B040075176C /* AppDelegate.swift in Sources */,
 				A1F2830A27608F00008F093C /* SearchViewControllerUseCase.swift in Sources */,
-				A155B4C32763426E005CA2C0 /* ViewsFactory.swift in Sources */,
 				A12C9014275EF967005CD963 /* PresentationPresenter.swift in Sources */,
 				A1F6BA05276068AB004B3ECA /* AppAssembly.swift in Sources */,
 				A1DBE2A5275E2BA90075176C /* UseCasesRepository.swift in Sources */,
 				A11E4F372765069200F88122 /* extension+UINavigationController.swift in Sources */,
 				A14483822760968B00F52710 /* FavoritesViewControllerUseCase.swift in Sources */,
-				A1DBE2BB275E2CAE0075176C /* TabBarViewController.swift in Sources */,
+				A1DBE2BB275E2CAE0075176C /* TabBarController.swift in Sources */,
 				A128A4022763168500CAAF9B /* SplashViewControllerUseCase.swift in Sources */,
 				A10B9816275F5180005E4083 /* Utils.swift in Sources */,
 				A12C9020275F1802005CD963 /* InstagramUserCell.swift in Sources */,
@@ -636,10 +638,12 @@
 				A1DBE2A0275E2B5A0075176C /* RealmInstagramUser.swift in Sources */,
 				A128A4042763186300CAAF9B /* AuthManager.swift in Sources */,
 				A11E4F352764FF6D00F88122 /* ProfileViewControllerUseCase.swift in Sources */,
+				A1F3E6272769A5D80039E547 /* CustomCollectionViewFlowLayout.swift in Sources */,
 				A1F3E61D2767C6B30039E547 /* extension+UIColor.swift in Sources */,
 				A10B981D275F6A62005E4083 /* Images.swift in Sources */,
 				A155B4C827637364005CA2C0 /* ImageCacheManager.swift in Sources */,
 				A1F6BA02276062D1004B3ECA /* ManagerFactory.swift in Sources */,
+				A1F3E625276996130039E547 /* CustomTabBar.swift in Sources */,
 				A10B9821275F7503005E4083 /* SettingsCell.swift in Sources */,
 				A1DBE2AA275E2BE50075176C /* NetworkManager.swift in Sources */,
 				A12FF0032766637900F6C3B4 /* Palette.swift in Sources */,
@@ -665,8 +669,8 @@
 				A128A4002763154400CAAF9B /* SplashPresenter.swift in Sources */,
 				A11E4F302764FD4E00F88122 /* ProfileViewController.swift in Sources */,
 				A10B9814275F2D9D005E4083 /* Text.swift in Sources */,
-				A1F3E61B27678DAA0039E547 /* CustomFlowLayout.swift in Sources */,
 				A155B4C127634130005CA2C0 /* CustomActivityIndicator.swift in Sources */,
+				A1F3E6232768C78E0039E547 /* ScrollToTopButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

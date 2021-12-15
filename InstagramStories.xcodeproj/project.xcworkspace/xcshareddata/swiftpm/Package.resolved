@@ -1,0 +1,79 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "ComposableRequest",
+        "repositoryURL": "https://github.com/sbertix/ComposableRequest",
+        "state": {
+          "branch": null,
+          "revision": "d4f0198a9dbb221e07b406b8ec2fbcdcbb4ca34f",
+          "version": "5.3.1"
+        }
+      },
+      {
+        "package": "KeychainAccess",
+        "repositoryURL": "https://github.com/kishikawakatsumi/KeychainAccess",
+        "state": {
+          "branch": null,
+          "revision": "84e546727d66f1adc5439debad16270d0fdd04e7",
+          "version": "4.2.2"
+        }
+      },
+      {
+        "package": "Lottie",
+        "repositoryURL": "https://github.com/airbnb/lottie-ios",
+        "state": {
+          "branch": "master",
+          "revision": "b0260e6b65fd403adcdce39ecff85fd981b6b578",
+          "version": null
+        }
+      },
+      {
+        "package": "PinLayout",
+        "repositoryURL": "https://github.com/layoutBox/PinLayout",
+        "state": {
+          "branch": "master",
+          "revision": "b4c8f7c4d3cfb73626cbf2c80303dae32373a993",
+          "version": null
+        }
+      },
+      {
+        "package": "Realm",
+        "repositoryURL": "https://github.com/realm/realm-cocoa.git",
+        "state": {
+          "branch": "master",
+          "revision": "5b72bab8143bb48095df8af62752863f2ebf8800",
+          "version": null
+        }
+      },
+      {
+        "package": "RealmDatabase",
+        "repositoryURL": "https://github.com/realm/realm-core",
+        "state": {
+          "branch": null,
+          "revision": "c3c11a841642ac93c27bd1edd61f989fc0bfb809",
+          "version": "11.6.1"
+        }
+      },
+      {
+        "package": "SwCrypt",
+        "repositoryURL": "https://github.com/sbertix/SwCrypt.git",
+        "state": {
+          "branch": null,
+          "revision": "e850285c2dadd4343be9465adc67cd717a64792f",
+          "version": "5.1.4"
+        }
+      },
+      {
+        "package": "Swiftagram",
+        "repositoryURL": "https://github.com/sbertix/Swiftagram.git",
+        "state": {
+          "branch": "main",
+          "revision": "de8a5d840a81b3d0dd66f0dc45304c54f29d0fda",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}

@@ -23,7 +23,8 @@ final class PreferencesViewController: CommonViewController {
     }
     
     //MARK: - Init
-    init(type: TabViewControllerType, presenter: PreferencesPresenterProtocol) {
+    init(type: TabViewControllerType,
+         presenter: PreferencesPresenterProtocol) {
         self.presenter = presenter
         self.settings = [Setting]()
         super.init(type: type)

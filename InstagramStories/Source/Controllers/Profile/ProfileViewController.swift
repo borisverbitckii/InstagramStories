@@ -22,13 +22,10 @@ final class ProfileViewController: UIViewController {
     
     //MARK: - Private properties
     private let presenter: ProfilePresenterProtocol
-    private let viewsFactory: ViewsFactoryProtocol
     
     //MARK: - Init
-    init(presenter: ProfilePresenterProtocol,
-         viewsFactory: ViewsFactoryProtocol) {
+    init(presenter: ProfilePresenterProtocol) {
         self.presenter = presenter
-        self.viewsFactory = viewsFactory
         super.init(nibName: nil, bundle: nil)
     }
     

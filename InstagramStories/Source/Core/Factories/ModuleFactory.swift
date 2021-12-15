@@ -24,13 +24,10 @@ final class ModuleFactory: ModuleFactoryProtocol {
     //MARK: - Private properties
     private weak var coordinator: CoordinatorProtocol?
     private let useCasesRepository: UseCasesRepositoryProtocol
-    private let viewsFactory: ViewsFactoryProtocol
     
     //MARK: - Init
-    init(useCasesRepository: UseCasesRepositoryProtocol,
-         viewsFactory: ViewsFactoryProtocol) {
+    init(useCasesRepository: UseCasesRepositoryProtocol) {
         self.useCasesRepository = useCasesRepository
-        self.viewsFactory = viewsFactory
     }
     
     
@@ -43,7 +40,7 @@ final class ModuleFactory: ModuleFactoryProtocol {
         let searchVC = buildSearchNavigationController(secret: secret)
         let favoritesVC = buildFavoritesNavigationController()
         let preferencesVC = buildPreferencesNaviationController()
-        return TabBarViewController(navigationControllerForSearch: searchVC,
+        return TabBarController(navigationControllerForSearch: searchVC,
                                     navigationControllerForFavorites: favoritesVC,
                                     navigationControllerForPreferences: preferencesVC)
     }
@@ -64,8 +61,7 @@ final class ModuleFactory: ModuleFactoryProtocol {
                                         searchUseCase: useCase,
                                         secret: secret)
         let view = SearchViewController(type: .search,
-                                        presenter: presenter,
-                                        viewsFactory: viewsFactory)
+                                        presenter: presenter)
         presenter.injectView(view: view)
         let navigationController = UINavigationController(rootViewController: view)
         presenter.injectTransitionHandler(view: navigationController)
@@ -106,7 +102,7 @@ final class ModuleFactory: ModuleFactoryProtocol {
         }
         
         let presenter = SplashPresenter(coordinator: coordinator, useCase: useCase)
-        let view = SplashViewController(presenter: presenter, viewsFactory: viewsFactory)
+        let view = SplashViewController(presenter: presenter)
         presenter.injectView(view: view)
         
         return view
@@ -119,7 +115,7 @@ final class ModuleFactory: ModuleFactoryProtocol {
         }
         
         let presenter = ProfilePresenter(coordinator: coordinator, useCase: useCase)
-        let view = ProfileViewController(presenter: presenter, viewsFactory: viewsFactory)
+        let view = ProfileViewController(presenter: presenter)
         presenter.injectUser(user)
         presenter.injectView(view: view)
         

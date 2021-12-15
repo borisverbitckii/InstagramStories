@@ -26,7 +26,7 @@ final class SearchViewController: CommonViewController {
     private var searchingInstagramUsers : [InstagramUser] { // for search results
         didSet {
             collectionView.reloadWithFade()
-            activityIndicator?.hide()
+            activityIndicator.hide()
         }
     }
     
@@ -44,20 +44,18 @@ final class SearchViewController: CommonViewController {
         return $0
     }(UISearchController(searchResultsController: nil))
     
-    private var activityIndicator: CustomActivityIndicator?
+    private var activityIndicator: CustomActivityIndicator = {
+        $0.type = .withBackgroundView(.medium)
+        $0.hide()
+        return $0
+    }(CustomActivityIndicator())
     
     //MARK: - Init
     init(type: TabViewControllerType,
-         presenter: SearchPresenterProtocol,
-         viewsFactory: ViewsFactoryProtocol) {
+         presenter: SearchPresenterProtocol) {
         self.recentUsers = [InstagramUser]()
         self.searchingInstagramUsers = [InstagramUser]()
         self.presenter = presenter
-        self.activityIndicator = viewsFactory.getCustomActivityIndicator()
-        if let activityIndicator = activityIndicator {
-            activityIndicator.type = .withBackgroundView(.medium)
-            activityIndicator.hide()
-        }
         
         super.init(type: type)
     
@@ -98,22 +96,16 @@ final class SearchViewController: CommonViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        activityIndicator?.hide()
-    }
-    
-    override func scrollToTopButtonTapped() {
-        super.scrollToTopButtonTapped()
-        scrollToTop()
+        activityIndicator.hide()
     }
     
     //MARK: - Private methods
     private func addSubviews() {
-        guard let activityIndicator = activityIndicator else { return }
         view.addSubview(activityIndicator)
     }
     
     private func layout() {
-        activityIndicator?.pin.center()
+        activityIndicator.pin.center()
     }
     
     private func setupSearchBar() {
@@ -227,7 +219,7 @@ extension SearchViewController: UISearchResultsUpdating {
         guard let text = searchController.searchBar.text,
               !text.isEmpty,
               previousValue != text else { return }
-        activityIndicator?.show()
+        activityIndicator.show()
         presenter?.fetchSearchingUsers(username: text)
         previousValue = text
     }
