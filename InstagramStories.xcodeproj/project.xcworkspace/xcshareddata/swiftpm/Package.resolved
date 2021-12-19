@@ -24,7 +24,7 @@
         "repositoryURL": "https://github.com/airbnb/lottie-ios",
         "state": {
           "branch": "master",
-          "revision": "b0260e6b65fd403adcdce39ecff85fd981b6b578",
+          "revision": "5126a4bf1ced3c3445457a1dbcce297a1cf2fab5",
           "version": null
         }
       },
@@ -42,7 +42,7 @@
         "repositoryURL": "https://github.com/realm/realm-cocoa.git",
         "state": {
           "branch": "master",
-          "revision": "5b72bab8143bb48095df8af62752863f2ebf8800",
+          "revision": "b4e6862babc5b739f635907bf39debeb413c32ec",
           "version": null
         }
       },

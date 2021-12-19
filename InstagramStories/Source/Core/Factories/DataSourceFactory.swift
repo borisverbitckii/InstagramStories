@@ -8,7 +8,13 @@
 import Foundation
 
 protocol DataSourceFactoryProtocol {
-    func getUserImageDataSourceProtocol() -> UserImageDataSourceProtocol
+    func getUserImageDataSource() -> UserImageDataSourceProtocol
+    func getSearchDataSource() -> SearchDataSourceProtocol
+    func getAuthDataSource() -> AuthDataSourceProtocol
+    func getStoriesDataSource() -> StoriesDataSourceProtocol
+    func getFavoritesDataSource() -> FavoritesDataSourceProtocol
+    func getRecentUsersDataSource() -> RecentUsersDataSourceProtocol
+    func getPreferencesDataSource() -> PreferencesDataSourceProtocol
 }
 
 final class DataSourceFactory {
@@ -19,12 +25,35 @@ final class DataSourceFactory {
     init(managerFactory: ManagerFactoryProtocol) {
         self.managerFactory = managerFactory
     }
-    
 }
 
 //MARK: - extension + DataSourceFactoryProtocol
 extension DataSourceFactory: DataSourceFactoryProtocol {
-    func getUserImageDataSourceProtocol() -> UserImageDataSourceProtocol {
+    func getSearchDataSource() -> SearchDataSourceProtocol {
+        return managerFactory.getNetworkManager() as! SearchDataSourceProtocol
+    }
+    
+    func getUserImageDataSource() -> UserImageDataSourceProtocol {
         return managerFactory.getNetworkManager() as! UserImageDataSourceProtocol
+    }
+    
+    func getAuthDataSource() -> AuthDataSourceProtocol {
+        return managerFactory.getAuthManager() as! AuthDataSourceProtocol
+    }
+    
+    func getStoriesDataSource() -> StoriesDataSourceProtocol {
+        return managerFactory.getNetworkManager() as! StoriesDataSourceProtocol
+    }
+    
+    func getFavoritesDataSource() -> FavoritesDataSourceProtocol {
+        return managerFactory.getDataBaseManager() as! FavoritesDataSourceProtocol
+    }
+    
+    func getRecentUsersDataSource() -> RecentUsersDataSourceProtocol {
+        return managerFactory.getDataBaseManager() as! RecentUsersDataSourceProtocol
+    }
+    
+    func getPreferencesDataSource() -> PreferencesDataSourceProtocol {
+        return Preferences() as PreferencesDataSourceProtocol
     }
 }

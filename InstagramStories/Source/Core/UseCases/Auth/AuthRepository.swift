@@ -1,37 +1,36 @@
 //
-//  SplashUseCase.swift
+//  AuthRepository.swift
 //  InstagramStories
 //
-//  Created by Борис on 10.12.2021.
+//  Created by Борис on 19.12.2021.
 //
 
 import Swiftagram
 
-protocol SplashUseCaseProtocol {
+protocol AuthRepositoryProtocol {
     func authInInstagram(completion: @escaping(Result<Secret,Error>) -> ())
 }
 
-final class AuthUseCase: UseCase {
+final class AuthRepository {
     
     //MARK: - Private properties
-    private let authManager: AuthManagerProtocol
+    private let authDataSource: AuthDataSourceProtocol
     
-    init(authManager: AuthManagerProtocol) {
-        self.authManager = authManager
+    init(authDataSource: AuthDataSourceProtocol) {
+        self.authDataSource = authDataSource
     }
 }
 
-
-//MARK: - extension + SplashUseCaseProtocol
-extension AuthUseCase: SplashUseCaseProtocol {
+//MARK: - extension + AuthRepositoryProtocol
+extension AuthRepository: AuthRepositoryProtocol {
     
     //MARK: - Public methods
     func authInInstagram(completion: @escaping(Result<Secret,Error>) -> ()) {
-        authManager.checkAuthorization { [weak self] secret in
+        authDataSource.checkAuthorization { [weak self] secret in
             guard let secret = secret else {
                 let username = Constants.credentialsUsername
                 let password = Constants.credentialsPassword
-                self?.authManager.authInInstagram(username: username,
+                self?.authDataSource.authInInstagram(username: username,
                                                   password: password, completion: completion)
                 return
             }

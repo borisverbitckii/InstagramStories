@@ -15,11 +15,11 @@ final class PreferencesPresenter {
     //MARK: - Private properties
     private weak var view: PreferencesViewProtocol?
     private weak var coordinator: CoordinatorProtocol?
-    private let useCase: PreferencesUseCaseProtocol
+    private let useCase: ShowPreferencesUseCaseProtocol
     
     //MARK: - Init
     init(coordinator: CoordinatorProtocol,
-         preferencesUseCase: PreferencesUseCaseProtocol) {
+         preferencesUseCase: ShowPreferencesUseCaseProtocol) {
         self.coordinator = coordinator
         self.useCase = preferencesUseCase
     }

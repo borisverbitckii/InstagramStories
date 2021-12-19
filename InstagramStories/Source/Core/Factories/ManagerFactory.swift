@@ -13,7 +13,6 @@ protocol ManagerProtocol {
 
 protocol ManagerFactoryProtocol {
     func getNetworkManager() -> NetworkManagerProtocol
-    func getReachabilityManager() -> ReachabilityManagerProtocol
     func getDataBaseManager() -> DataBaseManagerProtocol
     func getAuthManager() -> AuthManagerProtocol
     func getImageCacheManager() -> ImageCacheManagerProtocol
@@ -22,10 +21,6 @@ protocol ManagerFactoryProtocol {
 final class ManagerFactory: ManagerFactoryProtocol {
     func getNetworkManager() -> NetworkManagerProtocol {
         return NetworkManager(imageCacheManager: getImageCacheManager())
-    }
-    
-    func getReachabilityManager() -> ReachabilityManagerProtocol {
-        return ReachabilityManager()
     }
     
     func getDataBaseManager() -> DataBaseManagerProtocol {

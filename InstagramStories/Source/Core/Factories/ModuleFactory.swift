@@ -54,11 +54,13 @@ final class ModuleFactory: ModuleFactoryProtocol {
     
     func buildSearchNavigationController(secret: Secret) -> UINavigationController {
         guard let coordinator = coordinator,
-              let useCase = useCasesFactory.getUseCase(type: .searchViewController) as? SearchViewControllerUseCase else {
+              let searchUseCase = useCasesFactory.getSearchUserUseCase() as? SearchUserUseCase,
+              let recentUsersUseCase = useCasesFactory.getShowRecentsUsersUseCase() as? ShowRecentsUsersUseCase else {
             return UINavigationController()
         }
         let presenter = SearchPresenter(coordinator: coordinator,
-                                        searchUseCase: useCase,
+                                        searchUseCase: searchUseCase,
+                                        recentUsersUseCase: recentUsersUseCase,
                                         secret: secret)
         let view = SearchViewController(type: .search,
                                         presenter: presenter)
@@ -70,7 +72,7 @@ final class ModuleFactory: ModuleFactoryProtocol {
     
     func buildFavoritesNavigationController() -> UINavigationController {
         guard let coordinator = coordinator,
-              let useCase = useCasesFactory.getUseCase(type: .favoritesViewController) as? FavoritesViewControllerUseCase else {
+              let useCase = useCasesFactory.getShowFavoritesUsersUseCase() as? ShowFavoritesUseCaseProtocol else {
             return UINavigationController()
         }
         
@@ -84,7 +86,7 @@ final class ModuleFactory: ModuleFactoryProtocol {
     
     func buildPreferencesNavigationController() -> UINavigationController {
         guard let coordinator = coordinator,
-              let useCase = useCasesFactory.getUseCase(type: .preferencesViewController) as? PreferencesViewControllerUseCase else {
+              let useCase = useCasesFactory.getShowPreferencesUseCase() as? ShowPreferencesUseCase else {
             return UINavigationController()
         }
         
@@ -110,7 +112,7 @@ final class ModuleFactory: ModuleFactoryProtocol {
     
     func buildProfileViewController(with user: InstagramUser) -> UIViewController {
         guard let coordinator = coordinator,
-              let useCase = useCasesFactory.getFetchUserImageUseCase() as? FetchUserImageUseCase else {
+              let useCase = useCasesFactory.getLoadUserProfileUseCase() as? LoadUserProfileUseCase else {
             return UIViewController()
         }
         

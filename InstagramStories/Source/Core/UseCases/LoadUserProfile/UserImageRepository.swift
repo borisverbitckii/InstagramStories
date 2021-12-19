@@ -13,17 +13,17 @@ protocol UserImageRepositoryProtocol {
 
 final class UserImageRepository {
     //MARK: - Private properties
-    private let dataSource: UserImageDataSourceProtocol
+    private let remoteDataSource: UserImageDataSourceProtocol
     
     //MARK: - Init
-    init(dataSource: UserImageDataSourceProtocol) {
-        self.dataSource = dataSource
+    init(remoteDataSource: UserImageDataSourceProtocol) {
+        self.remoteDataSource = remoteDataSource
     }
 }
 
 //MARK: - extension + UserImageRepositoryProtocol
 extension UserImageRepository: UserImageRepositoryProtocol {
     func fetchImageData(urlString: String, completion: @escaping (Result<Data, Error>)->()) {
-        dataSource.fetchImageData(urlString: urlString, completion: completion)
+        remoteDataSource.fetchImageData(urlString: urlString, completion: completion)
     }
 }

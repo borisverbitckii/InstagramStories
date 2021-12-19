@@ -6,23 +6,25 @@
 //
 
 protocol DataBaseManagerProtocol: ManagerProtocol {
-    func fetchInstagramUsers(completion: @escaping (Result<[InstagramUser], Error>)->())
-    func saveDataToDB(_ users: [InstagramUser])
-    func removeDataFromDB()
+    func removeUserFromDB()
 }
 
 final class DataBaseManager: DataBaseManagerProtocol {
     
-    func fetchInstagramUsers(completion: @escaping (Result<[InstagramUser], Error>)->()) {
+    func saveDataToDB(_ users: [InstagramUser]) {
+        let _ = users.map { RealmInstagramUser(instagramUser: $0)}
+    }
+}
+
+//MARK: - extension + RecentUsersDataSourceProtocol
+extension DataBaseManager : RecentUsersDataSourceProtocol, FavoritesDataSourceProtocol {
+    func getInstagramUsers(completion: @escaping (Result<[InstagramUser], Error>)->()) {
         let realmInstagramUsers = [RealmInstagramUser]()
         let instagramUsers = realmInstagramUsers.map { InstagramUser(instagramUser: $0) }
         completion(.success(instagramUsers))
     }
     
-    func saveDataToDB(_ users: [InstagramUser]) {
-        let _ = users.map { RealmInstagramUser(instagramUser: $0)}
-    }
-    
-    func removeDataFromDB() {
+    func removeUserFromDB() {
     }
 }
+ 

@@ -26,7 +26,6 @@ final class Coordinator {
     }
     
     //MARK: - Public methods
-    
     func start() {
         let scene = UIApplication.shared.connectedScenes.first
         
@@ -44,7 +43,6 @@ final class Coordinator {
 }
 
 //MARK: - extension + CoordinatorProtocol
-
 extension Coordinator: CoordinatorProtocol {
     
     func presentTabBarController(secret: Secret) {

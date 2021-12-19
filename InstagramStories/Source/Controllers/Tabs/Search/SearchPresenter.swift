@@ -24,14 +24,17 @@ final class SearchPresenter {
     private weak var view: SearchViewProtocol?
     private weak var transitionHandler: TransitionProtocol?
     private let coordinator: CoordinatorProtocol
-    private let useCase: SearchUseCaseProtocol
+    private let searchUseCase: SearchUseCaseProtocol
+    private let recentUsersUseCase: ShowRecentsUsersUseCaseProtocol
     
     //MARK: - Init
     init(coordinator: CoordinatorProtocol,
          searchUseCase: SearchUseCaseProtocol,
+         recentUsersUseCase: ShowRecentsUsersUseCaseProtocol,
          secret: Secret) {
         self.coordinator = coordinator
-        self.useCase =  searchUseCase
+        self.searchUseCase =  searchUseCase
+        self.recentUsersUseCase = recentUsersUseCase
         self.secret = secret
     }
     
@@ -49,12 +52,12 @@ final class SearchPresenter {
 
 extension SearchPresenter: SearchPresenterProtocol {
     func fetchImage(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> ()) {
-        useCase.fetchImage(stringURL: stringURL, completion: completion)
+        searchUseCase.fetchImage(stringURL: stringURL, completion: completion)
     }
     
     //MARK: - Public methods
     func viewDidLoad() {
-        useCase.fetchRecentUsersFromBD { [weak self] result in
+        recentUsersUseCase.fetchRecentUsersFromBD { [weak self] result in
             switch result {
             case .success(_):
 //                self?.view?.showRecentUsers(users: users) // dont delete
@@ -70,7 +73,7 @@ extension SearchPresenter: SearchPresenterProtocol {
     }
     
     func fetchSearchingUsers(username: String) {
-        useCase.fetchInstagramUsersFromNetwork(searchingTitle: username, secret: secret) { [weak self] result in
+        searchUseCase.fetchInstagramUsersFromNetwork(searchingTitle: username, secret: secret) { [weak self] result in
             switch result {
             case .success(let users):
                 self?.view?.showSearchingUsers(users: users)
@@ -82,7 +85,7 @@ extension SearchPresenter: SearchPresenterProtocol {
     }
     
     func stopFetching() {
-        useCase.stopLastOperation()
+        searchUseCase.stopLastOperation()
     }
     
     //MARK: - Navigation

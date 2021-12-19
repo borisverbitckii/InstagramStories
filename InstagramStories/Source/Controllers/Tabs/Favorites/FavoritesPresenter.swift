@@ -16,11 +16,11 @@ final class FavoritesPresenter {
     //MARK: - Private properties
     private weak var view: FavoritesViewProtocol?
     private let coordinator: CoordinatorProtocol
-    private let favoritesUseCase: FavoritesUseCaseProtocol
+    private let favoritesUseCase: ShowFavoritesUseCaseProtocol
     
     //MARK: - Init
     init(coordinator: CoordinatorProtocol,
-         favoritesUseCase: FavoritesUseCaseProtocol) {
+         favoritesUseCase: ShowFavoritesUseCaseProtocol) {
         self.coordinator = coordinator
         self.favoritesUseCase = favoritesUseCase
     }
@@ -35,7 +35,7 @@ final class FavoritesPresenter {
 extension FavoritesPresenter: FavoritesPresenterProtocol {
     
     func viewDidLoad() {
-        favoritesUseCase.fetchFavoritesUsersFromBD { [weak self] result in
+        favoritesUseCase.showFavoritesUsers { [weak self] result in
             switch result{
             case .success(_):
                 

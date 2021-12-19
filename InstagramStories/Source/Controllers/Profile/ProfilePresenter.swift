@@ -17,12 +17,12 @@ final class ProfilePresenter {
     //MARK: - Private properties
     private weak var view: ProfileViewProtocol?
     private let coordinator: CoordinatorProtocol
-    private let useCase: FetchUserImageUseCase
+    private let useCase: LoadUserProfileUseCase
     private var user: InstagramUser?
     
     //MARK: - Init
     init(coordinator: CoordinatorProtocol,
-         useCase: FetchUserImageUseCase) {
+         useCase: LoadUserProfileUseCase) {
         self.coordinator = coordinator
         self.useCase = useCase
     }
