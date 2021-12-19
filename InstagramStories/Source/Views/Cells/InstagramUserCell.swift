@@ -43,13 +43,13 @@ final class InstagramUserCell: UICollectionViewCell {
     }(UIImageView())
     
     private let nickNameLabel: UILabel = {
-        $0.font = Fonts.instagramCellNickname.getFont()
+        $0.font = Fonts.avenir(.light).getFont(size: .small)
         $0.textColor = Palette.gray.color
         return $0
     }(UILabel())
     
     private let nameLabel: UILabel = {
-        $0.font = Fonts.instagramCellName.getFont()
+        $0.font = Fonts.avenir(.heavy).getFont(size: .medium)
         return $0
     }(UILabel())
     
@@ -122,9 +122,7 @@ final class InstagramUserCell: UICollectionViewCell {
     
     //MARK: - Private methods
     private func fetchImage(for user: InstagramUser) {
-        let queue = DispatchQueue(label: "image", qos: .userInteractive)
-        
-        queue.async { [weak self] in
+        DispatchQueue.global().async { [weak self] in
             self?.imageDelegate?.fetchImage(stringURL: user.userIconURL, completion: { result in
                 switch result {
                 case .success(let image):
@@ -173,7 +171,7 @@ final class InstagramUserCell: UICollectionViewCell {
             .after(of: userIcon).margin(LocalConstants.stackViewLeadingInset)
             .before(of: trailingButton)
             .vCenter()
-            .height(contentView.frame.height - 30)
+            .height(contentView.frame.height * 0.6)
         
     }
     

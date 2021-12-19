@@ -13,6 +13,7 @@ protocol SearchViewProtocol: AnyObject {
     func showRecentUsers(users: [InstagramUser])
     func showSearchingUsers(users: [InstagramUser])
     func showAlertController(title: String, message: String)
+    func hideActivityIndicator()
 }
 
 final class SearchViewController: CommonViewController {
@@ -84,7 +85,8 @@ final class SearchViewController: CommonViewController {
         layout()
     }
     
-    override func viewWillLayoutSubviews() {
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
         searchController.searchBar.searchTextField.layer.cornerRadius = searchController.searchBar.searchTextField.frame.height / 2
         searchController.searchBar.searchTextField.layer.masksToBounds = true
     }
@@ -97,6 +99,7 @@ final class SearchViewController: CommonViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         activityIndicator.hide()
+        searchController.searchBar.resignFirstResponder()
     }
     
     //MARK: - Private methods
@@ -115,13 +118,13 @@ final class SearchViewController: CommonViewController {
         let cancelButtonText = Text.searchBarCancelButton.getText
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).title = cancelButtonText()
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = Palette.black.color
-        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).setTitleTextAttributes([.font: Fonts.searchBarCancelButton.getFont()], for: .normal)
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).setTitleTextAttributes([.font: Fonts.avenir(.heavy).getFont(size: .medium)], for: .normal)
         definesPresentationContext = true
         
         searchController.searchBar.searchTextField.autocapitalizationType = .none
-        searchController.searchBar.searchTextField.font = Fonts.searchBarPlaceholder.getFont()
+        searchController.searchBar.searchTextField.font = Fonts.avenir(.book).getFont(size: .medium)
         searchController.searchBar.searchTextField.textColor = Palette.lightGray.color
-        searchController.searchBar.searchTextField.attributedPlaceholder = NSAttributedString(string: Text.searchBarPlaceholderText.getText(), attributes: [.foregroundColor : Palette.lightGray.color, .font : Fonts.searchBarPlaceholder.getFont()])
+        searchController.searchBar.searchTextField.attributedPlaceholder = NSAttributedString(string: Text.searchBarPlaceholderText.getText(), attributes: [.foregroundColor : Palette.lightGray.color, .font : Fonts.avenir(.book).getFont(size: .medium)])
         
         // searchBar textField background colod
         if let textField = searchController.searchBar.value(forKey: "searchField") as? UITextField {
@@ -142,6 +145,10 @@ extension SearchViewController: SearchViewProtocol {
     func showSearchingUsers(users: [InstagramUser]) {
         searchingInstagramUsers = users
         scrollToTop(animated: false)
+    }
+    
+    func hideActivityIndicator() {
+        activityIndicator.hide()
     }
 }
 

@@ -33,7 +33,7 @@ final class NetworkManager {
 
 
 //MARK: - extension + NetworkManagerProtocol
-extension NetworkManager: NetworkManagerProtocol {
+extension NetworkManager: NetworkManagerProtocol, UserImageDataSourceProtocol {
     
     //MARK: - Public methods
     func fetchInstagramUsers(searchingTitle: String,
@@ -46,28 +46,29 @@ extension NetworkManager: NetworkManagerProtocol {
             .session(URLSession.instagram)
             .pages(.max)
             .sink {  response in
-                print("fetching instagramUsers response", response)
-            } receiveValue: { users in
+                switch response {
+                case .finished: break
+                case .failure(let error):
+                    print(#file, #line, Errors.cantFetchUsers.error)
+                    DispatchQueue.main.async {
+                        completion(.failure(error))
+                    }
+                }
+            } receiveValue: { [weak self] users in
                 let queue = DispatchQueue(label: "queue", qos: .userInteractive, attributes: .concurrent)
                 queue.async {
                     guard let usersArray = users.users else { return }
                     var instagramUsers = [InstagramUser]()
-                    
+                    let dispatchGroup = DispatchGroup()
                     for user in usersArray {
-                        let instagramUser = InstagramUser(name: user["fullName"].string() ?? "",
-                                                          instagramUsername: user["username"].string() ?? "",
-                                                          id: user["pk"].int() ?? 0,
-                                                          userIconURL: user["profilePicUrl"].string() ?? "",
-                                                          // TODO: Change this
-                                                          posts: 100, // find info
-                                                          subscribers: 100, // find info
-                                                          subscriptions: 100, // find info
-                                                          isPrivate: user["isPrivate"].bool() ?? false,
-                                                          stories: nil)
-                        instagramUsers.append(instagramUser)
+                        dispatchGroup.enter()
+                        self?.fetchUserProfile(id: user["pk"].int() ?? 0, secret: secret, completion: { user in
+                            instagramUsers.append(user)
+                            dispatchGroup.leave()
+                        })
                     }
                     
-                    DispatchQueue.main.async {
+                    dispatchGroup.notify(queue: .main) {
                         completion(.success(instagramUsers))
                     }
                 }
@@ -153,6 +154,37 @@ extension NetworkManager: NetworkManagerProtocol {
     
     func stopLastOperation() {
         bin.removeAll()
+    }
+    
+    //MARK: - Private methods
+    private func fetchUserProfile(id: Int,
+                                  secret: Secret,
+                                  completion: @escaping (InstagramUser) -> ()) {
+        Endpoint
+            .user(String(id))
+            .unlock(with: secret)
+            .session(URLSession.instagram)
+            .sink { error in
+                switch error {
+                case .finished: break
+                case .failure(_):
+                    print(#file, #line, Errors.cantFetchUserProfile.error)
+                }
+            } receiveValue: { userInfo in
+                let user = userInfo["user"]
+                
+                let instagramUser = InstagramUser(name: userInfo.user?.name ?? "",
+                                                  profileDescription: userInfo.user?.biography ?? "",
+                                                  instagramUsername: userInfo.user?.username ?? "",
+                                                  id: id,
+                                                  userIconURL: userInfo.user?.thumbnail?.absoluteString ?? "",
+                                                  posts: userInfo.user?.counter?.posts ?? 0,
+                                                  subscribers: userInfo.user?.counter?.followers ?? 0,
+                                                  subscriptions: userInfo.user?.counter?.following ?? 0,
+                                                  isPrivate: user["isPrivate"].bool() ?? false,
+                                                  stories: nil)
+                completion(instagramUser)
+            }.store(in: &bin)
     }
 }
 

@@ -11,7 +11,7 @@ protocol SplashUseCaseProtocol {
     func authInInstagram(completion: @escaping(Result<Secret,Error>) -> ())
 }
 
-final class SplashViewControllerUseCase: UseCase {
+final class AuthUseCase: UseCase {
     
     //MARK: - Private properties
     private let authManager: AuthManagerProtocol
@@ -23,7 +23,7 @@ final class SplashViewControllerUseCase: UseCase {
 
 
 //MARK: - extension + SplashUseCaseProtocol
-extension SplashViewControllerUseCase: SplashUseCaseProtocol {
+extension AuthUseCase: SplashUseCaseProtocol {
     
     //MARK: - Public methods
     func authInInstagram(completion: @escaping(Result<Secret,Error>) -> ()) {

@@ -12,7 +12,7 @@ final class SettingsCell: UICollectionViewCell {
     
     //MARK: - Private properties
     private let settingName: UILabel = {
-        $0.font = Fonts.instagramCellName.getFont()
+        $0.font = Fonts.avenir(.heavy).getFont(size: .medium)
         return $0
     }(UILabel())
     

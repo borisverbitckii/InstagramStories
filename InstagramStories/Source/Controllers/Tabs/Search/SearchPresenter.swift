@@ -59,10 +59,11 @@ extension SearchPresenter: SearchPresenterProtocol {
             case .success(_):
 //                self?.view?.showRecentUsers(users: users) // dont delete
                 //TODO: Delete this
-                self?.view?.showRecentUsers(users: [InstagramUser(name: "Boris", instagramUsername: "verbitsky",id: 1000, userIconURL: "", posts: 230, subscribers: 2786, subscriptions: 3376, isPrivate: false, stories: [Story]())])
+                self?.view?.showRecentUsers(users: [InstagramUser(name: "Boris",profileDescription: "description", instagramUsername: "verbitsky",id: 1000, userIconURL: "", posts: 230, subscribers: 2786, subscriptions: 3376, isPrivate: false, stories: [Story]())])
                 //--
             case .failure(let error):
                 self?.view?.showAlertController(title: "Error", message: error.localizedDescription)
+                self?.view?.hideActivityIndicator()
                 
             }
         }
@@ -75,6 +76,7 @@ extension SearchPresenter: SearchPresenterProtocol {
                 self?.view?.showSearchingUsers(users: users)
             case .failure(let error):
                 self?.view?.showAlertController(title: "Error", message: error.localizedDescription)
+                self?.view?.hideActivityIndicator()
             }
         }
     }

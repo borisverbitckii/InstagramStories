@@ -19,7 +19,7 @@ class CommonViewController: UIViewController {
     //MARK: - Public properties
     var type: TabViewControllerType
     let collectionView : UICollectionView = {
-        let flowLayout = CustomCollectionViewFlowLayout()
+        let flowLayout = UICollectionViewFlowLayout()
         flowLayout.minimumLineSpacing = ConstantsForCommonViewController.itemSpacing
         flowLayout.scrollDirection = .vertical
         flowLayout.sectionInset = ConstantsForCommonViewController.sectionInsets
@@ -95,14 +95,20 @@ class CommonViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.barTintColor = .white
         
-        let navBarAppearance = UINavigationBarAppearance()
-        navBarAppearance.configureWithOpaqueBackground()
-        navBarAppearance.largeTitleTextAttributes = [.font: Fonts.navBarLargeTitle.getFont()]
-        navBarAppearance.titleTextAttributes = [.font: Fonts.navBarLittleTitle.getFont()]
-        navBarAppearance.backgroundColor = .white
-        navBarAppearance.shadowColor = .clear
-        navigationController?.navigationBar.standardAppearance = navBarAppearance
-        navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
+        let scrollEdgeAppearance = UINavigationBarAppearance()
+        scrollEdgeAppearance.configureWithOpaqueBackground()
+        scrollEdgeAppearance.largeTitleTextAttributes = [.font: Fonts.avenir(.heavy).getFont(size: .large)]
+        scrollEdgeAppearance.titleTextAttributes = [.font: Fonts.avenir(.heavy).getFont(size: .mediumPlus)]
+        scrollEdgeAppearance.backgroundColor = Palette.clear.color
+        scrollEdgeAppearance.shadowColor = Palette.clear.color
+        
+        let standardAppearance = UINavigationBarAppearance()
+        standardAppearance.backgroundColor = Palette.white.color
+        standardAppearance.shadowColor = Palette.clear.color
+        standardAppearance.titleTextAttributes = [.font: Fonts.avenir(.heavy).getFont(size: .mediumPlus)]
+        
+        navigationController?.navigationBar.scrollEdgeAppearance = scrollEdgeAppearance
+        navigationController?.navigationBar.standardAppearance = standardAppearance
         
         switch type{
         case .search:
@@ -111,10 +117,6 @@ class CommonViewController: UIViewController {
             navigationItem.title = Text.navTitle(.favorites).getText()
         case .preferences:
             navigationItem.title = Text.navTitle(.preferences).getText()
-        }
-    
-        if let layer = navigationController?.navigationBar.layer {
-            Utils.addShadow(type: .shadowIsUnder, layer: layer)
         }
     }
     
@@ -229,8 +231,8 @@ extension CommonViewController: UIScrollViewDelegate {
 }
 
 enum ConstantsForCommonViewController {
-    static let collectionViewContentInsets = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 0)
-    static let sectionInsets = UIEdgeInsets(top: 10, left: 0, bottom: 0, right: 0)
+    static let collectionViewContentInsets = UIEdgeInsets(top: 10, left: 0, bottom: 20, right: 0)
+    static let sectionInsets = UIEdgeInsets(top: 15, left: 0, bottom: 0, right: 0)
     static let reuseIdentifier  = "reuseIdentifier"
     static let cellHeight: CGFloat = 70
     static let itemSpacing: CGFloat = 15

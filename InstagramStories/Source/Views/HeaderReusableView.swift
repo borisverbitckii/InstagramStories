@@ -11,7 +11,7 @@ final class HeaderReusableView: UICollectionReusableView {
     
     //MARK: - Private properties
     private let titleLabel : UILabel = {
-        $0.font =  Fonts.searchHeader.getFont()
+        $0.font = Fonts.avenir(.book).getFont(size: .medium)
         $0.textColor = Palette.lightGray.color
         return $0
     }(UILabel())

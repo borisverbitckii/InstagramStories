@@ -12,6 +12,7 @@ final class RealmInstagramUser: Object {
     
     //MARK: - Public properties
     @objc dynamic let name: String
+    @objc dynamic let profileDescription: String
     @objc dynamic let instagramUsername: String
     @objc dynamic let id: Int
     @objc dynamic var userIconURL: String
@@ -27,6 +28,7 @@ final class RealmInstagramUser: Object {
     //MARK: - Init
     init(instagramUser: InstagramUser) {
         self.name = instagramUser.name
+        self.profileDescription = instagramUser.profileDescription
         self.instagramUsername = instagramUser.instagramUsername
         self.id = instagramUser.id
         self.userIconURL = instagramUser.userIconURL

@@ -15,6 +15,8 @@ enum Errors {
     case cantSaveSecret
     case urlNotValid
     case cantDownloadStory
+    case cantFetchUserProfile
+    case cantFetchUsers
     
     var error: NSError {
         switch self {
@@ -32,6 +34,10 @@ enum Errors {
             return NSError(domain: "URL is not valid", code: 5)
         case .cantDownloadStory:
             return NSError(domain: "Cant download story", code: 6)
+        case .cantFetchUserProfile:
+            return NSError(domain: "Cant fetch user profile", code: 7)
+        case .cantFetchUsers:
+            return NSError(domain: "Cant fetch users", code: 8)
         }
     }
 }

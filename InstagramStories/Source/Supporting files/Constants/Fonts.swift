@@ -7,38 +7,36 @@
 
 import UIKit.UIFont
 
+enum AvenirTypes {
+    case book
+    case heavy
+    case light
+}
+
+enum FontSizes: CGFloat {
+    case small = 12
+    case medium = 14
+    case mediumPlus = 16
+    case large = 34
+}
+
 enum Fonts {
-    case navBarLargeTitle
-    case navBarLittleTitle
-    case searchBarPlaceholder
-    case instagramCellName
-    case instagramCellNickname
-    case searchBarCancelButton
-    case searchHeader
+    case avenir(AvenirTypes)
     
-    func getFont() -> UIFont {
+    func getFont(size: FontSizes) -> UIFont {
         switch self{
-        case .navBarLargeTitle:
-            guard let font = UIFont(name: "Avenir-Heavy", size: 34) else { return UIFont() }
-            return font
-        case .navBarLittleTitle:
-            guard let font = UIFont(name: "Avenir-Heavy", size: 16) else { return UIFont() }
-            return font
-        case .searchBarPlaceholder:
-            guard let font = UIFont(name: "Avenir-Book", size: 14) else { return UIFont() }
-            return font
-        case .instagramCellName:
-            guard let font = UIFont(name: "Avenir-Heavy", size: 14) else { return UIFont() }
-            return font
-        case .instagramCellNickname:
-            guard let font = UIFont(name: "Avenir-Light", size: 12) else { return UIFont() }
-            return font
-        case .searchBarCancelButton:
-            guard let font = UIFont(name: "Avenir-Heavy", size: 14) else { return UIFont() }
-            return font
-        case .searchHeader:
-            guard let font = UIFont(name: "Avenir-Book", size: 14) else { return UIFont() }
-            return font
+        case .avenir(let type):
+            switch type{
+            case .book:
+                guard let font = UIFont(name: "Avenir-Book", size: size.rawValue) else { return UIFont() }
+                return font
+            case .heavy:
+                guard let font = UIFont(name: "Avenir-Heavy", size: size.rawValue) else { return UIFont() }
+                return font
+            case .light:
+                guard let font = UIFont(name: "Avenir-Light", size: size.rawValue) else { return UIFont() }
+                return font
+            }
         }
     }
 }

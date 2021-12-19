@@ -22,7 +22,7 @@ final class TabBarController: UITabBarController {
     private let navigationControllerForPreferences: UINavigationController
     
     private let indicatorView: UIView = {
-        $0.backgroundColor = Palette.searchBarTintColor.color
+        $0.backgroundColor = Palette.green.color
         $0.clipsToBounds = true
         $0.frame.size = LocalConstants.indicatorViewSize
         $0.layer.cornerRadius = $0.frame.height / 2
@@ -53,32 +53,17 @@ final class TabBarController: UITabBarController {
     }
     
     //MARK: - Override methods
-    
     override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
         let number = -(tabBar.items?.firstIndex(of: item)?.distance(to: 0) ?? 0) + 1
         animateIndicator(index: number)
     }
     
     //MARK: - Private methods
-    
-    private func animateIndicator(index: Int) {
-        UIView.animate(withDuration: LocalConstants.indicatorViewAnimationDuration) { [weak self] in
-            guard let self = self else { return }
-            if index == 1 {
-                self.indicatorView.center.x = self.tabBar.frame.width/3/2
-            } else if index == 2 {
-                self.indicatorView.center.x = self.tabBar.frame.width/3/2 + self.tabBar.frame.width/3
-            } else if index == 3 {
-                self.indicatorView.center.x = self.tabBar.frame.width/3/2 + self.tabBar.frame.width/3 * 2
-            }
-        }
-    }
-    
     private func setupTabBar() {
         let tabBar = CustomTabBar(frame: .zero)
         tabBar.delegate = self
         setValue(tabBar, forKey: "tabBar")
-        tabBar.tintColor = Palette.searchBarTintColor.color
+        tabBar.tintColor = Palette.green.color
         tabBar.unselectedItemTintColor = Palette.lightGray.color
         tabBar.addSubview(indicatorView)
         indicatorView.center.x =  tabBar.frame.width/3/2
@@ -95,6 +80,19 @@ final class TabBarController: UITabBarController {
         navigationControllerForPreferences.tabBarItem = UITabBarItem(title: "",
                                                                    image: Images.preferencesTabIcon.getImage(),
                                                                    selectedImage: Images.preferencesTabIcon.getImage())
+    }
+    
+    private func animateIndicator(index: Int) {
+        UIView.animate(withDuration: LocalConstants.indicatorViewAnimationDuration) { [weak self] in
+            guard let self = self else { return }
+            if index == 1 {
+                self.indicatorView.center.x = self.tabBar.frame.width/3/2
+            } else if index == 2 {
+                self.indicatorView.center.x = self.tabBar.frame.width/3/2 + self.tabBar.frame.width/3
+            } else if index == 3 {
+                self.indicatorView.center.x = self.tabBar.frame.width/3/2 + self.tabBar.frame.width/3 * 2
+            }
+        }
     }
 }
 

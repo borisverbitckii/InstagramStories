@@ -25,6 +25,6 @@ struct Utils {
         }
         
         layer.shadowRadius = 6.0
-        layer.shadowOpacity = 0.10
+        layer.shadowOpacity = 0.07
     }
 }

@@ -13,7 +13,7 @@ protocol ModuleFactoryProtocol: AnyObject {
     func buildPresentationViewController() -> UIViewController
     func buildSearchNavigationController(secret: Secret) -> UINavigationController
     func buildFavoritesNavigationController() -> UINavigationController
-    func buildPreferencesNaviationController() -> UINavigationController
+    func buildPreferencesNavigationController() -> UINavigationController
     func buildUsernameStoryViewController() -> UIViewController
     func buildSplashViewController() -> UIViewController
     func buildProfileViewController(with user: InstagramUser) -> UIViewController
@@ -23,11 +23,11 @@ final class ModuleFactory: ModuleFactoryProtocol {
     
     //MARK: - Private properties
     private weak var coordinator: CoordinatorProtocol?
-    private let useCasesRepository: UseCasesRepositoryProtocol
+    private let useCasesFactory: UseCaseFactoryProtocol
     
     //MARK: - Init
-    init(useCasesRepository: UseCasesRepositoryProtocol) {
-        self.useCasesRepository = useCasesRepository
+    init(useCasesFactory: UseCaseFactoryProtocol) {
+        self.useCasesFactory = useCasesFactory
     }
     
     
@@ -39,7 +39,7 @@ final class ModuleFactory: ModuleFactoryProtocol {
     func buildTabBarController(secret: Secret) -> UIViewController {
         let searchVC = buildSearchNavigationController(secret: secret)
         let favoritesVC = buildFavoritesNavigationController()
-        let preferencesVC = buildPreferencesNaviationController()
+        let preferencesVC = buildPreferencesNavigationController()
         return TabBarController(navigationControllerForSearch: searchVC,
                                     navigationControllerForFavorites: favoritesVC,
                                     navigationControllerForPreferences: preferencesVC)
@@ -54,7 +54,7 @@ final class ModuleFactory: ModuleFactoryProtocol {
     
     func buildSearchNavigationController(secret: Secret) -> UINavigationController {
         guard let coordinator = coordinator,
-              let useCase = useCasesRepository.getUseCase(type: .searchViewController) as? SearchViewControllerUseCase else {
+              let useCase = useCasesFactory.getUseCase(type: .searchViewController) as? SearchViewControllerUseCase else {
             return UINavigationController()
         }
         let presenter = SearchPresenter(coordinator: coordinator,
@@ -70,7 +70,7 @@ final class ModuleFactory: ModuleFactoryProtocol {
     
     func buildFavoritesNavigationController() -> UINavigationController {
         guard let coordinator = coordinator,
-              let useCase = useCasesRepository.getUseCase(type: .favoritesViewController) as? FavoritesViewControllerUseCase else {
+              let useCase = useCasesFactory.getUseCase(type: .favoritesViewController) as? FavoritesViewControllerUseCase else {
             return UINavigationController()
         }
         
@@ -82,9 +82,9 @@ final class ModuleFactory: ModuleFactoryProtocol {
         return navigationController
     }
     
-    func buildPreferencesNaviationController() -> UINavigationController {
+    func buildPreferencesNavigationController() -> UINavigationController {
         guard let coordinator = coordinator,
-              let useCase = useCasesRepository.getUseCase(type: .preferencesViewController) as? PreferencesViewControllerUseCase else {
+              let useCase = useCasesFactory.getUseCase(type: .preferencesViewController) as? PreferencesViewControllerUseCase else {
             return UINavigationController()
         }
         
@@ -97,7 +97,7 @@ final class ModuleFactory: ModuleFactoryProtocol {
 
     func buildSplashViewController() -> UIViewController {
         guard let coordinator = coordinator,
-              let useCase = useCasesRepository.getUseCase(type: .splashViewController) as? SplashUseCaseProtocol else {
+              let useCase = useCasesFactory.getAuthUseCase() as? SplashUseCaseProtocol else {
             return UIViewController()
         }
         
@@ -110,7 +110,7 @@ final class ModuleFactory: ModuleFactoryProtocol {
     
     func buildProfileViewController(with user: InstagramUser) -> UIViewController {
         guard let coordinator = coordinator,
-              let useCase = useCasesRepository.getUseCase(type: .profileViewController) as? ProfileUseCaseProtocol else {
+              let useCase = useCasesFactory.getFetchUserImageUseCase() as? FetchUserImageUseCase else {
             return UIViewController()
         }
         

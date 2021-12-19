@@ -1,5 +1,5 @@
 //
-//  UseCasesRepository.swift
+//  UseCasesFactory.swift
 //  InstagramStories
 //
 //  Created by Борис on 06.12.2021.
@@ -11,28 +11,38 @@ enum UseCaseType {
     case searchViewController
     case favoritesViewController
     case preferencesViewController
-    case splashViewController
-    case profileViewController
 }
 
-protocol UseCasesRepositoryProtocol {
+protocol UseCaseFactoryProtocol {
+    func getAuthUseCase() -> UseCase
+    func getFetchUserImageUseCase() -> UseCase
     func getUseCase(type: UseCaseType) -> UseCase
 }
 
 /// Only for  inheritance
 class UseCase {}
 
-final class UseCasesRepository: UseCasesRepositoryProtocol {
-    
+final class UseCasesFactory: UseCaseFactoryProtocol {
     //MARK: - Private properties
     private let managerFactory: ManagerFactoryProtocol
+    private let repositoryFactory: RepositoryFactoryProtocol
     
     //MARK: - Init
-    init(managerFactory: ManagerFactoryProtocol){
+    init(managerFactory: ManagerFactoryProtocol,
+         repositoryFactory: RepositoryFactoryProtocol){
         self.managerFactory = managerFactory
+        self.repositoryFactory = repositoryFactory
     }
     
-    func getUseCase(type: UseCaseType) -> UseCase {
+    func getAuthUseCase() -> UseCase {
+        return AuthUseCase(authManager: managerFactory.getAuthManager())
+    }
+    
+    func getFetchUserImageUseCase() -> UseCase {
+        return FetchUserImageUseCase(repository: repositoryFactory.getUserImageRepository())
+    }
+    
+    func getUseCase(type: UseCaseType) -> UseCase { //TODO: Fix use case production
         switch type {
         case .searchViewController:
             return SearchViewControllerUseCase(dataBaseManager: managerFactory.getDataBaseManager(),
@@ -42,10 +52,6 @@ final class UseCasesRepository: UseCasesRepositoryProtocol {
             return FavoritesViewControllerUseCase(dataBaseManager: managerFactory.getDataBaseManager())
         case .preferencesViewController:
             return PreferencesViewControllerUseCase()
-        case .splashViewController:
-            return SplashViewControllerUseCase(authManager: managerFactory.getAuthManager())
-        case .profileViewController:
-            return ProfileViewControllerUseCase()
         }
     }
 }

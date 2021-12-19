@@ -21,6 +21,8 @@ protocol SearchUseCaseProtocol {
 final class SearchViewControllerUseCase: UseCase, SearchUseCaseProtocol {
     
     //MARK: - Private properties
+//    private let fetchImageRepository: UserImageRepositoryProtocol
+    
     private let dataBaseManager: DataBaseManagerProtocol
     private let networkManager: NetworkManagerProtocol
     private let reachabilityManager: ReachabilityManagerProtocol

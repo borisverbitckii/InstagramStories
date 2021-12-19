@@ -11,6 +11,7 @@ struct InstagramUser {
     
     //MARK: - Public properties
     let name: String
+    let profileDescription: String
     let instagramUsername: String
     let id: Int
     var userIconURL: String
@@ -27,6 +28,7 @@ struct InstagramUser {
     
     init(instagramUser: RealmInstagramUser) {
         self.name = instagramUser.name
+        self.profileDescription = instagramUser.profileDescription
         self.instagramUsername = instagramUser.instagramUsername
         self.id = instagramUser.id
         self.userIconURL = instagramUser.userIconURL
@@ -46,6 +48,7 @@ struct InstagramUser {
     }
     
     init(name: String,
+         profileDescription: String,
          instagramUsername: String,
          id: Int,
          userIconURL: String,
@@ -56,6 +59,7 @@ struct InstagramUser {
          stories: [Story]?) {
 
         self.name = name
+        self.profileDescription = profileDescription
         self.instagramUsername = instagramUsername
         self.id = id
         self.userIconURL = userIconURL

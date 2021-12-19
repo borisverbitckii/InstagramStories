@@ -12,6 +12,9 @@ enum Text {
     case searchBarPlaceholderText
     case searchBarCancelButton
     case searchHeaderTitle(searchHeaderTitleType)
+    case posts
+    case subscribers
+    case subscriptions
     
     func getText() -> String {
         switch self {
@@ -35,6 +38,12 @@ enum Text {
             case .searchResult:
                 return "Результаты поиска".localized
             }
+        case .posts:
+            return "Публикации".localized
+        case .subscribers:
+            return "Подписчики".localized
+        case .subscriptions:
+            return "Подписки".localized
         }
     }
 }

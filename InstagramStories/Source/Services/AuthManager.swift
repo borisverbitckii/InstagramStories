@@ -42,8 +42,8 @@ extension AuthManager: AuthManagerProtocol {
                 .basic(username: username,
                        password: password)
                 .authenticate()
-                .sink(receiveCompletion: {
-                    switch $0 {
+                .sink(receiveCompletion: { response in
+                    switch response {
                     case .failure(let error):
                         print(#file, #line, error)
                         switch error {
@@ -59,10 +59,7 @@ extension AuthManager: AuthManagerProtocol {
                             }
                         }
                     default:
-                        print(#file, #line, Errors.somethingWrongWithAuth)
-                        DispatchQueue.main.async {
-                            completion(.failure(Errors.somethingWrongWithAuth.error))
-                        }
+                        print("successful log in")
                     }
                 },
                       receiveValue: { [weak self] secret in
