@@ -17,7 +17,6 @@
 		A10B982427605183005E4083 /* extension+UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10B982327605183005E4083 /* extension+UIViewController.swift */; };
 		A10B98262760521D005E4083 /* extension+String.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10B98252760521D005E4083 /* extension+String.swift */; };
 		A10B98282760586F005E4083 /* ModuleFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10B98272760586F005E4083 /* ModuleFactory.swift */; };
-		A11E4F2B2764D53A00F88122 /* 9131-loading-green.json in Resources */ = {isa = PBXBuildFile; fileRef = A11E4F2A2764D53A00F88122 /* 9131-loading-green.json */; };
 		A11E4F2E2764FB2700F88122 /* extension+UICollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11E4F2D2764FB2700F88122 /* extension+UICollectionView.swift */; };
 		A11E4F302764FD4E00F88122 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11E4F2F2764FD4E00F88122 /* ProfileViewController.swift */; };
 		A11E4F332764FDCE00F88122 /* ProfilePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11E4F322764FDCE00F88122 /* ProfilePresenter.swift */; };
@@ -35,6 +34,7 @@
 		A12FF001276629D400F6C3B4 /* HeaderReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12FF000276629D400F6C3B4 /* HeaderReusableView.swift */; };
 		A12FF0032766637900F6C3B4 /* Palette.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12FF0022766637900F6C3B4 /* Palette.swift */; };
 		A12FF00527671DB700F6C3B4 /* CustomTranstition.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12FF00427671DB700F6C3B4 /* CustomTranstition.swift */; };
+		A1316CA0277175C300DA0199 /* 9131-loading-green.json in Resources */ = {isa = PBXBuildFile; fileRef = A1316C9F277175C300DA0199 /* 9131-loading-green.json */; };
 		A155B4C127634130005CA2C0 /* CustomActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A155B4C027634130005CA2C0 /* CustomActivityIndicator.swift */; };
 		A155B4C6276346D3005CA2C0 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = A155B4C5276346D3005CA2C0 /* Lottie */; };
 		A155B4C827637364005CA2C0 /* ImageCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A155B4C727637364005CA2C0 /* ImageCacheManager.swift */; };
@@ -121,7 +121,6 @@
 		A10B982327605183005E4083 /* extension+UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "extension+UIViewController.swift"; sourceTree = "<group>"; };
 		A10B98252760521D005E4083 /* extension+String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "extension+String.swift"; sourceTree = "<group>"; };
 		A10B98272760586F005E4083 /* ModuleFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleFactory.swift; sourceTree = "<group>"; };
-		A11E4F2A2764D53A00F88122 /* 9131-loading-green.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = "9131-loading-green.json"; path = "../../../../Downloads/9131-loading-green.json"; sourceTree = "<group>"; };
 		A11E4F2D2764FB2700F88122 /* extension+UICollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "extension+UICollectionView.swift"; sourceTree = "<group>"; };
 		A11E4F2F2764FD4E00F88122 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		A11E4F322764FDCE00F88122 /* ProfilePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePresenter.swift; sourceTree = "<group>"; };
@@ -139,6 +138,7 @@
 		A12FF000276629D400F6C3B4 /* HeaderReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderReusableView.swift; sourceTree = "<group>"; };
 		A12FF0022766637900F6C3B4 /* Palette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Palette.swift; sourceTree = "<group>"; };
 		A12FF00427671DB700F6C3B4 /* CustomTranstition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTranstition.swift; sourceTree = "<group>"; };
+		A1316C9F277175C300DA0199 /* 9131-loading-green.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "9131-loading-green.json"; sourceTree = "<group>"; };
 		A155B4C027634130005CA2C0 /* CustomActivityIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomActivityIndicator.swift; sourceTree = "<group>"; };
 		A155B4C727637364005CA2C0 /* ImageCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCacheManager.swift; sourceTree = "<group>"; };
 		A18F136F275E3C2D003D3651 /* SearchPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchPresenter.swift; sourceTree = "<group>"; };
@@ -319,7 +319,7 @@
 		A155B4B927633F9B005CA2C0 /* Resource */ = {
 			isa = PBXGroup;
 			children = (
-				A11E4F2A2764D53A00F88122 /* 9131-loading-green.json */,
+				A1316C9F277175C300DA0199 /* 9131-loading-green.json */,
 				A1DBE278275E2B050075176C /* Assets.xcassets */,
 			);
 			path = Resource;
@@ -698,7 +698,7 @@
 			files = (
 				A1DBE2C2275E32B50075176C /* Launch Screen.storyboard in Resources */,
 				A1DBE279275E2B050075176C /* Assets.xcassets in Resources */,
-				A11E4F2B2764D53A00F88122 /* 9131-loading-green.json in Resources */,
+				A1316CA0277175C300DA0199 /* 9131-loading-green.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -34,7 +34,7 @@ final class CustomTabBar: UITabBar, UITabBarDelegate, CustomTabBarProtocol {
     
     //MARK: - Private methods
     private func setupTabBar() {
-        Utils.addShadow(type: .shadowIsUnder, layer: layer)
+        Utils.addShadow(type: .shadowIsAbove, layer: layer)
         backgroundColor = .clear
         shadowImage = UIImage()
         backgroundImage = UIImage()

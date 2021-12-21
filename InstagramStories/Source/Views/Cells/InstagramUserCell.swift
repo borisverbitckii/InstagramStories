@@ -71,7 +71,7 @@ final class InstagramUserCell: UICollectionViewCell {
         addSubviews()
         backgroundColor = Palette.white.color
         layer.cornerRadius = LocalConstants.cellCornerRadius
-        Utils.addShadow(type: .shadowIsUnder, layer: layer)
+        Utils.addShadow(type: .shadowIsBelow , layer: layer)
     }
     
     required init?(coder: NSCoder) {

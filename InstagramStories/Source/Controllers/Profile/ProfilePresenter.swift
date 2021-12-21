@@ -6,10 +6,11 @@
 //
 
 import UIKit.UIImage
+import Swiftagram
 
 protocol ProfilePresenterProtocol {
     func viewDidLoad()
-    func fetchUserImage(stringURL: String, completion: @escaping (UIImage) -> ())
+    func fetchImage(stringURL: String, completion: @escaping (Result<UIImage, Error>)->())
 }
 
 final class ProfilePresenter {
@@ -19,12 +20,15 @@ final class ProfilePresenter {
     private let coordinator: CoordinatorProtocol
     private let useCase: LoadUserProfileUseCase
     private var user: InstagramUser?
+    private let secret: Secret
     
     //MARK: - Init
     init(coordinator: CoordinatorProtocol,
-         useCase: LoadUserProfileUseCase) {
+         useCase: LoadUserProfileUseCase,
+         secret: Secret) {
         self.coordinator = coordinator
         self.useCase = useCase
+        self.secret = secret
     }
     
     //MARK: - Public methods
@@ -42,16 +46,24 @@ extension ProfilePresenter: ProfilePresenterProtocol {
     func viewDidLoad() {
         guard let user = user else { return }
         view?.showUser(user)
+        useCase.fetchUserStories(userID: String(user.id), secret: secret) { [weak self] result in
+            switch result {
+            case .success(let stories):
+                self?.view?.showStoriesPreview(stories: stories)
+            case .failure(let error): break
+                break //TODO: Fix this
+            }
+        }
     }
     
-    func fetchUserImage(stringURL: String, completion: @escaping (UIImage) -> ()) {
+    func fetchImage(stringURL: String, completion: @escaping (Result<UIImage, Error>)->()) {
         useCase.fetchImageData(urlString: stringURL) { result in
             switch result {
             case .success(let imageData):
                 guard let image = UIImage(data: imageData) else { return }
-                completion(image)
+                completion(.success(image))
             case .failure(let error):
-                break //TODO: Fix this
+                completion(.failure(error))
             }
         }
     }

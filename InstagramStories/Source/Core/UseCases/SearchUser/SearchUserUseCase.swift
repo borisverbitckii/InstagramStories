@@ -39,7 +39,9 @@ final class SearchUserUseCase: UseCase, SearchUseCaseProtocol {
     func fetchInstagramUsersFromNetwork(searchingTitle: String,
                                         secret: Secret,
                                         completion: @escaping (Result <[InstagramUser], Error>)->()) {
-        searchUserRepository.fetchInstagramUsersFromNetwork(searchingTitle: searchingTitle, secret: secret, completion: completion)
+        searchUserRepository.fetchInstagramUsersFromNetwork(searchingTitle: searchingTitle,
+                                                            secret: secret,
+                                                            completion: completion)
     }
     
     func fetchImage(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> ()) {
@@ -56,6 +58,7 @@ final class SearchUserUseCase: UseCase, SearchUseCaseProtocol {
     }
     
     func stopLastOperation() {
+        fetchImageRepository.stopLastOperation()
         searchUserRepository.stopLastOperation()
     }
 }

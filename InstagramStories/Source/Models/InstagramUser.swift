@@ -22,8 +22,6 @@ struct InstagramUser {
     var isOnFavorite = false
     var getNotifications = false
     
-    let stories: [Story]?
-    
     //MARK: - Init
     
     init(instagramUser: RealmInstagramUser) {
@@ -38,13 +36,6 @@ struct InstagramUser {
         self.isPrivate = instagramUser.isPrivate
         self.isOnFavorite = instagramUser.isOnFavorite
         self.getNotifications = instagramUser.getNotifications
-        
-        guard let stories = instagramUser.stories else {
-            self.stories = nil
-            return
-        }
-
-        self.stories = stories.map({ Story(realmStory: $0)})
     }
     
     init(name: String,
@@ -55,8 +46,7 @@ struct InstagramUser {
          posts: Int,
          subscribers: Int,
          subscriptions: Int,
-         isPrivate: Bool,
-         stories: [Story]?) {
+         isPrivate: Bool) {
 
         self.name = name
         self.profileDescription = profileDescription
@@ -69,24 +59,31 @@ struct InstagramUser {
         self.isPrivate = isPrivate
         self.isOnFavorite = false
         self.getNotifications = false
-        self.stories = stories
     }
+}
+
+enum StoryType {
+    case photo
+    case video
 }
 
 struct Story {
     //MARK: - Public properties
     let time: Int
-    let content: Data
+    let type: StoryType
+    let previewImageURL: String
+    let contentURL: String
+    var content: Data?
     
     //MARK: - Init
-    init(realmStory: RealmStory) {
-        self.time = realmStory.time
-        self.content = realmStory.content
-    }
     
     init(time: Int,
-         content: Data) {
+         type: StoryType,
+         previewImageURL: String,
+         contentURL: String) {
         self.time = time
-        self.content = content
+        self.type = type
+        self.previewImageURL = previewImageURL
+        self.contentURL = contentURL
     }
 }

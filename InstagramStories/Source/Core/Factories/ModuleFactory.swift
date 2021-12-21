@@ -16,7 +16,7 @@ protocol ModuleFactoryProtocol: AnyObject {
     func buildPreferencesNavigationController() -> UINavigationController
     func buildUsernameStoryViewController() -> UIViewController
     func buildSplashViewController() -> UIViewController
-    func buildProfileViewController(with user: InstagramUser) -> UIViewController
+    func buildProfileViewController(with user: InstagramUser, secret: Secret) -> UIViewController
 }
 
 final class ModuleFactory: ModuleFactoryProtocol {
@@ -110,13 +110,13 @@ final class ModuleFactory: ModuleFactoryProtocol {
         return view
     }
     
-    func buildProfileViewController(with user: InstagramUser) -> UIViewController {
+    func buildProfileViewController(with user: InstagramUser, secret: Secret) -> UIViewController {
         guard let coordinator = coordinator,
               let useCase = useCasesFactory.getLoadUserProfileUseCase() as? LoadUserProfileUseCase else {
             return UIViewController()
         }
         
-        let presenter = ProfilePresenter(coordinator: coordinator, useCase: useCase)
+        let presenter = ProfilePresenter(coordinator: coordinator, useCase: useCase, secret: secret)
         let view = ProfileViewController(presenter: presenter)
         presenter.injectUser(user)
         presenter.injectView(view: view)

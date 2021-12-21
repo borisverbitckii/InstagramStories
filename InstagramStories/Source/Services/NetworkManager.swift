@@ -17,6 +17,7 @@ final class NetworkManager {
     
     //MARK: - Private properties
     private var bin: Set<AnyCancellable> = []
+    private let queueForUsers = OperationQueue()
     private let imageCacheManager: ImageCacheManagerProtocol
     
     //MARK: - Init
@@ -28,10 +29,6 @@ final class NetworkManager {
     func stopLastOperation() {
         bin.removeAll()
     }
-}
-
-//MARK: - extension + NetworkManagerProtocol
-extension NetworkManager: NetworkManagerProtocol {
     
     //MARK: - Private methods
     private func fetchUserProfile(id: Int,
@@ -49,7 +46,7 @@ extension NetworkManager: NetworkManagerProtocol {
                 }
             } receiveValue: { userInfo in
                 let user = userInfo["user"]
-                
+
                 let instagramUser = InstagramUser(name: userInfo.user?.name ?? "",
                                                   profileDescription: userInfo.user?.biography ?? "",
                                                   instagramUsername: userInfo.user?.username ?? "",
@@ -58,12 +55,14 @@ extension NetworkManager: NetworkManagerProtocol {
                                                   posts: userInfo.user?.counter?.posts ?? 0,
                                                   subscribers: userInfo.user?.counter?.followers ?? 0,
                                                   subscriptions: userInfo.user?.counter?.following ?? 0,
-                                                  isPrivate: user["isPrivate"].bool() ?? false,
-                                                  stories: nil)
+                                                  isPrivate: user["isPrivate"].bool() ?? false)
                 completion(instagramUser)
             }.store(in: &bin)
     }
 }
+
+//MARK: - extension + NetworkManagerProtocol
+extension NetworkManager: NetworkManagerProtocol {}
 
 //MARK: - extension + UserImageDataSourceProtocol
 extension NetworkManager: UserImageDataSourceProtocol {
@@ -93,8 +92,7 @@ extension NetworkManager: UserImageDataSourceProtocol {
                       completion(.failure(Errors.urlNotValid.error))
                       return }
             
-            guard let data = data  else {
-                return }
+            guard let data = data  else { return }
             
             self?.imageCacheManager.saveImageToCache(imageData: data, response: response)
             
@@ -120,31 +118,61 @@ extension NetworkManager: StoriesDataSourceProtocol {
         completion(.failure(Errors.cantDownloadStory.error))
     }
     
-    func fetchStoriesURLs(userID: String, secret: Secret, completion: @escaping (Result<[String],Error>)->()) {
+    func fetchStories(userID: String, secret: Secret, completion: @escaping (Result<[Story],Error>)->()) {
         Endpoint.user(userID)
             .stories.unlock(with: secret)
             .session(URLSession.instagram)
             .sink { response in
-            } receiveValue: { stories in
-                guard let items = stories["reel"]["items"].array() else { return }
                 
-                var URLsStrings = [String]()
+                switch response {
+                case .finished:
+                    break
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            } receiveValue: { stories in
+                var storiesArray = [Story]()
+                
+                guard let items = stories["reel"]["items"].array() else {
+                    completion(.success(storiesArray))
+                    return }
                 
                 for item in items {
+                    
+                    var type: StoryType!
+                    var previewURLString = ""
+                    var contentURLString = ""
+                    
                     if let videoVersions = item["videoVersions"].array() {
                         if let firstVideoVersion = videoVersions.first {
                             let url = firstVideoVersion["url"].description
-                            URLsStrings.append(url)
+                            if let imageVersions = item["imageVersions2"]["candidates"].array() {
+                                guard let firstImageVersion = imageVersions.first else { return }
+                                let url = firstImageVersion["url"].description
+                                previewURLString = url
+                            }
+                            contentURLString = url
+                            type = .video
                         }
                     } else {
                         let candidates = item["imageVersions2"]["candidates"].array()
                         guard let firstCandidate = candidates?.first else { return }
                         let url = firstCandidate["url"].description
-                        URLsStrings.append(url)
+                        previewURLString = url
+                        contentURLString = url
+                        type = .photo
                     }
+                    var date = item["deviceTimestamp"].int()
+                    if date ?? 0 < 1000000000000000 {
+                        date = (date ?? 0) * 10
+                    }
+                    
+                    let story = Story(time: date ?? 0, type: type, previewImageURL: previewURLString, contentURL: contentURLString)
+                    storiesArray.append(story)
                 }
                 DispatchQueue.main.async {
-                    completion(.success(URLsStrings))
+                    storiesArray = storiesArray.sorted(by: { $0.time > $1.time})
+                    completion(.success(storiesArray))
                 }
             }.store(in: &bin)
     }
@@ -155,40 +183,56 @@ extension NetworkManager: SearchDataSourceProtocol {
     func fetchInstagramUsers(searchingTitle: String,
                              secret: Secret,
                              completion: @escaping (Result<[InstagramUser], Error>)->()){
-        bin.removeAll()
-        Endpoint
-            .users(matching: searchingTitle)
-            .unlock(with: secret)
-            .session(URLSession.instagram)
-            .pages(.max)
-            .sink {  response in
-                switch response {
-                case .finished: break
-                case .failure(let error):
-                    print(#file, #line, Errors.cantFetchUsers.error)
-                    DispatchQueue.main.async {
-                        completion(.failure(error))
+        queueForUsers.cancelAllOperations()
+        
+        let blockOperation = BlockOperation { [weak self] in
+            guard let strongSelf = self else { return }
+            
+            strongSelf.bin.removeAll()
+            Endpoint
+                .users(matching: searchingTitle)
+                .unlock(with: secret)
+                .session(URLSession.instagram)
+                .pages(.max, delay: .milliseconds(5))
+                .sink {  response in
+                    switch response {
+                    case .finished: break
+                    case .failure(let error):
+                        print(error)
+                        print(#file, #line, Errors.cantFetchUsers.error)
+                        DispatchQueue.main.async {
+                            completion(.failure(error))
+                        }
                     }
-                }
-            } receiveValue: { [weak self] users in
-                let queue = DispatchQueue(label: "queue", qos: .userInteractive, attributes: .concurrent)
-                queue.async {
-                    guard let usersArray = users.users else { return }
-                    var instagramUsers = [InstagramUser]()
-                    let dispatchGroup = DispatchGroup()
-                    for user in usersArray {
-                        dispatchGroup.enter()
-                        self?.fetchUserProfile(id: user["pk"].int() ?? 0, secret: secret, completion: { user in
-                            instagramUsers.append(user)
-                            dispatchGroup.leave()
-                        })
+                } receiveValue: { [weak self] users in
+                    let queue = DispatchQueue(label: "queue", qos: .userInteractive, attributes: .concurrent)
+                    queue.async {
+                        guard let usersArray = users.users else { return }
+                        var instagramUsers = [InstagramUser]()
+                        let dispatchGroup = DispatchGroup()
+                        for user in usersArray {
+                            dispatchGroup.enter()
+                            self?.fetchUserProfile(id: user["pk"].int() ?? 0, secret: secret, completion: { user in
+                                instagramUsers.append(user)
+                                dispatchGroup.leave()
+                            })
+                        }
+                        
+                        dispatchGroup.notify(queue: .main) {
+                            instagramUsers = instagramUsers.sorted { $0.subscribers > $1.subscribers}
+                            completion(.success(instagramUsers))
+                        }
                     }
-                    
-                    dispatchGroup.notify(queue: .main) {
-                        completion(.success(instagramUsers))
-                    }
-                }
-            }.store(in: &bin)
+                }.store(in: &strongSelf.bin)
+        }
+        
+        let timer = Timer.init(timeInterval: 0.3, repeats: false) { [weak self] timer in
+            // divide requests to prevent account block
+            self?.queueForUsers.addOperation(blockOperation)
+            timer.invalidate()
+        }
+        timer.tolerance = 0.1
+        RunLoop.current.add(timer, forMode: .common)
     }
 }
 

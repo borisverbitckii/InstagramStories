@@ -28,8 +28,12 @@ final class SearchUserRepository {
 
 //MARK: - extension + SearchUserRepositoryProtocol
 extension SearchUserRepository: SearchUserRepositoryProtocol {
-    func fetchInstagramUsersFromNetwork(searchingTitle: String, secret: Secret, completion: @escaping (Result<[InstagramUser], Error>) -> ()) {
-        remoteDataSource.fetchInstagramUsers(searchingTitle: searchingTitle, secret: secret, completion: completion)
+    func fetchInstagramUsersFromNetwork(searchingTitle: String,
+                                        secret: Secret,
+                                        completion: @escaping (Result<[InstagramUser], Error>) -> ()) {
+        remoteDataSource.fetchInstagramUsers(searchingTitle: searchingTitle,
+                                             secret: secret,
+                                             completion: completion)
     }
     
     func stopLastOperation() {

@@ -40,7 +40,7 @@ extension FavoritesPresenter: FavoritesPresenterProtocol {
             case .success(_):
                 
                 //TODO: Delete this
-                self?.view?.showFavoritesUsers(users: [InstagramUser(name: "Boris",profileDescription: "desription", instagramUsername: "verbitsky",id: 100, userIconURL: "", posts: 230, subscribers: 2786, subscriptions: 3376,isPrivate: false, stories: [Story]())])
+                self?.view?.showFavoritesUsers(users: [InstagramUser(name: "Boris",profileDescription: "desription", instagramUsername: "verbitsky",id: 100, userIconURL: "", posts: 230, subscribers: 2786, subscriptions: 3376,isPrivate: false)])
                 //--
             case .failure(let error):
                 self?.view?.showAlertController(title: "Error", message: error.localizedDescription)

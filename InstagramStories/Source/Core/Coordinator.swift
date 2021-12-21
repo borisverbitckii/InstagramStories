@@ -11,7 +11,7 @@ import Swiftagram
 protocol CoordinatorProtocol: AnyObject {
     func presentTabBarController(secret: Secret)
     func presentPresentationViewController()
-    func presentProfileViewController(transitionHandler: TransitionProtocol, with user: InstagramUser)
+    func presentProfileViewController(transitionHandler: TransitionProtocol, with user: InstagramUser, secret: Secret)
 }
 
 final class Coordinator {
@@ -67,8 +67,8 @@ extension Coordinator: CoordinatorProtocol {
         window?.makeKeyAndVisible()
     }
     
-    func presentProfileViewController(transitionHandler: TransitionProtocol, with user: InstagramUser) {
-        transitionHandler.pushViewControllerWithHandler(moduleFactory.buildProfileViewController(with: user),
+    func presentProfileViewController(transitionHandler: TransitionProtocol, with user: InstagramUser, secret: Secret) {
+        transitionHandler.pushViewControllerWithHandler(moduleFactory.buildProfileViewController(with: user,secret: secret),
                                                         animated: true)
     }
 }

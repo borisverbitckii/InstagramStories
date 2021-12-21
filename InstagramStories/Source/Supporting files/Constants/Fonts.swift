@@ -14,6 +14,7 @@ enum AvenirTypes {
 }
 
 enum FontSizes: CGFloat {
+    case superSmall = 10
     case small = 12
     case medium = 14
     case mediumPlus = 16

@@ -9,6 +9,7 @@ import Foundation
 
 protocol UserImageRepositoryProtocol {
     func fetchImageData(urlString: String, completion: @escaping (Result<Data, Error>)->())
+    func stopLastOperation()
 }
 
 final class UserImageRepository {
@@ -23,6 +24,10 @@ final class UserImageRepository {
 
 //MARK: - extension + UserImageRepositoryProtocol
 extension UserImageRepository: UserImageRepositoryProtocol {
+    func stopLastOperation() {
+        remoteDataSource.stopLastOperation()
+    }
+    
     func fetchImageData(urlString: String, completion: @escaping (Result<Data, Error>)->()) {
         remoteDataSource.fetchImageData(urlString: urlString, completion: completion)
     }

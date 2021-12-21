@@ -9,7 +9,7 @@ import Foundation
 import Swiftagram
 
 protocol StoriesDataSourceProtocol {
-    func fetchStoriesURLs(userID: String, secret: Secret, completion: @escaping (Result<[String],Error>)->())
+    func fetchStories(userID: String, secret: Secret, completion: @escaping (Result<[Story],Error>)->())
     func fetchStoryData(urlString: String, completion: @escaping (Result<Data, Error>)->())
     func stopLastOperation()
 }

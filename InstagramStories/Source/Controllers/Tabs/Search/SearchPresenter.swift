@@ -62,7 +62,7 @@ extension SearchPresenter: SearchPresenterProtocol {
             case .success(_):
 //                self?.view?.showRecentUsers(users: users) // dont delete
                 //TODO: Delete this
-                self?.view?.showRecentUsers(users: [InstagramUser(name: "Boris",profileDescription: "description", instagramUsername: "verbitsky",id: 1000, userIconURL: "", posts: 230, subscribers: 2786, subscriptions: 3376, isPrivate: false, stories: [Story]())])
+                self?.view?.showRecentUsers(users: [InstagramUser(name: "Boris",profileDescription: "description", instagramUsername: "verbitsky",id: 1000, userIconURL: "", posts: 230, subscribers: 2786, subscriptions: 3376, isPrivate: false)])
                 //--
             case .failure(let error):
                 self?.view?.showAlertController(title: "Error", message: error.localizedDescription)
@@ -91,6 +91,6 @@ extension SearchPresenter: SearchPresenterProtocol {
     //MARK: - Navigation
     func presentProfile(with user: InstagramUser) {
         guard let transitionHandler = transitionHandler else { return }
-        coordinator.presentProfileViewController(transitionHandler: transitionHandler,with: user)
+        coordinator.presentProfileViewController(transitionHandler: transitionHandler,with: user, secret: secret)
     }
 }

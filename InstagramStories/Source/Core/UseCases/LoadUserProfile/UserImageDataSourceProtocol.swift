@@ -10,4 +10,5 @@ import Swiftagram
 
 protocol UserImageDataSourceProtocol {
     func fetchImageData(urlString: String, completion: @escaping (Result<Data, Error>)->())
+    func stopLastOperation()
 }

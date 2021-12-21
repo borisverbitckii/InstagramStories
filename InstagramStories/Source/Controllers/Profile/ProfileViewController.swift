@@ -9,12 +9,20 @@ import UIKit
 
 protocol ProfileViewProtocol: AnyObject {
     func showUser(_ user: InstagramUser)
+    func showStoriesPreview(stories: [Story])
 }
 
 final class ProfileViewController: UIViewController {
     
     //MARK: - Private properties
     private let presenter: ProfilePresenterProtocol
+    private var stories: [Story]? {
+        didSet{
+            storiesCollectionView.reloadWithFade()
+            layout()
+            activityIndicator.hide()
+        }
+    }
     
     private var user: InstagramUser? {
         didSet {
@@ -22,13 +30,24 @@ final class ProfileViewController: UIViewController {
             title = "@" + instagramUsername
             nameLabel.text = user?.name
             descriptionLabel.text = user?.profileDescription
-            presenter.fetchUserImage(stringURL: user?.userIconURL ?? "") { [weak self] image in
-                self?.userImage.image = image
+            presenter.fetchImage(stringURL: user?.userIconURL ?? "") { [weak self] result in
+                switch result {
+                case .success(let image):
+                    self?.userImage.image = image
+                case .failure(_):
+                    // fix this
+                    break
+                }
             }
         }
     }
     
     // UI Elements
+    private var activityIndicator: CustomActivityIndicator = {
+        $0.type = .withBackgroundView(.medium)
+        return $0
+    }(CustomActivityIndicator())
+    
     private let scrollView: UIScrollView = {
         $0.showsVerticalScrollIndicator = false
         $0.contentInset = LocalConstants.contentInset
@@ -48,6 +67,7 @@ final class ProfileViewController: UIViewController {
     }(UILabel())
     
     private let descriptionLabel: UILabel = {
+        $0.numberOfLines = 0
         $0.font = Fonts.avenir(.light).getFont(size: .medium)
         return $0
     }(UILabel())
@@ -162,6 +182,7 @@ final class ProfileViewController: UIViewController {
         scrollView.addSubview(userImage)
         scrollView.addSubview(nameLabel)
         scrollView.addSubview(descriptionLabel)
+        scrollView.addSubview(activityIndicator)
         scrollView.addSubview(storiesCollectionView)
         
         guard let subscribersStackView = subscribersStackView,
@@ -194,7 +215,7 @@ final class ProfileViewController: UIViewController {
         userImage.layer.cornerRadius = userImage.frame.height / 2
         
         mainStackViewForNumbers.pin
-            .after(of: userImage,aligned: .center).margin(LocalConstants.valuesLeftInset)
+            .after(of: userImage,aligned: .center).marginLeft(LocalConstants.valuesLeftInset)
             .right(LocalConstants.valuesRightInset)
             .height(LocalConstants.valuesHeight)
         
@@ -214,7 +235,12 @@ final class ProfileViewController: UIViewController {
                 .below(of: nameLabel).marginTop(LocalConstants.descriptionLabelTopInset)
                 .left(LocalConstants.leftInset)
                 .right(LocalConstants.rightInset)
-                .height(descriptionLabel.intrinsicContentSize.height)
+            
+            descriptionLabel.sizeToFit()
+            
+            activityIndicator.pin
+                .below(of: descriptionLabel).marginTop(LocalConstants.activityIndicatoriInset)
+                .hCenter()
             
             storiesCollectionView.pin
                 .below(of: descriptionLabel).marginTop(LocalConstants.collectionViewTopInset)
@@ -222,6 +248,10 @@ final class ProfileViewController: UIViewController {
                 .right(LocalConstants.rightInset)
                 .height(storiesCollectionView.contentSize.height)
         } else {
+            activityIndicator.pin
+                .below(of: userImage).marginTop(LocalConstants.activityIndicatoriInset)
+                .hCenter()
+            
             storiesCollectionView.pin
                 .below(of: userImage).marginTop(LocalConstants.collectionViewTopInset)
                 .left(LocalConstants.leftInset)
@@ -260,11 +290,15 @@ final class ProfileViewController: UIViewController {
 
 extension ProfileViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return stories?.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: LocalConstants.reuseIdentifier, for: indexPath) as? StoryCell else { return UICollectionViewCell()}
+        cell.imageDelegate = self
+        if let story = stories?[indexPath.item] {
+            cell.configure(story: story)
+        }
         return cell
     }
     
@@ -275,8 +309,19 @@ extension ProfileViewController: UICollectionViewDataSource, UICollectionViewDel
 
 //MARK: - extension + ProfileViewProtocol
 extension ProfileViewController: ProfileViewProtocol {
+    func showStoriesPreview(stories: [Story]) {
+        self.stories = stories
+    }
+    
     func showUser(_ user: InstagramUser) {
         self.user = user
+    }
+}
+
+//MARK: - extension + StoryCellImageDelegate
+extension ProfileViewController: StoryCellImageDelegate {
+    func fetchImage(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> ()) {
+        presenter.fetchImage(stringURL: stringURL, completion: completion)
     }
 }
 
@@ -293,10 +338,11 @@ private enum LocalConstants {
     static let rightInset: CGFloat = 16
     static let userImage = CGSize(width: 90, height: 90)
     static let userImageTopInset: CGFloat = 10
-    static let valuesLeftInset: CGFloat = 30
-    static let valuesRightInset: CGFloat = 30
+    static let valuesLeftInset: CGFloat = 50
+    static let valuesRightInset: CGFloat = 50
     static let valuesHeight: CGFloat = 40
-    static let nameLabelTopInset: CGFloat = 20
+    static let nameLabelTopInset: CGFloat = 10
     static let descriptionLabelTopInset: CGFloat = 2
     static let collectionViewTopInset: CGFloat = 20
+    static let activityIndicatoriInset: CGFloat = 200
 }

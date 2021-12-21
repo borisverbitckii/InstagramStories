@@ -9,7 +9,7 @@ import Foundation
 import Swiftagram
 
 protocol StoriesRepositoryProtocol {
-    func fetchStoriesURLs(userID: String, secret: Secret, completion: @escaping (Result<[String],Error>)->())
+    func fetchStories(userID: String, secret: Secret, completion: @escaping (Result<[Story],Error>)->())
     func fetchStoryData(urlString: String, completion: @escaping (Result<Data, Error>)->())
     func stopLastOperation()
 }
@@ -27,8 +27,8 @@ final class StoriesRepository{
 
 //MARK: - extension + StoriesRepositoryProtocol
 extension StoriesRepository: StoriesRepositoryProtocol {
-    func fetchStoriesURLs(userID: String, secret: Secret, completion: @escaping (Result<[String], Error>) -> ()) {
-        remoteDataSource.fetchStoriesURLs(userID: userID, secret: secret, completion: completion)
+    func fetchStories(userID: String, secret: Secret, completion: @escaping (Result<[Story],Error>)->()) {
+        remoteDataSource.fetchStories(userID: userID, secret: secret, completion: completion)
     }
     
     func fetchStoryData(urlString: String, completion: @escaping (Result<Data, Error>) -> ()) {

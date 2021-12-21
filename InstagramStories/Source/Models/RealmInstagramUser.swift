@@ -23,8 +23,6 @@ final class RealmInstagramUser: Object {
     @objc dynamic var isOnFavorite: Bool
     @objc dynamic var getNotifications: Bool
     
-    var stories: [RealmStory]?
-    
     //MARK: - Init
     init(instagramUser: InstagramUser) {
         self.name = instagramUser.name
@@ -38,21 +36,5 @@ final class RealmInstagramUser: Object {
         self.isPrivate = instagramUser.isPrivate
         self.isOnFavorite = instagramUser.isOnFavorite
         self.getNotifications = instagramUser.getNotifications
-        
-        guard let stories = instagramUser.stories else { return }
-        self.stories = stories.map({ RealmStory(story: $0)})
-    }
-}
-
-final class RealmStory: Object {
-    
-    //MARK: - Public methods
-    @objc dynamic let time: Int
-    @objc dynamic let content: Data
-    
-    //MARK: - Init
-    init(story: Story) {
-        self.time = story.time
-        self.content = story.content
     }
 }

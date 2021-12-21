@@ -46,7 +46,7 @@ final class CustomActivityIndicator: UIView {
     }(UIView())
     
     private let activityIndicatorContainerShadow: UIView = {
-        Utils.addShadow(type: .shadowIsUnder, layer: $0.layer)
+        Utils.addShadow(type: .shadowIsBelow, layer: $0.layer)
         return $0
     }(UIView())
     

@@ -20,7 +20,7 @@ final class ScrollToTopButton : UIButton {
     init() {
         super.init(frame: .zero)
         isHidden = true
-        Utils.addShadow(type: .shadowIsUnder, layer: layer)
+        Utils.addShadow(type: .shadowIsAbove, layer: layer)
         addSubviews()
         layout()
         button.isUserInteractionEnabled = false

@@ -6,6 +6,6 @@
 //
 
 enum Constants {
-    static let credentialsUsername = "dr_ew6718"
-    static let credentialsPassword = "6HBmOvYd9"
+    static let credentialsUsername = "darina_petrova7258"
+    static let credentialsPassword = "fFglNcHJffHhvD"
 }
