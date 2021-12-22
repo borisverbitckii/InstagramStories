@@ -15,6 +15,13 @@ enum Text {
     case posts
     case subscribers
     case subscriptions
+    case noSearchResult
+    case tryAgain
+    case noStories
+    case tryLatter
+    case isPrivate
+    case error
+    case errorInUsername
     
     func getText() -> String {
         switch self {
@@ -44,6 +51,20 @@ enum Text {
             return "Подписчики".localized
         case .subscriptions:
             return "Подписки".localized
+        case .noSearchResult:
+            return "Пользователь не найден".localized
+        case .tryAgain:
+            return "Попробуйте еще раз".localized
+        case .noStories:
+            return "Нет новых stories".localized
+        case .tryLatter:
+            return "Попробуйте позже".localized
+        case .isPrivate:
+            return "Профиль закрыт"
+        case .error:
+            return "Ошибка".localized
+        case .errorInUsername:
+            return "Пожалуйста, не используйте пробел".localized
         }
     }
 }

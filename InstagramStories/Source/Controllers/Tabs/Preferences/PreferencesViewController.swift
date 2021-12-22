@@ -9,7 +9,7 @@ import UIKit.UIViewController
 
 protocol PreferencesViewProtocol: AnyObject {
     func showMenuItem(settings: [Setting])
-    func showAlertController(title: String, message: String)
+    func showAlertController(title: String, message: String, completion: (()->())?)
 }
 
 final class PreferencesViewController: CommonViewController {

@@ -8,7 +8,7 @@
 import UIKit.UIViewController
 
 protocol FavoritesViewProtocol: AnyObject {
-    func showAlertController(title: String, message: String)
+    func showAlertController(title: String, message: String, completion: (()->())?)
     func showFavoritesUsers(users: [InstagramUser])
 }
 

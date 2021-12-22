@@ -14,6 +14,7 @@ final class PreferencesPresenter {
     
     //MARK: - Private properties
     private weak var view: PreferencesViewProtocol?
+    private weak var transitionHandler: TransitionProtocol?
     private weak var coordinator: CoordinatorProtocol?
     private let useCase: ShowPreferencesUseCaseProtocol
     
@@ -29,6 +30,10 @@ final class PreferencesPresenter {
         self.view = view
     }
     
+    func injectTransitionHandler(view: TransitionProtocol) {
+        self.transitionHandler = view
+    }
+    
 }
 
 //MARK: - FavoritesPresenterProtocol
@@ -40,7 +45,7 @@ extension PreferencesPresenter: PreferencesPresenterProtocol {
             case .success(let settings):
                 self?.view?.showMenuItem(settings: settings)
             case .failure(let error):
-                self?.view?.showAlertController(title: "Error", message: error.localizedDescription)
+                self?.view?.showAlertController(title: "Error", message: error.localizedDescription, completion: nil)
             }
         }
     }

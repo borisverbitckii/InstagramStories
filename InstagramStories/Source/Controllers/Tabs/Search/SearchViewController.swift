@@ -12,7 +12,7 @@ import SwiftUI
 protocol SearchViewProtocol: AnyObject {
     func showRecentUsers(users: [InstagramUser])
     func showSearchingUsers(users: [InstagramUser])
-    func showAlertController(title: String, message: String)
+    func showAlertController(title: String, message: String, completion: (()->())?)
     func hideActivityIndicator()
 }
 
@@ -36,7 +36,7 @@ final class SearchViewController: CommonViewController {
         return text.isEmpty
     }
     
-    private var previousValue = ""
+    private var previousValue: String?
     private let presenter: SearchPresenterProtocol?
     
     // UI elements
@@ -50,6 +50,11 @@ final class SearchViewController: CommonViewController {
         $0.hide()
         return $0
     }(CustomActivityIndicator())
+    
+    private let noSearchResults: StateView = {
+        $0.isHidden = true
+        return $0
+    }(StateView(type: .noSearchResults))
     
     //MARK: - Init
     init(type: TabViewControllerType,
@@ -82,6 +87,10 @@ final class SearchViewController: CommonViewController {
         view.backgroundColor = Palette.white.color
         setupSearchBar()
         addSubviews()
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
         layout()
     }
     
@@ -99,16 +108,20 @@ final class SearchViewController: CommonViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         activityIndicator.hide()
-        searchController.searchBar.resignFirstResponder()
     }
     
     //MARK: - Private methods
     private func addSubviews() {
         view.addSubview(activityIndicator)
+        view.addSubview(noSearchResults)
     }
     
     private func layout() {
         activityIndicator.pin.center()
+    
+        noSearchResults.pin
+            .top(view.frame.height / 5)
+            .hCenter()
     }
     
     private func setupSearchBar() {
@@ -153,16 +166,19 @@ extension SearchViewController: SearchViewProtocol {
 }
 
 
-//MARK: - UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout
-extension SearchViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+//MARK: - UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
+extension SearchViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
     // Rows
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if !searchBarIsEmpty && searchingInstagramUsers.isEmpty {
+            noSearchResults.showWithFade(with: LocalConstants.noSearchResultAnimationDuration)
             return 0
         } else if searchingInstagramUsers.isEmpty {
+            noSearchResults.hideWithFade(with: LocalConstants.noSearchResultAnimationDuration)
             return recentUsers.count
         }
+        noSearchResults.hideWithFade(with: LocalConstants.noSearchResultAnimationDuration)
         return searchingInstagramUsers.count
     }
     
@@ -226,7 +242,14 @@ extension SearchViewController: UISearchResultsUpdating {
         guard let text = searchController.searchBar.text,
               !text.isEmpty,
               previousValue != text else { return }
+        guard !text.contains(where: { $0 == " "}) else {
+            showAlertController(title: Text.error.getText(), message: Text.errorInUsername.getText()) {
+                searchController.searchBar.becomeFirstResponder()
+            }
+            searchController.searchBar.text?.removeLast()
+            return }
         activityIndicator.show()
+        noSearchResults.hideWithFade(with: LocalConstants.noSearchResultAnimationDuration)
         presenter?.fetchSearchingUsers(username: text)
         previousValue = text
     }
@@ -234,6 +257,7 @@ extension SearchViewController: UISearchResultsUpdating {
 
 //MARK: - extension + UISearchBarDelegate
 extension SearchViewController: UISearchBarDelegate {
+    
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         presenter?.stopFetching()
         searchingInstagramUsers = []
@@ -267,4 +291,5 @@ extension SearchViewController: InstagramUserCellImageDelegate {
 private enum LocalConstants {
     static let headerReuseIdentifier = "header"
     static let headerHeight: CGFloat = 30
+    static let noSearchResultAnimationDuration: TimeInterval = 0.6
 }

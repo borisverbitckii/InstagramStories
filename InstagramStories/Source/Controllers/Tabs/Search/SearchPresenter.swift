@@ -65,7 +65,7 @@ extension SearchPresenter: SearchPresenterProtocol {
                 self?.view?.showRecentUsers(users: [InstagramUser(name: "Boris",profileDescription: "description", instagramUsername: "verbitsky",id: 1000, userIconURL: "", posts: 230, subscribers: 2786, subscriptions: 3376, isPrivate: false)])
                 //--
             case .failure(let error):
-                self?.view?.showAlertController(title: "Error", message: error.localizedDescription)
+                self?.view?.showAlertController(title: "Error", message: error.localizedDescription, completion: nil)
                 self?.view?.hideActivityIndicator()
                 
             }
@@ -78,7 +78,7 @@ extension SearchPresenter: SearchPresenterProtocol {
             case .success(let users):
                 self?.view?.showSearchingUsers(users: users)
             case .failure(let error):
-                self?.view?.showAlertController(title: "Error", message: error.localizedDescription)
+                self?.view?.showAlertController(title: "Error", message: error.localizedDescription, completion: nil)
                 self?.view?.hideActivityIndicator()
             }
         }

@@ -7,21 +7,39 @@
 
 import UIKit
 
-final class ScrollToTopButton : UIButton {
+enum CustomButtonType {
+    case close
+    case share
+    case save
+    case scroll
+}
+
+final class CustomButton : UIButton {
     
     //MARK: - Private methods
-    private let button: UIView = {
+    private let button: UIImageView = {
         $0.backgroundColor = Palette.white.color
         $0.clipsToBounds = true
         return $0
-    }(UIView())
+    }(UIImageView())
     
     //MARK: - Init
-    init() {
+    init(buttonType: CustomButtonType) {
         super.init(frame: .zero)
-        isHidden = true
-        Utils.addShadow(type: .shadowIsAbove, layer: layer)
+        Utils.addShadow(type: .shadowIsBelow, layer: layer)
         addSubviews()
+        
+        switch buttonType {
+        case .close:
+            break
+        case .share:
+            break
+        case .save:
+            break
+        case .scroll:
+            isHidden = true
+            break
+        }
         layout()
         button.isUserInteractionEnabled = false
     }
@@ -33,7 +51,6 @@ final class ScrollToTopButton : UIButton {
     //MARK: - Private methods
     private func addSubviews() {
         addSubview(button)
-        
     }
     
     private func layout(){

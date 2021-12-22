@@ -14,9 +14,9 @@ protocol ModuleFactoryProtocol: AnyObject {
     func buildSearchNavigationController(secret: Secret) -> UINavigationController
     func buildFavoritesNavigationController() -> UINavigationController
     func buildPreferencesNavigationController() -> UINavigationController
-    func buildUsernameStoryViewController() -> UIViewController
     func buildSplashViewController() -> UIViewController
     func buildProfileViewController(with user: InstagramUser, secret: Secret) -> UIViewController
+    func buildStoryViewController(user: InstagramUser, stories: [Story], selectedStoryIndex: Int, secret: Secret) -> UIViewController
 }
 
 final class ModuleFactory: ModuleFactoryProtocol {
@@ -66,7 +66,7 @@ final class ModuleFactory: ModuleFactoryProtocol {
                                         presenter: presenter)
         presenter.injectView(view: view)
         let navigationController = UINavigationController(rootViewController: view)
-        presenter.injectTransitionHandler(view: navigationController)
+        presenter.injectTransitionHandler(view: view)
         return navigationController
     }
     
@@ -81,6 +81,7 @@ final class ModuleFactory: ModuleFactoryProtocol {
         let view = FavoritesViewController(type: .favorites, presenter: presenter)
         presenter.injectView(view: view)
         let navigationController = UINavigationController(rootViewController: view)
+        presenter.injectTransitionHandler(view: view)
         return navigationController
     }
     
@@ -94,6 +95,7 @@ final class ModuleFactory: ModuleFactoryProtocol {
         let view = PreferencesViewController(type: .preferences,presenter: presenter)
         presenter.injectView(view: view)
         let navigationController = UINavigationController(rootViewController: view)
+        presenter.injectTransitionHandler(view: view)
         return navigationController
     }
 
@@ -106,7 +108,6 @@ final class ModuleFactory: ModuleFactoryProtocol {
         let presenter = SplashPresenter(coordinator: coordinator, useCase: useCase)
         let view = SplashViewController(presenter: presenter)
         presenter.injectView(view: view)
-        
         return view
     }
     
@@ -116,16 +117,26 @@ final class ModuleFactory: ModuleFactoryProtocol {
             return UIViewController()
         }
         
-        let presenter = ProfilePresenter(coordinator: coordinator, useCase: useCase, secret: secret)
+        let presenter = ProfilePresenter(coordinator: coordinator, useCase: useCase, secret: secret, user: user)
         let view = ProfileViewController(presenter: presenter)
-        presenter.injectUser(user)
         presenter.injectView(view: view)
-        
         return view
     }
     
-    func buildUsernameStoryViewController() -> UIViewController {
-        return UIViewController()
+    func buildStoryViewController(user: InstagramUser, stories: [Story], selectedStoryIndex: Int, secret: Secret) -> UIViewController {
+        guard let coordinator = coordinator,
+              let useCase = useCasesFactory.getShowStoryUseCase() as? ShowStoryUseCaseProtocol else {
+            return UIViewController()
+        }
+        let presenter = StoryPresenter(coordinator: coordinator,
+                                       secret: secret,
+                                       useCase: useCase,
+                                       stories: stories,
+                                       user: user,
+                                       selectedStoryIndex: selectedStoryIndex)
+        let view = StoryViewController(presenter: presenter)
+        presenter.injectView(view: view)
+        return view
     }
     
 }

@@ -16,13 +16,13 @@ protocol LoadUserProfileUseCaseProtocol {
 final class LoadUserProfileUseCase: UseCase {
     //MARK: - Private properties
     private let userImageRepository: UserImageRepositoryProtocol
-    private let storiesRepository: StoriesRepositoryProtocol
+    private let storiesPreviewRepository: StoriesPreviewRepositoryProtocol
     
     //MARK: - Init
     init(repository: UserImageRepositoryProtocol,
-         storiesRepository: StoriesRepositoryProtocol) {
+         storiesRepository: StoriesPreviewRepositoryProtocol) {
         self.userImageRepository = repository
-        self.storiesRepository = storiesRepository
+        self.storiesPreviewRepository = storiesRepository
     }
 }
 
@@ -33,14 +33,6 @@ extension LoadUserProfileUseCase: LoadUserProfileUseCaseProtocol {
     }
     
     func fetchUserStories(userID: String, secret: Secret, completion: @escaping (Result<[Story], Error>)->()) {
-        storiesRepository.fetchStories(userID: userID, secret: secret) { result in
-            switch result {
-            case .success(let stories):
-                completion(.success(stories))
-            case .failure(let error):
-                print(#file, #line, error)
-                completion(.failure(error))
-            }
-        }
+        storiesPreviewRepository.fetchStories(userID: userID, secret: secret, completion: completion)
     }
 }

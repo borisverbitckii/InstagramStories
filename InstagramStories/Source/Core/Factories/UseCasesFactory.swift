@@ -18,6 +18,7 @@ protocol UseCaseFactoryProtocol {
     func getShowRecentsUsersUseCase() -> UseCase
     func getShowFavoritesUsersUseCase() -> UseCase
     func getShowPreferencesUseCase() -> UseCase
+    func getShowStoryUseCase() -> UseCase
 }
 
 /// Only for  inheritance
@@ -64,5 +65,9 @@ final class UseCasesFactory: UseCaseFactoryProtocol {
     
     func getShowPreferencesUseCase() -> UseCase {
         return ShowPreferencesUseCase(preferencesRepository: repositoryFactory.getPreferencesRepository())
+    }
+    
+    func getShowStoryUseCase() -> UseCase {
+        return ShowStoryUseCase(userImageRepository: repositoryFactory.getUserImageRepository(),storyRepository: repositoryFactory.getStoryRepository())
     }
 }

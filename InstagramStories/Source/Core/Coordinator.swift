@@ -12,6 +12,11 @@ protocol CoordinatorProtocol: AnyObject {
     func presentTabBarController(secret: Secret)
     func presentPresentationViewController()
     func presentProfileViewController(transitionHandler: TransitionProtocol, with user: InstagramUser, secret: Secret)
+    func presentStoryViewController(transitionHandler: TransitionProtocol,
+                                    user: InstagramUser,
+                                    selectedStoryIndex: Int,
+                                    stories: [Story],
+                                    secret: Secret)
 }
 
 final class Coordinator {
@@ -70,6 +75,20 @@ extension Coordinator: CoordinatorProtocol {
     func presentProfileViewController(transitionHandler: TransitionProtocol, with user: InstagramUser, secret: Secret) {
         transitionHandler.pushViewControllerWithHandler(moduleFactory.buildProfileViewController(with: user,secret: secret),
                                                         animated: true)
+    }
+    func presentStoryViewController(transitionHandler: TransitionProtocol,
+                                    user: InstagramUser,
+                                    selectedStoryIndex: Int,
+                                    stories: [Story],
+                                    secret: Secret) {
+        let storyViewController = moduleFactory.buildStoryViewController(user: user,
+                                                                         stories: stories,
+                                                                         selectedStoryIndex: selectedStoryIndex,
+                                                                         secret: secret)
+        storyViewController.modalTransitionStyle = .coverVertical
+        storyViewController.modalPresentationStyle = .fullScreen
+        transitionHandler.presentViewController(storyViewController,
+                                                animated: true)
     }
 }
 

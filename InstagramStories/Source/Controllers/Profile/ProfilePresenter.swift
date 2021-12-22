@@ -11,12 +11,14 @@ import Swiftagram
 protocol ProfilePresenterProtocol {
     func viewDidLoad()
     func fetchImage(stringURL: String, completion: @escaping (Result<UIImage, Error>)->())
+    func presentStory(transitionHandler: TransitionProtocol, with stories: [Story], selectedStoryIndex: Int)
 }
 
 final class ProfilePresenter {
     
     //MARK: - Private properties
     private weak var view: ProfileViewProtocol?
+    private weak var transitionHandler: TransitionProtocol?
     private let coordinator: CoordinatorProtocol
     private let useCase: LoadUserProfileUseCase
     private var user: InstagramUser?
@@ -25,27 +27,31 @@ final class ProfilePresenter {
     //MARK: - Init
     init(coordinator: CoordinatorProtocol,
          useCase: LoadUserProfileUseCase,
-         secret: Secret) {
+         secret: Secret,
+         user: InstagramUser) {
         self.coordinator = coordinator
         self.useCase = useCase
         self.secret = secret
+        self.user = user
     }
     
     //MARK: - Public methods
     func injectView(view: ProfileViewProtocol) {
         self.view = view
     }
-    
-    func injectUser(_ user: InstagramUser) {
-        self.user = user
-    }
 }
 
 //MARK: - extension + ProfilePresenterProtocol
 extension ProfilePresenter: ProfilePresenterProtocol {
+    
     func viewDidLoad() {
         guard let user = user else { return }
         view?.showUser(user)
+        
+        if user.isPrivate {
+            view?.showProfileIsPrivate()
+            return
+        }
         useCase.fetchUserStories(userID: String(user.id), secret: secret) { [weak self] result in
             switch result {
             case .success(let stories):
@@ -65,6 +71,16 @@ extension ProfilePresenter: ProfilePresenterProtocol {
             case .failure(let error):
                 completion(.failure(error))
             }
+        }
+    }
+    
+    func presentStory(transitionHandler: TransitionProtocol, with stories: [Story], selectedStoryIndex: Int) {
+        if let user = user {
+            coordinator.presentStoryViewController(transitionHandler: transitionHandler,
+                                                   user: user,
+                                                   selectedStoryIndex: selectedStoryIndex,
+                                                   stories: stories,
+                                                   secret: secret)
         }
     }
 }

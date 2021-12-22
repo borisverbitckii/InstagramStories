@@ -8,7 +8,7 @@
 import UIKit.UIViewController
 
 protocol SplashView: AnyObject {
-    func showAlertController(title: String, message: String)
+    func showAlertController(title: String, message: String, completion: (()->())?)
 }
 
 final class SplashViewController: UIViewController {
@@ -53,5 +53,4 @@ final class SplashViewController: UIViewController {
 
 //MARK: - extension + SplashView
 extension SplashViewController: SplashView {
-    
 }

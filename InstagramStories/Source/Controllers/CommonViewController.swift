@@ -43,10 +43,12 @@ class CommonViewController: UIViewController {
     
     //MARK: - Private properties
     private var previousValueForScrollViewGesture: CGFloat = 0
+    private var keyboardIsOpen = false
     
-    private var scrollToTopButton: ScrollToTopButton = {
+    // UI Elements
+    private var scrollToTopButton: CustomButton = {
         return $0
-    }(ScrollToTopButton())
+    }(CustomButton(buttonType: .scroll))
     
     //MARK: - Init
     init(type: TabViewControllerType) {
@@ -145,7 +147,7 @@ class CommonViewController: UIViewController {
         
         scrollToTopButton.pin
             .right(ConstantsForCommonViewController.scrollToTopButtonRightInset)
-            .above(of: tabBar).margin(ConstantsForCommonViewController.scrollToTopButtonBottomInset)
+            .bottom(ConstantsForCommonViewController.scrollToTopButtonBottomInset)
     }
     
     private func registerCollectionViewCell() {
@@ -158,28 +160,39 @@ class CommonViewController: UIViewController {
     }
     
     private func animateScrollToTopButton(isHidden: Bool) {
-        isHidden ? scrollToTopButton.hideWithFade(with: ConstantsForCommonViewController.scrollToTopButtonHideWithFadeDuration) : scrollToTopButton.showWithFade(with: ConstantsForCommonViewController.scrollToTopButtonShowWithFadeDuration)
+        isHidden
+        ? scrollToTopButton.hideWithFade(with: ConstantsForCommonViewController.scrollToTopButtonHideWithFadeDuration)
+        : scrollToTopButton.showWithFade(with: ConstantsForCommonViewController.scrollToTopButtonShowWithFadeDuration)
     }
     
     //MARK: - OBJC methods
     
     @objc private func keyboardWillShow(notification: NSNotification) {
-        guard let keyboardFrameValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
-        
-        let keyboardRectangle = keyboardFrameValue.cgRectValue
-        let keyboardHeight = keyboardRectangle.height
-        if let tabBarController = tabBarController {
-            if tabBarController.tabBar.frame.origin.y != view.frame.height {
-                scrollToTopButton.frame.origin.y -= keyboardHeight - tabBarController.tabBar.frame.height
-            } else {
-                scrollToTopButton.frame.origin.y -= keyboardHeight
-            }
+        if !keyboardIsOpen {
+            guard let keyboardFrameValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
+            
+            let keyboardRectangle = keyboardFrameValue.cgRectValue
+            let keyboardHeight = keyboardRectangle.height
+            scrollToTopButton.pin
+                .bottom(keyboardHeight + ConstantsForCommonViewController.scrollToTopButtonBottomInset)
+            keyboardIsOpen = true
         }
     }
     
     @objc private func keyboardWillHide(notification: NSNotification) {
-        guard let tabBar = tabBarController?.tabBar else { return }
-        scrollToTopButton.frame.origin.y = tabBar.frame.origin.y -  tabBar.frame.height
+        if keyboardIsOpen {
+            guard let tabBar = tabBarController?.tabBar else { return }
+            
+            if tabBar.frame.minY == view.frame.maxY {
+                scrollToTopButton.pin
+                    .bottom(ConstantsForCommonViewController.scrollToTopButtonBottomInset)
+            } else {
+                scrollToTopButton.pin
+                    .bottom(ConstantsForCommonViewController.scrollToTopButtonBottomInset + tabBar.frame.height)
+            }
+            
+            keyboardIsOpen = false
+        }
     }
     
     @objc func scrollToTopButtonTapped() {
@@ -217,13 +230,24 @@ extension CommonViewController: UIScrollViewDelegate {
     }
     
     func changeTabBar(hidden: Bool, animated: Bool) {
-        let offset = hidden ? UIScreen.main.bounds.size.height : UIScreen.main.bounds.size.height - (tabBarController?.tabBar.frame.size.height ?? 0)
+        
+        let screenHeight = UIScreen.main.bounds.size.height
+        let offset = hidden ? screenHeight : screenHeight - (tabBarController?.tabBar.frame.size.height ?? 0)
         if offset == tabBarController?.tabBar.frame.origin.y { return }
         let duration: TimeInterval = (animated ? ConstantsForCommonViewController.tabBarAnimationDuration : 0.0)
-        UIView.animate(withDuration: duration, delay: 0,
+        UIView.animate(withDuration: duration,
+                       delay: 0,
                        options: .curveEaseInOut,
                        animations: { [weak self] in
-            self?.scrollToTopButton.frame.origin.y = offset - (self?.tabBarController?.tabBar.frame.height ?? 0)
+            
+            if offset == screenHeight {
+                self?.scrollToTopButton.pin
+                    .bottom(ConstantsForCommonViewController.scrollToTopButtonBottomInset)
+            } else {
+                self?.scrollToTopButton.pin
+                    .bottom(ConstantsForCommonViewController.scrollToTopButtonBottomInset + (self?.tabBarController?.tabBar.frame.height ?? 0) )
+            }
+            
             self?.tabBarController?.tabBar.frame.origin.y = offset
         },
                        completion: nil)
@@ -237,8 +261,8 @@ enum ConstantsForCommonViewController {
     static let cellHeight: CGFloat = 70
     static let itemSpacing: CGFloat = 15
     static let tabBarAnimationDuration: TimeInterval = 0.35
-    static let scrollToTopButtonRightInset: CGFloat = 0
-    static let scrollToTopButtonBottomInset: CGFloat = 16
+    static let scrollToTopButtonRightInset: CGFloat = 16
+    static let scrollToTopButtonBottomInset: CGFloat = 32
     static let scrollToTopButtonPushAnimationDuration: TimeInterval = 0.1
     static let scrollToTopButtonPushAnimationToDefault: TimeInterval = 0.45
     static let scrollToTopButtonShowWithFadeDuration : TimeInterval = 0.6

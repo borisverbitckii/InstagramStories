@@ -10,14 +10,16 @@ import SwiftagramCrypto
 import UIKit.UIImage
 import RealmSwift
 
-protocol NetworkManagerProtocol: ManagerProtocol {
-}
+protocol NetworkManagerProtocol: ManagerProtocol {}
 
 final class NetworkManager {
     
     //MARK: - Private properties
     private var bin: Set<AnyCancellable> = []
-    private let queueForUsers = OperationQueue()
+    private let queueForUsers: OperationQueue = {
+        $0.maxConcurrentOperationCount = 1
+        return $0
+    }(OperationQueue())
     private let imageCacheManager: ImageCacheManagerProtocol
     
     //MARK: - Init
@@ -58,6 +60,24 @@ final class NetworkManager {
                                                   isPrivate: user["isPrivate"].bool() ?? false)
                 completion(instagramUser)
             }.store(in: &bin)
+    }
+    
+    private func timeFormatHandle(date: Int?) -> Int {
+        let dateFormat = 1000000000000000
+        var correctDate = 0
+        if let date = date {
+            correctDate = date
+            if date < dateFormat {
+                while correctDate / dateFormat < 1 {
+                    correctDate = correctDate * 10
+                }
+            } else {
+                while correctDate / dateFormat > 2 {
+                    correctDate = correctDate / 10
+                }
+            }
+        }
+        return correctDate
     }
 }
 
@@ -106,17 +126,6 @@ extension NetworkManager: UserImageDataSourceProtocol {
 
 //MARK: - extension + StoriesDataSourceProtocol
 extension NetworkManager: StoriesDataSourceProtocol {
-
-    func fetchStoryData(urlString: String, completion: @escaping (Result<Data, Error>)->()) {
-        if let data = imageCacheManager.getCacheImage(stringURL: urlString) {
-            completion(.success(data))
-            return
-        } else {
-            return
-        }
-        print(#file, #line, Errors.cantDownloadStory.error)
-        completion(.failure(Errors.cantDownloadStory.error))
-    }
     
     func fetchStories(userID: String, secret: Secret, completion: @escaping (Result<[Story],Error>)->()) {
         Endpoint.user(userID)
@@ -128,13 +137,17 @@ extension NetworkManager: StoriesDataSourceProtocol {
                 case .finished:
                     break
                 case .failure(let error):
-                    completion(.failure(error))
+                    DispatchQueue.main.async {
+                        completion(.failure(error))
+                    }
                 }
-            } receiveValue: { stories in
+            } receiveValue: { [weak self] stories in
                 var storiesArray = [Story]()
                 
                 guard let items = stories["reel"]["items"].array() else {
-                    completion(.success(storiesArray))
+                    DispatchQueue.main.async {
+                        completion(.success(storiesArray))
+                    }
                     return }
                 
                 for item in items {
@@ -162,12 +175,10 @@ extension NetworkManager: StoriesDataSourceProtocol {
                         contentURLString = url
                         type = .photo
                     }
-                    var date = item["deviceTimestamp"].int()
-                    if date ?? 0 < 1000000000000000 {
-                        date = (date ?? 0) * 10
-                    }
+                    let date = item["deviceTimestamp"].int()
+                    let correctDate = self?.timeFormatHandle(date: date)
                     
-                    let story = Story(time: date ?? 0, type: type, previewImageURL: previewURLString, contentURL: contentURLString)
+                    let story = Story(time: correctDate ?? 0, type: type, previewImageURL: previewURLString, contentURL: contentURLString)
                     storiesArray.append(story)
                 }
                 DispatchQueue.main.async {
@@ -204,9 +215,8 @@ extension NetworkManager: SearchDataSourceProtocol {
                             completion(.failure(error))
                         }
                     }
-                } receiveValue: { [weak self] users in
-                    let queue = DispatchQueue(label: "queue", qos: .userInteractive, attributes: .concurrent)
-                    queue.async {
+                } receiveValue: { users in
+                    DispatchQueue.global().async {
                         guard let usersArray = users.users else { return }
                         var instagramUsers = [InstagramUser]()
                         let dispatchGroup = DispatchGroup()
@@ -233,6 +243,20 @@ extension NetworkManager: SearchDataSourceProtocol {
         }
         timer.tolerance = 0.1
         RunLoop.current.add(timer, forMode: .common)
+    }
+}
+
+extension NetworkManager: StoryDataSourceProtocol {
+    
+    func fetchStoryData(urlString: String, completion: @escaping (Result<Data, Error>)->()) {
+        if let data = imageCacheManager.getCacheImage(stringURL: urlString) {
+            completion(.success(data))
+            return
+        } else {
+            return
+        }
+        print(#file, #line, Errors.cantDownloadStory.error)
+        completion(.failure(Errors.cantDownloadStory.error))
     }
 }
 

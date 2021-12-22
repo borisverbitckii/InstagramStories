@@ -10,6 +10,7 @@ import UIKit
 protocol ProfileViewProtocol: AnyObject {
     func showUser(_ user: InstagramUser)
     func showStoriesPreview(stories: [Story])
+    func showProfileIsPrivate()
 }
 
 final class ProfileViewController: UIViewController {
@@ -18,9 +19,12 @@ final class ProfileViewController: UIViewController {
     private let presenter: ProfilePresenterProtocol
     private var stories: [Story]? {
         didSet{
+            activityIndicator.hide()
+            if stories?.count == 0 {
+                stateView.showWithFade(with: LocalConstants.noStoriesAnimationDuration)
+            }
             storiesCollectionView.reloadWithFade()
             layout()
-            activityIndicator.hide()
         }
     }
     
@@ -91,6 +95,11 @@ final class ProfileViewController: UIViewController {
         $0.alignment = .center
         return $0
     }(UIStackView())
+    
+    private let stateView: StateView = {
+        $0.alpha = LocalConstants.noStoriesViewDefaultAlpha
+        return $0
+    } (StateView(type: .noStories))
     
     private let storiesCollectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
@@ -183,6 +192,7 @@ final class ProfileViewController: UIViewController {
         scrollView.addSubview(nameLabel)
         scrollView.addSubview(descriptionLabel)
         scrollView.addSubview(activityIndicator)
+        scrollView.addSubview(stateView)
         scrollView.addSubview(storiesCollectionView)
         
         guard let subscribersStackView = subscribersStackView,
@@ -237,6 +247,10 @@ final class ProfileViewController: UIViewController {
                 .right(LocalConstants.rightInset)
             
             descriptionLabel.sizeToFit()
+        
+            stateView.pin
+                .below(of: descriptionLabel).marginTop(LocalConstants.noStoriesTopInset)
+                .hCenter()
             
             activityIndicator.pin
                 .below(of: descriptionLabel).marginTop(LocalConstants.activityIndicatoriInset)
@@ -250,6 +264,10 @@ final class ProfileViewController: UIViewController {
         } else {
             activityIndicator.pin
                 .below(of: userImage).marginTop(LocalConstants.activityIndicatoriInset)
+                .hCenter()
+            
+            stateView.pin
+                .below(of: userImage).marginTop(LocalConstants.noStoriesTopInset)
                 .hCenter()
             
             storiesCollectionView.pin
@@ -305,16 +323,28 @@ extension ProfileViewController: UICollectionViewDataSource, UICollectionViewDel
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return LocalConstants.cellSize
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let stories = stories, let navigationController = navigationController else { return }
+        presenter.presentStory(transitionHandler: navigationController,with: stories, selectedStoryIndex: indexPath.item)
+    }
 }
 
 //MARK: - extension + ProfileViewProtocol
 extension ProfileViewController: ProfileViewProtocol {
+    
     func showStoriesPreview(stories: [Story]) {
         self.stories = stories
     }
     
     func showUser(_ user: InstagramUser) {
         self.user = user
+    }
+    
+    func showProfileIsPrivate() {
+        activityIndicator.hide()
+        stateView.type = .isPrivate
+        stateView.showWithFade(with: LocalConstants.noStoriesAnimationDuration)
     }
 }
 
@@ -333,6 +363,8 @@ private enum LocalConstants {
     static let minimumLineSpacing: CGFloat = 15
     static let minimimInteritemSpacing: CGFloat = 10
     
+    static let noStoriesAnimationDuration: TimeInterval = 0.6
+    
     //Layout
     static let leftInset: CGFloat = 16
     static let rightInset: CGFloat = 16
@@ -345,4 +377,6 @@ private enum LocalConstants {
     static let descriptionLabelTopInset: CGFloat = 2
     static let collectionViewTopInset: CGFloat = 20
     static let activityIndicatoriInset: CGFloat = 200
+    static let noStoriesTopInset: CGFloat = 50
+    static let noStoriesViewDefaultAlpha: CGFloat = 0
 }

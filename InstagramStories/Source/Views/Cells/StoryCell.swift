@@ -70,7 +70,7 @@ final class StoryCell: UICollectionViewCell {
     //MARK: - Public methods
     func configure(story: Story) {
         activityIndicator.show()
-        timeLabel.text = setupDate(date: story.time)
+        timeLabel.text = Utils.handleDate(unixDate: story.time)
         
         imageDelegate?.fetchImage(stringURL: story.previewImageURL, completion: { [weak self] result in
             switch result {
@@ -89,19 +89,12 @@ final class StoryCell: UICollectionViewCell {
     }
     
     //MARK: - Private methods
-    private func setupDate(date: Int) -> String {
-        let baseDate = Date().timeIntervalSince1970
-        let amountOfHoursSinceStoryHadPosted = (baseDate - Double(date / 1000000)) / 60
-        if amountOfHoursSinceStoryHadPosted < 60 {
-            return String(Int(amountOfHoursSinceStoryHadPosted.rounded(.down))) + "мин"
-        }
-        return String(Int((amountOfHoursSinceStoryHadPosted / 60).rounded(.down))) + "ч"
-    }
-    
     private func setupSelf() {
         backgroundColor = Palette.clear.color
         contentView.layer.cornerRadius = LocalConstants.cornerRadius
-        Utils.addShadow(type: .shadowIsBelow, layer: layer, opacity: 0.11)
+        Utils.addShadow(type: .shadowIsBelow,
+                        layer: layer,
+                        opacity: LocalConstants.shadowOpacity)
     }
     
     private func addSubviews() {
@@ -144,6 +137,7 @@ final class StoryCell: UICollectionViewCell {
 private enum LocalConstants {
     static let cornerRadius: CGFloat = 20
     static let animationDuration: TimeInterval = 0.45
+    static let shadowOpacity: Float =  0.11
     
     //Layout
     static let timerViewContainerLeftInset: CGFloat = 10

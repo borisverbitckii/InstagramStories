@@ -15,6 +15,7 @@ final class FavoritesPresenter {
     
     //MARK: - Private properties
     private weak var view: FavoritesViewProtocol?
+    private weak var transitionHandler: TransitionProtocol?
     private let coordinator: CoordinatorProtocol
     private let favoritesUseCase: ShowFavoritesUseCaseProtocol
     
@@ -28,6 +29,10 @@ final class FavoritesPresenter {
     //MARK: - Public methods
     func injectView(view: FavoritesViewProtocol) {
         self.view = view
+    }
+    
+    func injectTransitionHandler(view: TransitionProtocol) {
+        self.transitionHandler = view
     }
 }
 
@@ -43,7 +48,7 @@ extension FavoritesPresenter: FavoritesPresenterProtocol {
                 self?.view?.showFavoritesUsers(users: [InstagramUser(name: "Boris",profileDescription: "desription", instagramUsername: "verbitsky",id: 100, userIconURL: "", posts: 230, subscribers: 2786, subscriptions: 3376,isPrivate: false)])
                 //--
             case .failure(let error):
-                self?.view?.showAlertController(title: "Error", message: error.localizedDescription)
+                self?.view?.showAlertController(title: "Error", message: error.localizedDescription, completion: nil)
             }
         }
     }

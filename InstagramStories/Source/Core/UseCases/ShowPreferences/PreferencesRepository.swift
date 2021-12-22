@@ -13,17 +13,17 @@ protocol PreferencesRepositoryProtocol {
 
 final class PreferencesRepository {
     //MARK: - Private properties
-    private let preferencesDataSource: PreferencesDataSourceProtocol
+    private let localDataSource: PreferencesDataSourceProtocol
     
     //MARK: - Init
-    init(preferencesDataSource: PreferencesDataSourceProtocol) {
-        self.preferencesDataSource = preferencesDataSource
+    init(localDataSource: PreferencesDataSourceProtocol) {
+        self.localDataSource = localDataSource
     }
 }
 
 //MARK: - extension + PreferencesRepositoryProtocol
 extension PreferencesRepository: PreferencesRepositoryProtocol {
     func getMenuItems(completion: @escaping (Result<[Setting], Error>) -> ()) {
-        preferencesDataSource.getMenuItems(completion: completion)
+        localDataSource.getMenuItems(completion: completion)
     }
 }
