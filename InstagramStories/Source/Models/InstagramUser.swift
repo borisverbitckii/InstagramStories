@@ -72,18 +72,20 @@ struct Story {
     let time: Int
     let type: StoryType
     let previewImageURL: String
-    let contentURL: String
-    var content: Data?
+    let contentURLString: String
+    var contentURL: URL?
     
     //MARK: - Init
     
     init(time: Int,
          type: StoryType,
          previewImageURL: String,
-         contentURL: String) {
+         contentURL: String,
+         content: URL? = nil) {
         self.time = time
         self.type = type
         self.previewImageURL = previewImageURL
-        self.contentURL = contentURL
+        self.contentURLString = contentURL
+        self.contentURL = content
     }
 }

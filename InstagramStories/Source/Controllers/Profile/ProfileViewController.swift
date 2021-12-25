@@ -208,13 +208,12 @@ final class ProfileViewController: UIViewController {
     }
     
     private func layout() {
-        if let navigationBar = navigationController?.navigationBar,
-           let tabBar = tabBarController?.tabBar  {
+        if let navigationBar = navigationController?.navigationBar {
             scrollView.pin
                 .below(of: navigationBar)
                 .left()
                 .right()
-                .above(of: tabBar)
+                .bottom()
         }
         
         userImage.pin

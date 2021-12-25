@@ -11,6 +11,7 @@ import Swiftagram
 protocol StoryPresenterProtocol {
     func viewDidLoad()
     func fetchStoryPreview(urlString: String, completion: @escaping (Result<UIImage, Error>) -> ())
+    func downloadCurrentStoryVideo(urlString: String, completion: @escaping (URL)->())
 }
 
 final class StoryPresenter {
@@ -23,6 +24,9 @@ final class StoryPresenter {
     private let stories: [Story]
     private let user: InstagramUser
     private let selectedStoryIndex: Int
+    
+    //
+    private var timer: Timer?
     
     //MARK: - Init
     init(coordinator: CoordinatorProtocol,
@@ -53,9 +57,15 @@ extension StoryPresenter: StoryPresenterProtocol {
         view?.injectStories(reversedStories) // for changing story position (new at the end)
         let reversedSelectedIndex = reversedStories.count - 1 - selectedStoryIndex
         view?.injectCurrentStoryIndex(reversedSelectedIndex)
+        let title = "@" + user.instagramUsername
+        view?.setupTitle(title)
     }
     
     func fetchStoryPreview(urlString: String, completion: @escaping (Result<UIImage, Error>) -> ()) {
         useCase.fetchStoryPreview(urlString: urlString, completion: completion)
+    }
+    
+    func downloadCurrentStoryVideo(urlString: String, completion: @escaping (URL)->()) {
+        useCase.downloadCurrentStoryVideo(urlString: urlString, completion: completion)
     }
 }

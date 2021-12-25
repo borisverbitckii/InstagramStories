@@ -39,7 +39,7 @@
 		A1316CA62771DA1000DA0199 /* StoryPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1316CA52771DA1000DA0199 /* StoryPresenter.swift */; };
 		A1316CAB2771E18200DA0199 /* ShowStoryUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1316CAA2771E18200DA0199 /* ShowStoryUseCase.swift */; };
 		A1316CAD2771E21500DA0199 /* StoryRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1316CAC2771E21500DA0199 /* StoryRepository.swift */; };
-		A1316CAF2771E28800DA0199 /* StoryDataSourceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1316CAE2771E28800DA0199 /* StoryDataSourceProtocol.swift */; };
+		A1316CAF2771E28800DA0199 /* StoriesVideoSourceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1316CAE2771E28800DA0199 /* StoriesVideoSourceProtocol.swift */; };
 		A155B4C127634130005CA2C0 /* CustomActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A155B4C027634130005CA2C0 /* CustomActivityIndicator.swift */; };
 		A155B4C6276346D3005CA2C0 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = A155B4C5276346D3005CA2C0 /* Lottie */; };
 		A155B4C827637364005CA2C0 /* ImageCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A155B4C727637364005CA2C0 /* ImageCacheManager.swift */; };
@@ -148,7 +148,7 @@
 		A1316CA52771DA1000DA0199 /* StoryPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryPresenter.swift; sourceTree = "<group>"; };
 		A1316CAA2771E18200DA0199 /* ShowStoryUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowStoryUseCase.swift; sourceTree = "<group>"; };
 		A1316CAC2771E21500DA0199 /* StoryRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryRepository.swift; sourceTree = "<group>"; };
-		A1316CAE2771E28800DA0199 /* StoryDataSourceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryDataSourceProtocol.swift; sourceTree = "<group>"; };
+		A1316CAE2771E28800DA0199 /* StoriesVideoSourceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoriesVideoSourceProtocol.swift; sourceTree = "<group>"; };
 		A155B4C027634130005CA2C0 /* CustomActivityIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomActivityIndicator.swift; sourceTree = "<group>"; };
 		A155B4C727637364005CA2C0 /* ImageCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCacheManager.swift; sourceTree = "<group>"; };
 		A18F136F275E3C2D003D3651 /* SearchPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchPresenter.swift; sourceTree = "<group>"; };
@@ -349,7 +349,7 @@
 			children = (
 				A1316CAA2771E18200DA0199 /* ShowStoryUseCase.swift */,
 				A1316CAC2771E21500DA0199 /* StoryRepository.swift */,
-				A1316CAE2771E28800DA0199 /* StoryDataSourceProtocol.swift */,
+				A1316CAE2771E28800DA0199 /* StoriesVideoSourceProtocol.swift */,
 			);
 			path = ShowStory;
 			sourceTree = "<group>";
@@ -787,7 +787,7 @@
 				A10B9816275F5180005E4083 /* Utils.swift in Sources */,
 				A12C9020275F1802005CD963 /* InstagramUserCell.swift in Sources */,
 				A1F3E636276DFB930039E547 /* DataSourceFactory.swift in Sources */,
-				A1316CAF2771E28800DA0199 /* StoryDataSourceProtocol.swift in Sources */,
+				A1316CAF2771E28800DA0199 /* StoriesVideoSourceProtocol.swift in Sources */,
 				A128A4062763195A00CAAF9B /* Constants.swift in Sources */,
 				A12FF001276629D400F6C3B4 /* HeaderReusableView.swift in Sources */,
 				A1DBE2A0275E2B5A0075176C /* RealmInstagramUser.swift in Sources */,

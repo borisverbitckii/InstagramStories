@@ -23,6 +23,23 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
+        // clean cache directory
+        let cacheURL =  FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        let fileManager = FileManager.default
+        do {
+            let directoryContents = try FileManager.default.contentsOfDirectory( at: cacheURL, includingPropertiesForKeys: nil, options: [])
+            for file in directoryContents {
+                do {
+                    try fileManager.removeItem(at: file) // TODO: Fix cleaning, clean only app files
+                }
+                catch let error as NSError {
+                    print(error)
+                }
+                
+            }
+        } catch let error as NSError {
+            print(error.localizedDescription)
+        }
     }
 
     func sceneDidBecomeActive(_ scene: UIScene) {
@@ -36,7 +53,5 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func sceneDidEnterBackground(_ scene: UIScene) {
     }
-
-
 }
 

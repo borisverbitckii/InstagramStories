@@ -41,6 +41,7 @@ final class StoryCell: UICollectionViewCell {
     
     private let storyImage: UIImageView = {
         $0.layer.cornerRadius = LocalConstants.cornerRadius
+        $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
         return $0
     }(UIImageView())

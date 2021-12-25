@@ -9,6 +9,7 @@ import UIKit.UIImage
 
 protocol ShowStoryUseCaseProtocol {
     func fetchStoryPreview(urlString: String, completion: @escaping (Result<UIImage, Error>) -> ())
+    func downloadCurrentStoryVideo(urlString: String, completion: @escaping (URL)->())
 }
 
 final class ShowStoryUseCase: UseCase {
@@ -38,5 +39,9 @@ extension ShowStoryUseCase: ShowStoryUseCaseProtocol {
                 completion(.failure(error))
             }
         }
+    }
+    
+    func downloadCurrentStoryVideo(urlString: String, completion: @escaping (URL)->()) {
+        storyRepository.downloadCurrentStoryVideo(urlString: urlString, completion: completion)
     }
 }
