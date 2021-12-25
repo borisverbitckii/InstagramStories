@@ -8,7 +8,6 @@
 import Foundation
 import SwiftagramCrypto
 import UIKit.UIImage
-import RealmSwift
 
 protocol NetworkManagerProtocol: ManagerProtocol {}
 

@@ -10,90 +10,29 @@ import WebKit
 import AVFoundation
 
 protocol StoryViewProtocol: AnyObject {
-    func injectUser(_ user: InstagramUser)
-    func injectStories(_ stories: [Story])
-    func injectCurrentStoryIndex(_ index: Int)
+    // Properties
+    var videoPlayer: AVPlayer { get set }
+    var videoPlayerLayer: AVPlayerLayer { get set }
+    var isBeingDismissed: Bool { get }
+    // Methods
+    func dismiss(animated flag: Bool, completion: (() -> Void)?)
+    func showStoryPreview(with image: UIImage)
+    func layoutStoryWasPostedTimeLabel()
+    func reloadCollectionViewItems(indexPaths: [IndexPath])
+    // Setup properties
     func setupTitle(_ title: String)
+    func setupSelectedStoryIndex(index: Int)
+    func setupStoriesCount(_ number: Int)
+    func setupStoryPostingTime(_ time: String)
+    func setupVideoProgressViewWidth(percentWidth: CGFloat)
 }
 
 final class StoryViewController: UIViewController, UINavigationBarDelegate {
     
     //MARK: - Private properties
     private let presenter: StoryPresenterProtocol
-    private var timer: Timer?
-    private var user: InstagramUser? {
-        didSet {
-            usernameLabel.text = "@" + (user?.instagramUsername ?? "")
-        }
-    }
-    private var stories: [Story]?
-    
-    private var currentStoriesIndex = 0 {
-        didSet{
-            if let stories = stories {
-                storyWasPostedTimeLabel.text = Utils.handleDate(unixDate: stories[currentStoriesIndex].time) + " назад"
-                layoutStoryWasPostedTimeLabel()
-            }
-            
-            // Change selection collection view item
-            if oldValue < currentStoriesIndex {
-                let indexPaths = (currentStoriesIndex - 1...currentStoriesIndex).map { IndexPath(item: $0, section: 0)}
-                collectionViewForStories.reloadItems(at: indexPaths)
-            } else if oldValue > currentStoriesIndex {
-                let indexPaths = (currentStoriesIndex...oldValue).map { IndexPath(item: $0, section: 0)}
-                collectionViewForStories.reloadItems(at: indexPaths)
-            } else {
-                collectionViewForStories.reloadItems(at: [IndexPath(item: currentStoriesIndex, section: 0)])
-            }
-            
-            // Show story preview
-            guard let stringURL = stories?[currentStoriesIndex].previewImageURL else { return }
-            presenter.fetchStoryPreview(urlString: stringURL) { [weak self] result in
-                switch result {
-                case .success(let image):
-                    self?.storyPreviewImageView.image = image
-                case .failure(_): break
-                    //TODO: Fix this
-                }
-            }
-            
-            // Play video
-            videoPlayer.pause()
-            guard let urlString = stories?[currentStoriesIndex].contentURLString else { return }
-            presenter.downloadCurrentStoryVideo(urlString: urlString) { [weak self] url in
-                guard let self = self else { return }
-                if self.isBeingDismissed { // stop player when vc is dismissed
-                    return
-                }
-                self.videoPlayer = AVPlayer(url: url)
-                self.videoPlayerLayer.player = self.videoPlayer
-                self.videoPlayer.play()
-                
-                // Fire timer
-                guard let url = URL(string: urlString) else { return }
-                let asset = AVAsset(url: url)
-                let duration = asset.duration
-                var durationTime: TimeInterval = CMTimeGetSeconds(duration)
-                if durationTime == 0 {
-                    durationTime = LocalConstants.storyVideoDuration
-                }
-                
-                if self.timer != nil {
-                    self.timer?.invalidate()
-                }
-                
-                self.timer = Timer(timeInterval: durationTime, target: self,
-                                   selector: #selector(self.timerWasFired),
-                                   userInfo: nil,
-                                   repeats: false)
-                
-                guard let timer = self.timer else { return }
-                timer.addObserver(self, forKeyPath: "rate", options: NSKeyValueObservingOptions.new, context: nil)
-                timer.tolerance = 0.3
-                RunLoop.current.add(timer, forMode: .common)
-            }
-        }
-    }
+    private var storiesCount = 0
+    private var currentStoriesIndex: Int?
     
     //UI Elements
     private var navBar: UINavigationBar = {
@@ -130,7 +69,6 @@ final class StoryViewController: UIViewController, UINavigationBarDelegate {
         $0.collectionViewLayout = flowLayout
         $0.register(UICollectionViewCell.self, forCellWithReuseIdentifier: LocalConstants.reuseIdentifier)
         $0.isScrollEnabled = false
-        
         return $0
     }(UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout()))
     
@@ -151,7 +89,8 @@ final class StoryViewController: UIViewController, UINavigationBarDelegate {
     var videoPlayer: AVPlayer = {
         return $0
     }(AVPlayer())
-    let videoPlayerLayer: AVPlayerLayer = {
+    
+    var videoPlayerLayer: AVPlayerLayer = {
         $0.videoGravity = .resizeAspectFill
         return $0
     } (AVPlayerLayer())
@@ -188,18 +127,7 @@ final class StoryViewController: UIViewController, UINavigationBarDelegate {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        videoPlayer.replaceCurrentItem(with: nil)
-        videoPlayer.pause()
-        timer?.removeObserver(self, forKeyPath: "rate")
-        timer?.invalidate()
-    }
-    
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if keyPath == "rate" {
-            if videoPlayer.rate > 0 {
-                timer?.fire()
-            }
-        }
+        presenter.viewDidDisappear()
     }
     
     //MARK: - Private methods
@@ -241,13 +169,11 @@ final class StoryViewController: UIViewController, UINavigationBarDelegate {
             .right()
             .bottom()
         
-        layoutVideoPlayerLayer()
-        
-        videoProgressView.pin
-            .below(of: collectionViewForStories).marginTop(LocalConstants.videoProgressViewTopInset)
+        videoPlayerLayer.pin
+            .below(of: collectionViewForStories.layer)
             .left()
-            .width(LocalConstants.videoProgressViewDefaultWidth)
-            .height(LocalConstants.videoProgressViewHeight)
+            .right()
+            .bottom()
         
         videoProgressView.layer.cornerRadius = videoProgressView.frame.height / 2
         
@@ -263,51 +189,17 @@ final class StoryViewController: UIViewController, UINavigationBarDelegate {
             .right()
             .bottom()
     }
-    
-    private func layoutVideoPlayerLayer() {
-        videoPlayerLayer.pin
-            .below(of: collectionViewForStories.layer)
-            .left()
-            .right()
-            .bottom()
-    }
-    
-    private func layoutStoryWasPostedTimeLabel() {
-        storyWasPostedTimeLabel.sizeToFit()
-        storyWasPostedTimeLabel.pin
-            .after(of: usernameLabel, aligned: .center).marginLeft(LocalConstants.storyWasPostedTimeLabelLeftInset)
-    }
-    
     private func setupViewsForStoriesChanging() {
         leftSideView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(leftSideWasTapped)))
         rightSideView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(rightSideWasTapped)))
     }
     
-    private func increaseCurrentStoryIndex() {
-        timer?.invalidate()
-        
-        if currentStoriesIndex < (stories?.count ?? 0 ) - 1 {
-            currentStoriesIndex += 1
-            return
-        }
-        
-        dismiss(animated: true)
-    }
-    
-    //MARK: - OBJC methods
-    @objc private func timerWasFired() {
-        increaseCurrentStoryIndex()
-    }
-    
     @objc private func leftSideWasTapped() {
-        timer?.invalidate()
-        if currentStoriesIndex > 0 {
-            currentStoriesIndex -= 1
-        }
+        presenter.selectedStoryIndexWasDecreased()
     }
     
     @objc private func rightSideWasTapped() {
-        increaseCurrentStoryIndex()
+        presenter.selectedStoryIndexWasIncreased()
     }
     
     @objc private func closeBarButtonTapped() {
@@ -325,7 +217,7 @@ final class StoryViewController: UIViewController, UINavigationBarDelegate {
 
 extension StoryViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return stories?.count ?? 0
+        return storiesCount
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -340,19 +232,53 @@ extension StoryViewController: UICollectionViewDataSource, UICollectionViewDeleg
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        if let stories = stories {
+        if storiesCount > 0 {
             let collectionViewWidth = collectionView.frame.width
             
-            let cellWidth = (collectionViewWidth - CGFloat(stories.count - 1) * LocalConstants.collectionViewMinimumInteritemSpacing) / CGFloat(stories.count)
+            let cellWidth = (collectionViewWidth - CGFloat(storiesCount - 1) * LocalConstants.collectionViewMinimumInteritemSpacing) / CGFloat(storiesCount)
             return CGSize(width: cellWidth, height: collectionView.frame.height)
         }
         
         return CGSize(width: collectionView.frame.width, height: collectionView.frame.height)
     }
 }
- 
+
 //MARK: - extension + StoryViewProtocol
 extension StoryViewController: StoryViewProtocol {
+    func setupVideoProgressViewWidth(percentWidth: CGFloat) {
+        videoProgressView.pin
+            .below(of: collectionViewForStories).marginTop(LocalConstants.videoProgressViewTopInset)
+            .left()
+            .width(view.frame.width * percentWidth)
+            .height(LocalConstants.videoProgressViewHeight)
+    }
+    
+    func setupStoriesCount(_ number: Int) {
+        self.storiesCount = number
+    }
+    
+    func setupSelectedStoryIndex(index: Int) {
+        self.currentStoriesIndex = index
+    }
+    
+    func setupStoryPostingTime(_ time: String) {
+        storyWasPostedTimeLabel.text = time
+    }
+    
+    func layoutStoryWasPostedTimeLabel() {
+        storyWasPostedTimeLabel.sizeToFit()
+        storyWasPostedTimeLabel.pin
+            .after(of: usernameLabel, aligned: .center).marginLeft(LocalConstants.storyWasPostedTimeLabelLeftInset)
+    }
+    
+    func reloadCollectionViewItems(indexPaths: [IndexPath]) {
+        collectionViewForStories.reloadItems(at: indexPaths)
+    }
+    
+    func showStoryPreview(with image: UIImage) {
+        storyPreviewImageView.image = image
+    }
+    
     func setupTitle(_ title: String) {
         usernameLabel.text = title
     }
@@ -360,19 +286,9 @@ extension StoryViewController: StoryViewProtocol {
     func injectCurrentStoryIndex(_ index: Int) {
         currentStoriesIndex = index
     }
-    
-    func injectUser(_ user: InstagramUser) {
-        self.user = user
-    }
-    
-    func injectStories(_ stories: [Story]) {
-        self.stories = stories
-    }
 }
 
 private enum LocalConstants {
-    static let storyVideoDuration: TimeInterval = 15
-    
     static let reuseIdentifier = "story"
     static let collectionViewMinimumInteritemSpacing: CGFloat = 3
     static let collectionViewHeight: CGFloat = 3
