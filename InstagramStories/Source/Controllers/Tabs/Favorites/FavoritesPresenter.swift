@@ -6,24 +6,33 @@
 //
 
 import UIKit
+import RealmSwift
 
 protocol FavoritesPresenterProtocol {
-    func viewDidLoad()
+    var favoritesUsers: [RealmInstagramUserProtocol] { get }
+    
+    func viewWillAppear()
+    func userImageWillBeShown(stringURL: String, completion: @escaping (Result<UIImage,Error>)->())
+    func trailingButtonTapped(type: InstagramUserCellType, user: RealmInstagramUserProtocol)
 }
 
 final class FavoritesPresenter {
+    
+    //MARK: - Public properties
+    var favoritesUsers: [RealmInstagramUserProtocol]
     
     //MARK: - Private properties
     private weak var view: FavoritesViewProtocol?
     private weak var transitionHandler: TransitionProtocol?
     private let coordinator: CoordinatorProtocol
-    private let favoritesUseCase: ShowFavoritesUseCaseProtocol
+    private let changeFavoritesUseCase: ChangeFavoritesUseCaseProtocol
     
     //MARK: - Init
     init(coordinator: CoordinatorProtocol,
-         favoritesUseCase: ShowFavoritesUseCaseProtocol) {
+         changeFavoritesUseCase: ChangeFavoritesUseCaseProtocol) {
+        self.favoritesUsers = [RealmInstagramUserProtocol]()
         self.coordinator = coordinator
-        self.favoritesUseCase = favoritesUseCase
+        self.changeFavoritesUseCase = changeFavoritesUseCase
     }
     
     //MARK: - Public methods
@@ -39,19 +48,21 @@ final class FavoritesPresenter {
 //MARK: - FavoritesPresenterProtocol
 extension FavoritesPresenter: FavoritesPresenterProtocol {
     
-    func viewDidLoad() {
-        favoritesUseCase.showFavoritesUsers { [weak self] result in
-            switch result{
-            case .success(_):
-                
-                //TODO: Delete this
-                self?.view?.showFavoritesUsers(users: [InstagramUser(name: "Boris",profileDescription: "desription", instagramUsername: "verbitsky",id: 100, userIconURL: "", posts: 230, subscribers: 2786, subscriptions: 3376,isPrivate: false)])
-                //--
-            case .failure(let error):
-                self?.view?.showAlertController(title: "Error", message: error.localizedDescription, completion: nil)
-            }
+    func viewWillAppear() {
+        changeFavoritesUseCase.loadFavoritesUsers { [weak self] users in
+            self?.favoritesUsers = users
+            self?.view?.setupFavoritesCount(number: users.count)
         }
     }
     
-    //MARK: Navigation
+    func userImageWillBeShown(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> ()) {
+        changeFavoritesUseCase.fetchImage(stringURL: stringURL, completion: completion)
+    }
+    
+    func trailingButtonTapped(type: InstagramUserCellType, user: RealmInstagramUserProtocol) {
+        switch type {
+        case .removeFromRecent: break
+        case .favorite: break
+        }
+    }
 }

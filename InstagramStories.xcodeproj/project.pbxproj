@@ -17,6 +17,9 @@
 		A10B982427605183005E4083 /* extension+UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10B982327605183005E4083 /* extension+UIViewController.swift */; };
 		A10B98262760521D005E4083 /* extension+String.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10B98252760521D005E4083 /* extension+String.swift */; };
 		A10B98282760586F005E4083 /* ModuleFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10B98272760586F005E4083 /* ModuleFactory.swift */; };
+		A11521D9277AB3E600462BAB /* ChangeFavoriteUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11521D8277AB3E600462BAB /* ChangeFavoriteUseCase.swift */; };
+		A11521DB277AB3FA00462BAB /* ChangeRecentUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11521DA277AB3FA00462BAB /* ChangeRecentUseCase.swift */; };
+		A11521E6277C734F00462BAB /* UsersDataBaseManagerSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11521E5277C734F00462BAB /* UsersDataBaseManagerSettings.swift */; };
 		A11E4F2E2764FB2700F88122 /* extension+UICollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11E4F2D2764FB2700F88122 /* extension+UICollectionView.swift */; };
 		A11E4F302764FD4E00F88122 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11E4F2F2764FD4E00F88122 /* ProfileViewController.swift */; };
 		A11E4F332764FDCE00F88122 /* ProfilePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11E4F322764FDCE00F88122 /* ProfilePresenter.swift */; };
@@ -40,6 +43,7 @@
 		A1316CAB2771E18200DA0199 /* ShowStoryUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1316CAA2771E18200DA0199 /* ShowStoryUseCase.swift */; };
 		A1316CAD2771E21500DA0199 /* StoryRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1316CAC2771E21500DA0199 /* StoryRepository.swift */; };
 		A1316CAF2771E28800DA0199 /* StoriesVideoSourceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1316CAE2771E28800DA0199 /* StoriesVideoSourceProtocol.swift */; };
+		A1316CB52777700800DA0199 /* VideoCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1316CB42777700800DA0199 /* VideoCacheManager.swift */; };
 		A155B4C127634130005CA2C0 /* CustomActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A155B4C027634130005CA2C0 /* CustomActivityIndicator.swift */; };
 		A155B4C6276346D3005CA2C0 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = A155B4C5276346D3005CA2C0 /* Lottie */; };
 		A155B4C827637364005CA2C0 /* ImageCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A155B4C727637364005CA2C0 /* ImageCacheManager.swift */; };
@@ -54,7 +58,7 @@
 		A1DBE291275E2B050075176C /* InstagramStoriesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DBE290275E2B050075176C /* InstagramStoriesUITests.swift */; };
 		A1DBE293275E2B050075176C /* InstagramStoriesUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DBE292275E2B050075176C /* InstagramStoriesUITestsLaunchTests.swift */; };
 		A1DBE2A0275E2B5A0075176C /* RealmInstagramUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DBE29F275E2B5A0075176C /* RealmInstagramUser.swift */; };
-		A1DBE2A3275E2B910075176C /* InstagramUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DBE2A2275E2B910075176C /* InstagramUser.swift */; };
+		A1DBE2A3275E2B910075176C /* Story.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DBE2A2275E2B910075176C /* Story.swift */; };
 		A1DBE2A5275E2BA90075176C /* UseCasesFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DBE2A4275E2BA90075176C /* UseCasesFactory.swift */; };
 		A1DBE2A8275E2BCB0075176C /* DataBaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DBE2A7275E2BCB0075176C /* DataBaseManager.swift */; };
 		A1DBE2AA275E2BE50075176C /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DBE2A9275E2BE50075176C /* NetworkManager.swift */; };
@@ -76,18 +80,14 @@
 		A1F3E639276DFEB00039E547 /* UserImageRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F3E638276DFEB00039E547 /* UserImageRepository.swift */; };
 		A1F3E63B276DFF830039E547 /* RepositoryFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F3E63A276DFF830039E547 /* RepositoryFactory.swift */; };
 		A1F3E63D276E0C760039E547 /* StoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F3E63C276E0C760039E547 /* StoryCell.swift */; };
-		A1F3E640276F2E440039E547 /* ShowRecentsUsersUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F3E63F276F2E440039E547 /* ShowRecentsUsersUseCase.swift */; };
-		A1F3E642276F302E0039E547 /* RecentUsersRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F3E641276F302E0039E547 /* RecentUsersRepository.swift */; };
+		A1F3E642276F302E0039E547 /* UsersRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F3E641276F302E0039E547 /* UsersRepository.swift */; };
 		A1F3E644276F30680039E547 /* SearchUserRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F3E643276F30680039E547 /* SearchUserRepository.swift */; };
-		A1F3E646276F30A00039E547 /* ShowFavoritesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F3E645276F30A00039E547 /* ShowFavoritesUseCase.swift */; };
 		A1F3E648276F32C00039E547 /* AuthRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F3E647276F32C00039E547 /* AuthRepository.swift */; };
-		A1F3E64A276F340D0039E547 /* RecentUsersDataSourceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F3E649276F340D0039E547 /* RecentUsersDataSourceProtocol.swift */; };
+		A1F3E64A276F340D0039E547 /* UsersDataSourceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F3E649276F340D0039E547 /* UsersDataSourceProtocol.swift */; };
 		A1F3E64C276F3A020039E547 /* StoriesPreviewRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F3E64B276F3A020039E547 /* StoriesPreviewRepository.swift */; };
 		A1F3E64E276F3A8B0039E547 /* StoriesDataSourceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F3E64D276F3A8B0039E547 /* StoriesDataSourceProtocol.swift */; };
 		A1F3E650276F3BE00039E547 /* SearchDataSourceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F3E64F276F3BE00039E547 /* SearchDataSourceProtocol.swift */; };
 		A1F3E652276F50770039E547 /* AuthDataSourceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F3E651276F50770039E547 /* AuthDataSourceProtocol.swift */; };
-		A1F3E654276F6EF30039E547 /* FavoritesRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F3E653276F6EF30039E547 /* FavoritesRepository.swift */; };
-		A1F3E656276F74750039E547 /* FavoritesDataSourceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F3E655276F74750039E547 /* FavoritesDataSourceProtocol.swift */; };
 		A1F3E65E276F7BCF0039E547 /* PreferencesRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F3E65D276F7BCF0039E547 /* PreferencesRepository.swift */; };
 		A1F3E660276F7DED0039E547 /* PreferencesDataSourceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F3E65F276F7DED0039E547 /* PreferencesDataSourceProtocol.swift */; };
 		A1F3E663276F7F2C0039E547 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F3E662276F7F2C0039E547 /* Preferences.swift */; };
@@ -126,6 +126,9 @@
 		A10B982327605183005E4083 /* extension+UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "extension+UIViewController.swift"; sourceTree = "<group>"; };
 		A10B98252760521D005E4083 /* extension+String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "extension+String.swift"; sourceTree = "<group>"; };
 		A10B98272760586F005E4083 /* ModuleFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleFactory.swift; sourceTree = "<group>"; };
+		A11521D8277AB3E600462BAB /* ChangeFavoriteUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChangeFavoriteUseCase.swift; sourceTree = "<group>"; };
+		A11521DA277AB3FA00462BAB /* ChangeRecentUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChangeRecentUseCase.swift; sourceTree = "<group>"; };
+		A11521E5277C734F00462BAB /* UsersDataBaseManagerSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersDataBaseManagerSettings.swift; sourceTree = "<group>"; };
 		A11E4F2D2764FB2700F88122 /* extension+UICollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "extension+UICollectionView.swift"; sourceTree = "<group>"; };
 		A11E4F2F2764FD4E00F88122 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		A11E4F322764FDCE00F88122 /* ProfilePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePresenter.swift; sourceTree = "<group>"; };
@@ -149,6 +152,7 @@
 		A1316CAA2771E18200DA0199 /* ShowStoryUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowStoryUseCase.swift; sourceTree = "<group>"; };
 		A1316CAC2771E21500DA0199 /* StoryRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryRepository.swift; sourceTree = "<group>"; };
 		A1316CAE2771E28800DA0199 /* StoriesVideoSourceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoriesVideoSourceProtocol.swift; sourceTree = "<group>"; };
+		A1316CB42777700800DA0199 /* VideoCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCacheManager.swift; sourceTree = "<group>"; };
 		A155B4C027634130005CA2C0 /* CustomActivityIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomActivityIndicator.swift; sourceTree = "<group>"; };
 		A155B4C727637364005CA2C0 /* ImageCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCacheManager.swift; sourceTree = "<group>"; };
 		A18F136F275E3C2D003D3651 /* SearchPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchPresenter.swift; sourceTree = "<group>"; };
@@ -163,7 +167,7 @@
 		A1DBE290275E2B050075176C /* InstagramStoriesUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstagramStoriesUITests.swift; sourceTree = "<group>"; };
 		A1DBE292275E2B050075176C /* InstagramStoriesUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstagramStoriesUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		A1DBE29F275E2B5A0075176C /* RealmInstagramUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmInstagramUser.swift; sourceTree = "<group>"; };
-		A1DBE2A2275E2B910075176C /* InstagramUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstagramUser.swift; sourceTree = "<group>"; };
+		A1DBE2A2275E2B910075176C /* Story.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Story.swift; sourceTree = "<group>"; };
 		A1DBE2A4275E2BA90075176C /* UseCasesFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UseCasesFactory.swift; sourceTree = "<group>"; };
 		A1DBE2A7275E2BCB0075176C /* DataBaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataBaseManager.swift; sourceTree = "<group>"; };
 		A1DBE2A9275E2BE50075176C /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
@@ -185,18 +189,14 @@
 		A1F3E638276DFEB00039E547 /* UserImageRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserImageRepository.swift; sourceTree = "<group>"; };
 		A1F3E63A276DFF830039E547 /* RepositoryFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryFactory.swift; sourceTree = "<group>"; };
 		A1F3E63C276E0C760039E547 /* StoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryCell.swift; sourceTree = "<group>"; };
-		A1F3E63F276F2E440039E547 /* ShowRecentsUsersUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowRecentsUsersUseCase.swift; sourceTree = "<group>"; };
-		A1F3E641276F302E0039E547 /* RecentUsersRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentUsersRepository.swift; sourceTree = "<group>"; };
+		A1F3E641276F302E0039E547 /* UsersRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersRepository.swift; sourceTree = "<group>"; };
 		A1F3E643276F30680039E547 /* SearchUserRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchUserRepository.swift; sourceTree = "<group>"; };
-		A1F3E645276F30A00039E547 /* ShowFavoritesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowFavoritesUseCase.swift; sourceTree = "<group>"; };
 		A1F3E647276F32C00039E547 /* AuthRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthRepository.swift; sourceTree = "<group>"; };
-		A1F3E649276F340D0039E547 /* RecentUsersDataSourceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentUsersDataSourceProtocol.swift; sourceTree = "<group>"; };
+		A1F3E649276F340D0039E547 /* UsersDataSourceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersDataSourceProtocol.swift; sourceTree = "<group>"; };
 		A1F3E64B276F3A020039E547 /* StoriesPreviewRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoriesPreviewRepository.swift; sourceTree = "<group>"; };
 		A1F3E64D276F3A8B0039E547 /* StoriesDataSourceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoriesDataSourceProtocol.swift; sourceTree = "<group>"; };
 		A1F3E64F276F3BE00039E547 /* SearchDataSourceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchDataSourceProtocol.swift; sourceTree = "<group>"; };
 		A1F3E651276F50770039E547 /* AuthDataSourceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthDataSourceProtocol.swift; sourceTree = "<group>"; };
-		A1F3E653276F6EF30039E547 /* FavoritesRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesRepository.swift; sourceTree = "<group>"; };
-		A1F3E655276F74750039E547 /* FavoritesDataSourceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesDataSourceProtocol.swift; sourceTree = "<group>"; };
 		A1F3E65D276F7BCF0039E547 /* PreferencesRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesRepository.swift; sourceTree = "<group>"; };
 		A1F3E65F276F7DED0039E547 /* PreferencesDataSourceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesDataSourceProtocol.swift; sourceTree = "<group>"; };
 		A1F3E662276F7F2C0039E547 /* Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
@@ -246,6 +246,34 @@
 				A10B98252760521D005E4083 /* extension+String.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		A11521D42779D8D300462BAB /* Repositories */ = {
+			isa = PBXGroup;
+			children = (
+				A1F3E641276F302E0039E547 /* UsersRepository.swift */,
+				A1F3E638276DFEB00039E547 /* UserImageRepository.swift */,
+			);
+			path = Repositories;
+			sourceTree = "<group>";
+		};
+		A11521D52779D8E100462BAB /* DataSources */ = {
+			isa = PBXGroup;
+			children = (
+				A1F3E633276DFA860039E547 /* UserImageDataSourceProtocol.swift */,
+				A1F3E649276F340D0039E547 /* UsersDataSourceProtocol.swift */,
+			);
+			path = DataSources;
+			sourceTree = "<group>";
+		};
+		A11521E0277AD8AC00462BAB /* Users */ = {
+			isa = PBXGroup;
+			children = (
+				A1F3E65A276F7B080039E547 /* SearchUser */,
+				A11521DA277AB3FA00462BAB /* ChangeRecentUseCase.swift */,
+				A11521D8277AB3E600462BAB /* ChangeFavoriteUseCase.swift */,
+			);
+			path = Users;
 			sourceTree = "<group>";
 		};
 		A11E4F312764FDC200F88122 /* Profile */ = {
@@ -338,8 +366,8 @@
 		A1316CA82771E13900DA0199 /* Common */ = {
 			isa = PBXGroup;
 			children = (
-				A1F3E638276DFEB00039E547 /* UserImageRepository.swift */,
-				A1F3E633276DFA860039E547 /* UserImageDataSourceProtocol.swift */,
+				A11521D42779D8D300462BAB /* Repositories */,
+				A11521D52779D8E100462BAB /* DataSources */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -381,6 +409,7 @@
 			children = (
 				A1DBE2A7275E2BCB0075176C /* DataBaseManager.swift */,
 				A155B4C727637364005CA2C0 /* ImageCacheManager.swift */,
+				A1316CB42777700800DA0199 /* VideoCacheManager.swift */,
 			);
 			path = Storage;
 			sourceTree = "<group>";
@@ -447,7 +476,8 @@
 			children = (
 				A10B981E275F7444005E4083 /* Setting.swift */,
 				A1DBE29F275E2B5A0075176C /* RealmInstagramUser.swift */,
-				A1DBE2A2275E2B910075176C /* InstagramUser.swift */,
+				A1DBE2A2275E2B910075176C /* Story.swift */,
+				A11521E5277C734F00462BAB /* UsersDataBaseManagerSettings.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -512,24 +542,12 @@
 			children = (
 				A1316CA82771E13900DA0199 /* Common */,
 				A1F3E658276F7AD40039E547 /* Auth */,
-				A1F3E659276F7AE70039E547 /* RecentUsers */,
-				A1F3E65A276F7B080039E547 /* SearchUser */,
+				A11521E0277AD8AC00462BAB /* Users */,
 				A1F3E65B276F7B260039E547 /* LoadUserProfile */,
-				A1F3E63E276F2E160039E547 /* ShowFavoritesUsers */,
 				A1F3E661276F7EEA0039E547 /* ShowPreferences */,
 				A1316CA92771E16A00DA0199 /* ShowStory */,
 			);
 			path = UseCases;
-			sourceTree = "<group>";
-		};
-		A1F3E63E276F2E160039E547 /* ShowFavoritesUsers */ = {
-			isa = PBXGroup;
-			children = (
-				A1F3E645276F30A00039E547 /* ShowFavoritesUseCase.swift */,
-				A1F3E653276F6EF30039E547 /* FavoritesRepository.swift */,
-				A1F3E655276F74750039E547 /* FavoritesDataSourceProtocol.swift */,
-			);
-			path = ShowFavoritesUsers;
 			sourceTree = "<group>";
 		};
 		A1F3E658276F7AD40039E547 /* Auth */ = {
@@ -540,16 +558,6 @@
 				A1F3E651276F50770039E547 /* AuthDataSourceProtocol.swift */,
 			);
 			path = Auth;
-			sourceTree = "<group>";
-		};
-		A1F3E659276F7AE70039E547 /* RecentUsers */ = {
-			isa = PBXGroup;
-			children = (
-				A1F3E63F276F2E440039E547 /* ShowRecentsUsersUseCase.swift */,
-				A1F3E641276F302E0039E547 /* RecentUsersRepository.swift */,
-				A1F3E649276F340D0039E547 /* RecentUsersDataSourceProtocol.swift */,
-			);
-			path = RecentUsers;
 			sourceTree = "<group>";
 		};
 		A1F3E65A276F7B080039E547 /* SearchUser */ = {
@@ -773,13 +781,12 @@
 				A12FF00527671DB700F6C3B4 /* CustomTranstition.swift in Sources */,
 				A1DBE270275E2B040075176C /* AppDelegate.swift in Sources */,
 				A1F2830A27608F00008F093C /* SearchUserUseCase.swift in Sources */,
-				A1F3E64A276F340D0039E547 /* RecentUsersDataSourceProtocol.swift in Sources */,
+				A1F3E64A276F340D0039E547 /* UsersDataSourceProtocol.swift in Sources */,
 				A1F3E652276F50770039E547 /* AuthDataSourceProtocol.swift in Sources */,
 				A12C9014275EF967005CD963 /* PresentationPresenter.swift in Sources */,
 				A1F6BA05276068AB004B3ECA /* AppAssembly.swift in Sources */,
 				A1F3E644276F30680039E547 /* SearchUserRepository.swift in Sources */,
 				A1DBE2A5275E2BA90075176C /* UseCasesFactory.swift in Sources */,
-				A1F3E640276F2E440039E547 /* ShowRecentsUsersUseCase.swift in Sources */,
 				A1F3E63D276E0C760039E547 /* StoryCell.swift in Sources */,
 				A1316CAB2771E18200DA0199 /* ShowStoryUseCase.swift in Sources */,
 				A1DBE2BB275E2CAE0075176C /* TabBarController.swift in Sources */,
@@ -792,12 +799,13 @@
 				A12FF001276629D400F6C3B4 /* HeaderReusableView.swift in Sources */,
 				A1DBE2A0275E2B5A0075176C /* RealmInstagramUser.swift in Sources */,
 				A128A4042763186300CAAF9B /* AuthManager.swift in Sources */,
-				A1F3E654276F6EF30039E547 /* FavoritesRepository.swift in Sources */,
 				A1F3E660276F7DED0039E547 /* PreferencesDataSourceProtocol.swift in Sources */,
 				A1F3E639276DFEB00039E547 /* UserImageRepository.swift in Sources */,
 				A1F3E61D2767C6B30039E547 /* extension+UIColor.swift in Sources */,
 				A10B981D275F6A62005E4083 /* Images.swift in Sources */,
 				A155B4C827637364005CA2C0 /* ImageCacheManager.swift in Sources */,
+				A1316CB52777700800DA0199 /* VideoCacheManager.swift in Sources */,
+				A11521D9277AB3E600462BAB /* ChangeFavoriteUseCase.swift in Sources */,
 				A1F3E634276DFA860039E547 /* UserImageDataSourceProtocol.swift in Sources */,
 				A1F6BA02276062D1004B3ECA /* ManagerFactory.swift in Sources */,
 				A1F3E625276996130039E547 /* CustomTabBar.swift in Sources */,
@@ -808,15 +816,15 @@
 				A11E4F332764FDCE00F88122 /* ProfilePresenter.swift in Sources */,
 				A10B981F275F7444005E4083 /* Setting.swift in Sources */,
 				A1DBE2B9275E2C980075176C /* PresentationViewController.swift in Sources */,
+				A11521E6277C734F00462BAB /* UsersDataBaseManagerSettings.swift in Sources */,
 				A10B9812275F243C005E4083 /* Fonts.swift in Sources */,
 				A128A408276328E800CAAF9B /* Errors.swift in Sources */,
 				A1DBE2B5275E2C780075176C /* FavoritesViewController.swift in Sources */,
 				A1FD9E332760A05D0076BE38 /* PreferencesViewControllerUseCase.swift in Sources */,
+				A11521DB277AB3FA00462BAB /* ChangeRecentUseCase.swift in Sources */,
 				A1F3E63B276DFF830039E547 /* RepositoryFactory.swift in Sources */,
 				A1F3E64C276F3A020039E547 /* StoriesPreviewRepository.swift in Sources */,
 				A1316CA62771DA1000DA0199 /* StoryPresenter.swift in Sources */,
-				A1F3E656276F74750039E547 /* FavoritesDataSourceProtocol.swift in Sources */,
-				A1F3E646276F30A00039E547 /* ShowFavoritesUseCase.swift in Sources */,
 				A1316CA227717E4B00DA0199 /* StateView.swift in Sources */,
 				A1DBE272275E2B040075176C /* SceneDelegate.swift in Sources */,
 				A11E4F2E2764FB2700F88122 /* extension+UICollectionView.swift in Sources */,
@@ -825,7 +833,7 @@
 				A10B98262760521D005E4083 /* extension+String.swift in Sources */,
 				A1DBE2A8275E2BCB0075176C /* DataBaseManager.swift in Sources */,
 				A1DBE2AE275E2C130075176C /* Coordinator.swift in Sources */,
-				A1DBE2A3275E2B910075176C /* InstagramUser.swift in Sources */,
+				A1DBE2A3275E2B910075176C /* Story.swift in Sources */,
 				A1DBE2B7275E2C850075176C /* PreferencesViewController.swift in Sources */,
 				A10B98282760586F005E4083 /* ModuleFactory.swift in Sources */,
 				A10B9818275F5929005E4083 /* CommonViewController.swift in Sources */,
@@ -837,7 +845,7 @@
 				A11E4F302764FD4E00F88122 /* ProfileViewController.swift in Sources */,
 				A10B9814275F2D9D005E4083 /* Text.swift in Sources */,
 				A155B4C127634130005CA2C0 /* CustomActivityIndicator.swift in Sources */,
-				A1F3E642276F302E0039E547 /* RecentUsersRepository.swift in Sources */,
+				A1F3E642276F302E0039E547 /* UsersRepository.swift in Sources */,
 				A1F3E6232768C78E0039E547 /* CustomButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

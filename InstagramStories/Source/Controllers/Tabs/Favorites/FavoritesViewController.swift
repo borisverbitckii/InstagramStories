@@ -9,7 +9,7 @@ import UIKit.UIViewController
 
 protocol FavoritesViewProtocol: AnyObject {
     func showAlertController(title: String, message: String, completion: (()->())?)
-    func showFavoritesUsers(users: [InstagramUser])
+    func setupFavoritesCount(number: Int)
 }
 
 final class FavoritesViewController: CommonViewController {
@@ -17,7 +17,7 @@ final class FavoritesViewController: CommonViewController {
     //MARK: - Private properties
     private let presenter: FavoritesPresenterProtocol
     
-    private var favoritesUsers: [InstagramUser] {
+    private var favoritesUsersCount = 0 {
         didSet{
             collectionView.reloadWithFade()
         }
@@ -27,7 +27,6 @@ final class FavoritesViewController: CommonViewController {
     init(type: TabViewControllerType,
          presenter: FavoritesPresenterProtocol) {
         self.presenter = presenter
-        self.favoritesUsers = [InstagramUser]()
         
         super.init(type: type)
         
@@ -40,17 +39,17 @@ final class FavoritesViewController: CommonViewController {
     }
     
     //MARK: - Override methods
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        presenter.viewDidLoad()
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        presenter.viewWillAppear()
     }
 }
 
 
 //MARK: - extension + FavoritesViewProtocol
 extension FavoritesViewController: FavoritesViewProtocol {
-    func showFavoritesUsers(users: [InstagramUser]) {
-        favoritesUsers = users
+    func setupFavoritesCount(number: Int) {
+        favoritesUsersCount = number
     }
 }
 
@@ -58,26 +57,25 @@ extension FavoritesViewController: FavoritesViewProtocol {
 extension FavoritesViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return favoritesUsers.count
-    }
-    
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return favoritesUsers.count
+        return favoritesUsersCount
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ConstantsForCommonViewController.reuseIdentifier,
                                                  for: indexPath) as? InstagramUserCell else { return UICollectionViewCell() }
-        
-        let user = favoritesUsers[indexPath.row]
-        cell.configure(type: .fromDB, user: user)
         cell.buttonDelegate = self
+        cell.imageDelegate = self
+        
+        let user = presenter.favoritesUsers[indexPath.row]
+        cell.configure(type: .favorite(.remove), user: user)
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
         // rootCoordinator
+//        guard let user = presenter?.favoritesUsers?[indexPath.row] else { return }
+//        presenter.
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: collectionView.frame.width - 32, height: ConstantsForCommonViewController.cellHeight)
@@ -88,15 +86,17 @@ extension FavoritesViewController: UICollectionViewDataSource, UICollectionViewD
     }
 }
 
+//MARK: - extension + InstagramUserCellImageDelegate
+extension FavoritesViewController: InstagramUserCellImageDelegate {
+    
+    func userImageWillBeShown(stringURL: String, completion: @escaping (Result<UIImage,Error>)->()) {
+        presenter.userImageWillBeShown(stringURL: stringURL, completion: completion)
+    }
+}
+
 //MARK: - extension + InstagramUserCellDelegate
 extension FavoritesViewController: InstagramUserCellButtonDelegate {
-    
-    func trailingButtonTapped(type: InstagramUserCellType) {
-        switch type {
-        case .fromDB:
-            break
-        case .fromNetwork:
-            break
-        }
+    func trailingButtonTapped(type: InstagramUserCellType, user: RealmInstagramUserProtocol) {
+        presenter.trailingButtonTapped(type: type, user: user)
     }
 }

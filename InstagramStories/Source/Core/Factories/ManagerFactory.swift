@@ -16,11 +16,13 @@ protocol ManagerFactoryProtocol {
     func getDataBaseManager() -> DataBaseManagerProtocol
     func getAuthManager() -> AuthManagerProtocol
     func getImageCacheManager() -> ImageCacheManagerProtocol
+    func getVideoCacheManager() -> VideoCacheManagerProtocol
 }
 
 final class ManagerFactory: ManagerFactoryProtocol {
     func getNetworkManager() -> NetworkManagerProtocol {
-        return NetworkManager(imageCacheManager: getImageCacheManager())
+        return NetworkManager(imageCacheManager: getImageCacheManager(),
+                              videoCacheManager: getVideoCacheManager())
     }
     
     func getDataBaseManager() -> DataBaseManagerProtocol {
@@ -31,8 +33,12 @@ final class ManagerFactory: ManagerFactoryProtocol {
         return AuthManager()
     }
     
-    func getImageCacheManager() -> ImageCacheManagerProtocol{
+    func getImageCacheManager() -> ImageCacheManagerProtocol {
         return ImageCacheManager()
+    }
+    
+    func getVideoCacheManager() -> VideoCacheManagerProtocol {
+        return VideoCacheManager()
     }
     
 }

@@ -74,17 +74,22 @@ final class StoryCell: UICollectionViewCell {
         timeLabel.text = Utils.handleDate(unixDate: story.time)
         
         imageDelegate?.fetchImage(stringURL: story.previewImageURL, completion: { [weak self] result in
+            guard let self = self else { return }
+            
             switch result {
             case .success(let image):
-                UIView.transition(with: self?.storyImage ?? UIView(),
+                Utils.addShadow(type: .shadowIsBelow,
+                                layer: self.layer,
+                                opacity: LocalConstants.shadowOpacity)
+                UIView.transition(with: self.storyImage,
                                   duration: LocalConstants.animationDuration,
                                   options: .transitionCrossDissolve,
                                   animations: {
-                    self?.storyImage.image = image })
+                    self.storyImage.image = image })
  
-                self?.activityIndicator.hide()
+                self.activityIndicator.hide()
             case .failure(_):
-                self?.storyImage.backgroundColor = Palette.superLightGray.color
+                self.storyImage.backgroundColor = Palette.superLightGray.color
             }
         })
     }
@@ -93,9 +98,6 @@ final class StoryCell: UICollectionViewCell {
     private func setupSelf() {
         backgroundColor = Palette.clear.color
         contentView.layer.cornerRadius = LocalConstants.cornerRadius
-        Utils.addShadow(type: .shadowIsBelow,
-                        layer: layer,
-                        opacity: LocalConstants.shadowOpacity)
     }
     
     private func addSubviews() {
@@ -139,6 +141,7 @@ private enum LocalConstants {
     static let cornerRadius: CGFloat = 20
     static let animationDuration: TimeInterval = 0.45
     static let shadowOpacity: Float =  0.11
+    static let shadowOpacityForMainView: Float = 0.07
     
     //Layout
     static let timerViewContainerLeftInset: CGFloat = 10

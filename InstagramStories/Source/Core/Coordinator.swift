@@ -11,12 +11,28 @@ import Swiftagram
 protocol CoordinatorProtocol: AnyObject {
     func presentTabBarController(secret: Secret)
     func presentPresentationViewController()
-    func presentProfileViewController(transitionHandler: TransitionProtocol, with user: InstagramUser, secret: Secret)
+    func presentProfileViewController(transitionHandler: TransitionProtocol,
+                                      with user: RealmInstagramUserProtocol,
+                                      secret: Secret)
     func presentStoryViewController(transitionHandler: TransitionProtocol,
-                                    user: InstagramUser,
+                                    user: RealmInstagramUserProtocol,
                                     selectedStoryIndex: Int,
                                     stories: [Story],
                                     secret: Secret)
+    func presentActivityViewController(type: ActivityViewControllerType ,
+                                       transitionHandler: TransitionProtocol,
+                                       completion: (()->())?)
+}
+
+enum ActivityViewControllerType {
+    case video(ActivityViewControllerSettings)
+}
+
+struct ActivityViewControllerSettings {
+    let key: String
+    let value: String
+    let objectsToShare: [URL]
+    let excludedActivityTypes: [UIActivity.ActivityType]
 }
 
 final class Coordinator {
@@ -72,16 +88,19 @@ extension Coordinator: CoordinatorProtocol {
         window?.makeKeyAndVisible()
     }
     
-    func presentProfileViewController(transitionHandler: TransitionProtocol, with user: InstagramUser, secret: Secret) {
-        transitionHandler.pushViewControllerWithHandler(moduleFactory.buildProfileViewController(with: user,secret: secret),
+    func presentProfileViewController(transitionHandler: TransitionProtocol,
+                                      with user: RealmInstagramUserProtocol,
+                                      secret: Secret) {
+        transitionHandler.pushViewControllerWithHandler(moduleFactory.buildProfileViewController(with: user,
+                                                                                                 secret: secret),
                                                         animated: true)
     }
     func presentStoryViewController(transitionHandler: TransitionProtocol,
-                                    user: InstagramUser,
+                                    user: RealmInstagramUserProtocol,
                                     selectedStoryIndex: Int,
                                     stories: [Story],
                                     secret: Secret) {
-        let storyViewController = moduleFactory.buildStoryViewController(user: user,
+        let storyViewController = moduleFactory.buildStoryViewController(with: user,
                                                                          stories: stories,
                                                                          selectedStoryIndex: selectedStoryIndex,
                                                                          secret: secret)
@@ -89,6 +108,28 @@ extension Coordinator: CoordinatorProtocol {
         storyViewController.modalPresentationStyle = .fullScreen
         transitionHandler.presentViewController(storyViewController,
                                                 animated: true)
+    }
+    
+    func presentActivityViewController(type: ActivityViewControllerType ,
+                                       transitionHandler: TransitionProtocol,
+                                       completion: (()->())?) {
+        switch type {
+        case .video(let settings):
+            let activityViewController = UIActivityViewController(activityItems: settings.objectsToShare,
+                                                                  applicationActivities: nil)
+            activityViewController.setValue(settings.value, forKey: settings.key)
+            activityViewController.excludedActivityTypes = settings.excludedActivityTypes
+            activityViewController.completionWithItemsHandler = { _, _, _, error in
+                if let error = error {
+                    print(error) // fix with NSError
+                }
+                if let completion = completion {
+                    completion()
+                }
+                
+            }
+            transitionHandler.presentViewController(activityViewController, animated: true)
+        }
     }
 }
 

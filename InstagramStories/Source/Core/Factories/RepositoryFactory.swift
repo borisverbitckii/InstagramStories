@@ -12,8 +12,7 @@ protocol RepositoryFactoryProtocol {
     func getUserImageRepository() -> UserImageRepositoryProtocol
     func getSearchUserRepository() -> SearchUserRepositoryProtocol
     func getStoriesRepository() -> StoriesPreviewRepositoryProtocol
-    func getFavoritesUsersRepository() -> FavoritesRepositoryProtocol
-    func getRecentUsersRepository() -> RecentUsersRepositoryProtocol
+    func getUsersRepository() -> UsersRepositoryProtocol
     func getPreferencesRepository() -> PreferencesRepositoryProtocol
     func getStoryRepository() -> StoryRepositoryProtocol
 }
@@ -48,12 +47,8 @@ extension RepositoryFactory: RepositoryFactoryProtocol {
         return StoriesPreviewRepository(remoteDataSource: dataSourceFactory.getStoriesDataSource())
     }
     
-    func getFavoritesUsersRepository() -> FavoritesRepositoryProtocol {
-        return FavoritesRepository(localDataSource: dataSourceFactory.getFavoritesDataSource())
-    }
-    
-    func getRecentUsersRepository() -> RecentUsersRepositoryProtocol {
-        return RecentUsersRepository(localDataSource: dataSourceFactory.getRecentUsersDataSource())
+    func getUsersRepository() -> UsersRepositoryProtocol {
+        return UsersRepository(localDataSource: dataSourceFactory.getRecentUsersDataSource())
     }
     
     func getPreferencesRepository() -> PreferencesRepositoryProtocol {

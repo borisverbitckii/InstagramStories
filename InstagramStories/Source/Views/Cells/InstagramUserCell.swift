@@ -10,16 +10,21 @@ import UIKit.UIImageView
 import UIKit.UIButton
 
 enum InstagramUserCellType {
-    case fromDB
-    case fromNetwork
+    case removeFromRecent
+    case favorite(FavoriteButtonType? = nil)
+}
+
+enum FavoriteButtonType {
+    case add
+    case remove
 }
 
 protocol InstagramUserCellButtonDelegate {
-    func trailingButtonTapped(type: InstagramUserCellType)
+    func trailingButtonTapped(type: InstagramUserCellType, user: RealmInstagramUserProtocol)
 }
 
 protocol InstagramUserCellImageDelegate {
-    func fetchImage(stringURL: String, completion: @escaping (Result<UIImage,Error>)->())
+    func userImageWillBeShown(stringURL: String, completion: @escaping (Result<UIImage,Error>)->())
 }
 
 final class InstagramUserCell: UICollectionViewCell {
@@ -30,6 +35,7 @@ final class InstagramUserCell: UICollectionViewCell {
     
     //MARK: - Private properties
     private var type: InstagramUserCellType?
+    private var user: RealmInstagramUserProtocol?
     private var activityIndicator: CustomActivityIndicator = {
         $0.type = .defaultActivityIndicator(.medium)
         $0.hide()
@@ -61,7 +67,6 @@ final class InstagramUserCell: UICollectionViewCell {
     
     private let trailingButton: UIButton = {
         $0.contentMode = .scaleAspectFill
-        $0.addTarget(self, action: #selector(trailingButtonTapped), for: .touchUpInside)
         return $0
     }(UIButton())
     
@@ -94,53 +99,56 @@ final class InstagramUserCell: UICollectionViewCell {
     }
     
     //MARK: - Public methods
-    func configure(type: InstagramUserCellType,user: InstagramUser) {
+    func configure(type: InstagramUserCellType,user: RealmInstagramUserProtocol) {
         self.type = type
+        self.user = user
         
         nameLabel.text = user.name
         nickNameLabel.text = "@" + user.instagramUsername
+        trailingButton.addTarget(self, action: #selector(trailingButtonTapped), for: .touchUpInside)
         
         switch type {
-        case .fromDB:
-            trailingButton.setImage(Images.trailingCellButton(.fromDB).getImage(),
+        case .removeFromRecent:
+            trailingButton.setImage(Images.trailingCellButton(.removeFromRecent).getImage(),
                                     for: .normal)
-            userIcon.image = Images.userImageIsEmpty.getImage()
             activityIndicator.hide()
-        case .fromNetwork:
-            trailingButton.setImage(Images.trailingCellButton(.fromNetwork).getImage(),
-                                    for: .normal)
-
-            if ImageCacheManager.isAlreadyCached(stringURL: user.userIconURL) {
-                activityIndicator.hide()
-                fetchImage(for: user)
-            } else {
-                activityIndicator.show()
-                fetchImage(for: user)
+        case .favorite(let favoriteType):
+            switch favoriteType {
+            case .add:
+                break
+            case .remove:
+                break
+            case .none:
+                break
             }
+            trailingButton.setImage(Images.trailingCellButton(.favorite(.add)).getImage(),
+                                    for: .normal)
         }
+        
+        ImageCacheManager.isAlreadyCached(stringURL: user.userIconURL)
+            ? activityIndicator.hide()
+            : activityIndicator.show()
+
+        fetchImage(for: user)
     }
     
     //MARK: - Private methods
-    private func fetchImage(for user: InstagramUser) {
-        DispatchQueue.global().async { [weak self] in
-            self?.imageDelegate?.fetchImage(stringURL: user.userIconURL, completion: { result in
-                switch result {
-                case .success(let image):
-                    DispatchQueue.main.async {
-                        guard let self = self else { return }
-                        self.activityIndicator.hide()
-                        UIView.transition(with: self.userIcon,
-                                          duration: LocalConstants.animationDuration,
-                                          options: .transitionCrossDissolve,
-                                          animations: {
-                            self.userIcon.image = image })
-                    }
-                case .failure(_):
-                    //TODO: Change this
-                    break
-                }
-            })
-        }
+    private func fetchImage(for user: RealmInstagramUserProtocol) {
+        self.imageDelegate?.userImageWillBeShown(stringURL: user.userIconURL, completion: { result in
+            switch result {
+            case .success(let image):
+                self.activityIndicator.hide()
+                UIView.transition(with: self.userIcon,
+                                  duration: LocalConstants.animationDuration,
+                                  options: .transitionCrossDissolve,
+                                  animations: {
+                    self.userIcon.image = image })
+                
+            case .failure(_):
+                //TODO: Change this
+                break
+            }
+        })
     }
     
     private func addSubviews(){
@@ -177,8 +185,8 @@ final class InstagramUserCell: UICollectionViewCell {
     
     //MARK: - OBJC methods
     @objc private func trailingButtonTapped() {
-        if let type = type {
-            buttonDelegate?.trailingButtonTapped(type: type)
+        if let type = type, let user = user {
+            buttonDelegate?.trailingButtonTapped(type: type, user: user)
         }
     }
 }

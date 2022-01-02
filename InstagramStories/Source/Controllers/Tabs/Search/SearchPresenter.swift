@@ -7,34 +7,48 @@
 
 import UIKit
 import Swiftagram
-
+import RealmSwift
 
 protocol SearchPresenterProtocol {
+    var searchingInstagramUsers: [RealmInstagramUserProtocol] { get }
+    var recentUsers: [RealmInstagramUserProtocol] { get }
+    
     func viewDidLoad()
-    func fetchSearchingUsers(username: String)
-    func fetchImage(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> ())
-    func presentProfile(with user: InstagramUser)
-    func stopFetching()
+    func searchResultWasUpdated(username: String)
+    func userImageWillBeShown(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> ())
+    func cellWasTapped(indexPath: Int, isRecent: Bool)
+    func searchBarCancelButtonClicked()
+    func trailingButtonTapped(type: InstagramUserCellType, user: RealmInstagramUserProtocol)
+    func cellForItemIsExecute(user: RealmInstagramUserProtocol) -> Bool
 }
 
 final class SearchPresenter {
     
+    //MARK: - Public properties
+    var searchingInstagramUsers: [RealmInstagramUserProtocol]
+    var recentUsers: [RealmInstagramUserProtocol]
+    
     //MARK: - Private properties
-    private let secret: Secret
     private weak var view: SearchViewProtocol?
     private weak var transitionHandler: TransitionProtocol?
+    private let secret: Secret
     private let coordinator: CoordinatorProtocol
     private let searchUseCase: SearchUseCaseProtocol
-    private let recentUsersUseCase: ShowRecentsUsersUseCaseProtocol
+    private let changeRecentUsersUseCase: ChangeRecentUseCaseProtocol
+    private let changeFavoritesUseCase: ChangeFavoritesUseCaseProtocol
     
     //MARK: - Init
     init(coordinator: CoordinatorProtocol,
          searchUseCase: SearchUseCaseProtocol,
-         recentUsersUseCase: ShowRecentsUsersUseCaseProtocol,
+         changeRecentUsersUseCase: ChangeRecentUseCaseProtocol,
+         changeFavoritesUseCase: ChangeFavoritesUseCaseProtocol,
          secret: Secret) {
+        self.searchingInstagramUsers = [RealmInstagramUserProtocol]()
+        self.recentUsers = [RealmInstagramUserProtocol]()
         self.coordinator = coordinator
         self.searchUseCase =  searchUseCase
-        self.recentUsersUseCase = recentUsersUseCase
+        self.changeRecentUsersUseCase = changeRecentUsersUseCase
+        self.changeFavoritesUseCase = changeFavoritesUseCase
         self.secret = secret
     }
     
@@ -51,46 +65,143 @@ final class SearchPresenter {
 //MARK: - SearchPresenterProtocol
 
 extension SearchPresenter: SearchPresenterProtocol {
-    func fetchImage(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> ()) {
+    
+    func cellForItemIsExecute(user: RealmInstagramUserProtocol) -> Bool {
+        DataBaseManager.isOnFavorite(user: user)
+    }
+    
+    func trailingButtonTapped(type: InstagramUserCellType, user: RealmInstagramUserProtocol) {
+        switch type {
+        case .removeFromRecent:
+            if user.isRecent {
+                if !DataBaseManager.isOnFavorite(user: user) {
+                    changeRecentUsersUseCase.removeRecentUser(user: user) { [weak self] _ in
+                        self?.changeRecentUsersUseCase.fetchRecentUsersFromBD { users in
+                            self?.view?.setupRecentUsersCount(number: users.count) // fix reloadData to reloadItem
+                            self?.recentUsers = users
+                        }
+                    }
+                } else {
+                    var notRecentUser = user
+                    notRecentUser.isRecent = false
+                    changeRecentUsersUseCase.changeRecentUser(user: notRecentUser) { [weak self] _ in
+                        self?.changeRecentUsersUseCase.fetchRecentUsersFromBD { users in
+                            self?.view?.setupRecentUsersCount(number: users.count) // fix reloadData to reloadItem
+                            self?.recentUsers = users
+                        }
+                    }
+                }
+            }
+        case .favorite(_):
+            
+            if DataBaseManager.isOnFavorite(user: user) {
+                var notFavoriteUser = user
+                notFavoriteUser.isOnFavorite = false
+                changeFavoritesUseCase.changeFavoriteUser(user: notFavoriteUser) { _ in
+                    return
+                        //TODO: fix with deleting user which is not necessary
+                }
+            } else {
+                var favoriteUser = user
+                if DataBaseManager.isAlreadyExist(user: user) {
+                    favoriteUser.isOnFavorite = true
+                    if DataBaseManager.isRecent(user: user ) {
+                        favoriteUser.isRecent = true
+                        changeFavoritesUseCase.changeFavoriteUser(user: favoriteUser) { _ in }
+                    } else {
+                        changeFavoritesUseCase.changeFavoriteUser(user: favoriteUser) { _ in }
+                    }
+                } else {
+                    favoriteUser.isOnFavorite = true
+                    changeFavoritesUseCase.saveFavoritesUser(user: favoriteUser) { _ in }
+                }
+            }
+        }
+    }
+    
+    func cellWasTapped(indexPath: Int, isRecent: Bool) {
+        
+        if isRecent {
+            let recentUser = recentUsers[indexPath]
+            presentProfile(with: recentUser)
+            return
+        }
+        
+        var user = searchingInstagramUsers[indexPath]
+        if !DataBaseManager.isAlreadyExist(user: user) {
+            user.isRecent = true
+            changeRecentUsersUseCase.saveRecentUser(user: user) { _ in }
+        } else {
+            if DataBaseManager.isOnFavorite(user: user) {
+                user.isOnFavorite = true
+                user.isRecent = true
+                changeRecentUsersUseCase.changeRecentUser(user: user) { _ in }
+            } else {
+                user.isRecent = true
+                changeRecentUsersUseCase.changeRecentUser(user: user) { _ in }
+            }
+            
+        }
+        presentProfile(with: user)
+    }
+    
+    func userImageWillBeShown(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> ()) {
         searchUseCase.fetchImage(stringURL: stringURL, completion: completion)
     }
     
     //MARK: - Public methods
     func viewDidLoad() {
-        recentUsersUseCase.fetchRecentUsersFromBD { [weak self] result in
-            switch result {
-            case .success(_):
-//                self?.view?.showRecentUsers(users: users) // dont delete
-                //TODO: Delete this
-                self?.view?.showRecentUsers(users: [InstagramUser(name: "Boris",profileDescription: "description", instagramUsername: "verbitsky",id: 1000, userIconURL: "", posts: 230, subscribers: 2786, subscriptions: 3376, isPrivate: false)])
-                //--
-            case .failure(let error):
-                self?.view?.showAlertController(title: "Error", message: error.localizedDescription, completion: nil)
-                self?.view?.hideActivityIndicator()
-                
-            }
+        changeRecentUsersUseCase.fetchRecentUsersFromBD { [weak self] users in
+            self?.view?.setupRecentUsersCount(number: users.count)
+            self?.recentUsers = users
         }
     }
     
-    func fetchSearchingUsers(username: String) {
+    func searchResultWasUpdated(username: String) {
         searchUseCase.fetchInstagramUsersFromNetwork(searchingTitle: username, secret: secret) { [weak self] result in
             switch result {
             case .success(let users):
-                self?.view?.showSearchingUsers(users: users)
+                self?.searchingInstagramUsers = users
+                self?.view?.setupSearchingUsersCount(number: users.count)
             case .failure(let error):
                 self?.view?.showAlertController(title: "Error", message: error.localizedDescription, completion: nil)
-                self?.view?.hideActivityIndicator()
             }
+            self?.view?.hideActivityIndicator()
         }
     }
     
-    func stopFetching() {
+    func searchBarCancelButtonClicked() {
         searchUseCase.stopLastOperation()
+        changeRecentUsersUseCase.fetchRecentUsersFromBD { [weak self] users in
+            self?.recentUsers = users
+            self?.view?.setupRecentUsersCount(number: users.count)
+            self?.view?.setupSearchingUsersCount(number: 0)
+        }
     }
     
     //MARK: - Navigation
-    func presentProfile(with user: InstagramUser) {
+    private func presentProfile(with user: RealmInstagramUserProtocol) {
         guard let transitionHandler = transitionHandler else { return }
         coordinator.presentProfileViewController(transitionHandler: transitionHandler,with: user, secret: secret)
     }
+}
+
+final class UserStateHandler { // StateHandler
+    
+    func onlyExist() -> Bool {
+        return false
+    }
+    
+    func onlyOnFavorite() -> Bool {
+        return false
+    }
+    
+    func onlyOnRecents() -> Bool {
+        return false
+    }
+    
+    func onFavoritesAndRecents() -> Bool {
+        return false
+    }
+    
 }

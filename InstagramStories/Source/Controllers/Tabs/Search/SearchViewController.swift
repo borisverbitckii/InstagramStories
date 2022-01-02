@@ -7,27 +7,25 @@
 
 import UIKit
 import PinLayout
-import SwiftUI
 
 protocol SearchViewProtocol: AnyObject {
-    func showRecentUsers(users: [InstagramUser])
-    func showSearchingUsers(users: [InstagramUser])
     func showAlertController(title: String, message: String, completion: (()->())?)
     func hideActivityIndicator()
+    func setupRecentUsersCount(number: Int)
+    func setupSearchingUsersCount(number: Int)
 }
 
 final class SearchViewController: CommonViewController {
     
     //MARK: - Private properties
-    private var recentUsers: [InstagramUser] {
+    private var recentUsersCount = 0 {
         didSet{
             collectionView.reloadWithFade()
         }
     }
-    private var searchingInstagramUsers : [InstagramUser] { // for search results
-        didSet {
+    private var searchingInstagramUsersCount = 0 {
+        didSet{
             collectionView.reloadWithFade()
-            activityIndicator.hide()
         }
     }
     
@@ -59,8 +57,6 @@ final class SearchViewController: CommonViewController {
     //MARK: - Init
     init(type: TabViewControllerType,
          presenter: SearchPresenterProtocol) {
-        self.recentUsers = [InstagramUser]()
-        self.searchingInstagramUsers = [InstagramUser]()
         self.presenter = presenter
         
         super.init(type: type)
@@ -151,12 +147,12 @@ final class SearchViewController: CommonViewController {
 //MARK: - SearchViewControllerProtocol
 extension SearchViewController: SearchViewProtocol {
     
-    func showRecentUsers(users: [InstagramUser]) {
-        recentUsers = users
+    func setupRecentUsersCount(number: Int) {
+        recentUsersCount = number
     }
     
-    func showSearchingUsers(users: [InstagramUser]) {
-        searchingInstagramUsers = users
+    func setupSearchingUsersCount(number: Int) {
+        searchingInstagramUsersCount = number
         scrollToTop(animated: false)
     }
     
@@ -171,15 +167,15 @@ extension SearchViewController: UICollectionViewDataSource, UICollectionViewDele
 
     // Rows
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if !searchBarIsEmpty && searchingInstagramUsers.isEmpty {
+        if !searchBarIsEmpty && searchingInstagramUsersCount == 0 {
             noSearchResults.showWithFade(with: LocalConstants.noSearchResultAnimationDuration)
             return 0
-        } else if searchingInstagramUsers.isEmpty {
+        } else if searchingInstagramUsersCount == 0 {
             noSearchResults.hideWithFade(with: LocalConstants.noSearchResultAnimationDuration)
-            return recentUsers.count
+            return recentUsersCount
         }
         noSearchResults.hideWithFade(with: LocalConstants.noSearchResultAnimationDuration)
-        return searchingInstagramUsers.count
+        return searchingInstagramUsersCount
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -188,23 +184,26 @@ extension SearchViewController: UICollectionViewDataSource, UICollectionViewDele
         cell.buttonDelegate = self
         cell.imageDelegate = self
         
-        if searchingInstagramUsers.isEmpty {
-            let user = recentUsers[indexPath.row]
-            cell.configure(type: .fromDB, user: user)
+        guard searchingInstagramUsersCount != 0 else {
+            guard let user = presenter?.recentUsers[indexPath.row] else { return cell}
+            cell.configure(type: .removeFromRecent, user: user)
             return cell
         }
         
-        let user = searchingInstagramUsers[indexPath.row]
-        cell.configure(type: .fromNetwork, user: user)
+        guard let user = presenter?.searchingInstagramUsers[indexPath.row] else { return cell}
+        presenter?.cellForItemIsExecute(user: user) == true
+        ? cell.configure(type: .favorite(.remove), user: user)
+        : cell.configure(type: .favorite(.add), user: user)
+        
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
-        if !searchingInstagramUsers.isEmpty{
-            presenter?.presentProfile(with: searchingInstagramUsers[indexPath.row])
-        } else {
-            presenter?.presentProfile(with: recentUsers[indexPath.row])
+        if searchingInstagramUsersCount != 0 {
+            presenter?.cellWasTapped(indexPath: indexPath.row, isRecent: false)
+        } else if recentUsersCount != 0 {
+            presenter?.cellWasTapped(indexPath: indexPath.row, isRecent: true)
         }
     }
     
@@ -219,10 +218,10 @@ extension SearchViewController: UICollectionViewDataSource, UICollectionViewDele
                                                                                withReuseIdentifier: LocalConstants.headerReuseIdentifier,
                                                                                for: indexPath) as? HeaderReusableView else { return UICollectionReusableView() }
         
-        if !searchBarIsEmpty && searchingInstagramUsers.isEmpty {
+        if !searchBarIsEmpty && searchingInstagramUsersCount == 0 {
             headerView.configure(title: Text.searchHeaderTitle(.searchResult).getText())
             return headerView
-        } else if searchingInstagramUsers.isEmpty {
+        } else if searchingInstagramUsersCount == 0 {
             headerView.configure(title: Text.searchHeaderTitle(.recent).getText())
             return headerView
         }
@@ -250,7 +249,7 @@ extension SearchViewController: UISearchResultsUpdating {
             return }
         activityIndicator.show()
         noSearchResults.hideWithFade(with: LocalConstants.noSearchResultAnimationDuration)
-        presenter?.fetchSearchingUsers(username: text)
+        presenter?.searchResultWasUpdated(username: text)
         previousValue = text
     }
 }
@@ -259,8 +258,8 @@ extension SearchViewController: UISearchResultsUpdating {
 extension SearchViewController: UISearchBarDelegate {
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        presenter?.stopFetching()
-        searchingInstagramUsers = []
+        presenter?.searchBarCancelButtonClicked()
+        searchingInstagramUsersCount = 0
         changeTabBar(hidden: false, animated: true)
         previousValue = ""
         collectionView.setContentOffset(collectionView.contentOffset, animated:false)
@@ -270,21 +269,16 @@ extension SearchViewController: UISearchBarDelegate {
 //MARK: - extension + InstagramUserCellDelegate
 extension SearchViewController: InstagramUserCellButtonDelegate {
     
-    func trailingButtonTapped(type: InstagramUserCellType) {
-        switch type {
-        case .fromDB:
-            break
-        case .fromNetwork:
-            break
-        }
+    func trailingButtonTapped(type: InstagramUserCellType, user: RealmInstagramUserProtocol) {
+        presenter?.trailingButtonTapped(type: type, user: user)
     }
 }
 
 //MARK: - extension + InstagramUserCellImageDelegate
 extension SearchViewController: InstagramUserCellImageDelegate {
     
-    func fetchImage(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> ()) {
-        presenter?.fetchImage(stringURL: stringURL, completion: completion)
+    func userImageWillBeShown(stringURL: String, completion: @escaping (Result<UIImage,Error>)->()) {
+        presenter?.userImageWillBeShown(stringURL: stringURL, completion: completion)
     }
 }
 

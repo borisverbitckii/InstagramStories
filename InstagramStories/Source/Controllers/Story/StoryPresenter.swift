@@ -8,20 +8,24 @@
 import UIKit
 import Swiftagram
 import AVFoundation
+import Photos
 
 protocol StoryPresenterProtocol {
     func viewDidLoad()
     func viewDidDisappear()
     func selectedStoryIndexWasIncreased()
     func selectedStoryIndexWasDecreased()
+    func saveVideoToLibrary(storyIndex: Int)
+    func shareStory(storyIndex: Int)
 }
 
-final class StoryPresenter: NSObject {
+final class StoryPresenter {
     
     //MARK: - Private properties
     private weak var view: StoryViewProtocol?
+    private weak var transitionHandler: TransitionProtocol?
     private let coordinator: CoordinatorProtocol
-    private let useCase: ShowStoryUseCaseProtocol
+    private let showStoryUseCase: ShowStoryUseCaseProtocol
     private let secret: Secret
     private let stories: [Story]
     private let username: String
@@ -33,34 +37,32 @@ final class StoryPresenter: NSObject {
         }
     }
     private var progressWidth: CGFloat = 0
+    private var durationForCurrentStory: TimeInterval = 0
+    private var previousDurationWhenWasPaused: TimeInterval = 0
+    private var durationWhenWasPaused: TimeInterval = 0
     
     //MARK: - Init
     init(coordinator: CoordinatorProtocol,
          secret: Secret,
          useCase: ShowStoryUseCaseProtocol,
          stories: [Story],
-         user: InstagramUser,
+         user: RealmInstagramUserProtocol,
          selectedStoryIndex: Int) {
         self.coordinator = coordinator
-        self.useCase = useCase
+        self.showStoryUseCase = useCase
         self.secret = secret
         self.username = user.instagramUsername
         self.stories = stories.reversed() // for changing story position (new at the end)
         self.selectedStoryIndex = stories.count - 1 - selectedStoryIndex
     }
     
-    //MARK: - Override methods
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if keyPath == "rate" {
-            if (view?.videoPlayer.rate ?? 0) > 0 {
-                timer?.fire()
-            }
-        }
-    }
-    
     //MARK: - Public methods
     func injectView(view: StoryViewProtocol) {
         self.view = view
+    }
+    
+    func injectTransitionHandler(view: TransitionProtocol) {
+        self.transitionHandler = view
     }
     
     
@@ -84,71 +86,72 @@ final class StoryPresenter: NSObject {
         }
         
         // StoryPreview
-        useCase.fetchStoryPreview(urlString: stories[selectedStoryIndex].previewImageURL) { [weak self] result in
+        showStoryUseCase.fetchStoryPreview(urlString: stories[selectedStoryIndex].previewImageURL) { [weak self] result in
+            guard let self = self else { return }
+            
             switch result {
             case .success(let image):
-                self?.view?.showStoryPreview(with: image)
+                self.view?.showStoryPreview(with: image)
+                
+                /// Image already cached so I can show video in completion without any delay
+                
+                // StoryVideo
+                self.view?.videoPlayer.pause()
+                self.view?.videoPlayer.replaceCurrentItem(with: nil)
+                self.showStoryUseCase.downloadCurrentStoryVideo(urlString: self.stories[self.selectedStoryIndex].contentURLString) { [weak self] videoURL in
+                    // Play video
+                    guard let self = self else { return }
+                    guard self.view?.isBeingDismissed != true else { return }
+                    self.view?.videoPlayer = AVPlayer(url: videoURL)
+                    self.view?.videoPlayerLayer.player = self.view?.videoPlayer
+                    self.view?.videoPlayer.play()
+                    
+                    // Fire timer
+                    let asset = AVAsset(url: videoURL)
+                    let duration = asset.duration
+                    var durationTime: TimeInterval = CMTimeGetSeconds(duration)
+                    if durationTime == 0 {
+                        durationTime = LocalConstants.mainTimerDurationTime
+                    }
+                    
+                    self.durationForCurrentStory = durationTime // for calculate pause progress
+                    
+                    if self.timer != nil {
+                        self.timer?.invalidate()
+                    }
+                    
+                    self.timer = Timer(timeInterval: durationTime, target: self,
+                                       selector: #selector(self.timerWasFired),
+                                       userInfo: nil,
+                                       repeats: false)
+                    
+                    guard let timer = self.timer else { return }
+                    timer.tolerance = LocalConstants.mainTimerTolerance
+                    RunLoop.current.add(timer, forMode: .common)
+                    
+                    self.progressWidth = 0
+                    self.timerForProgressWidth = Timer(timeInterval: LocalConstants.timerForProgressWidthDurationTime,
+                                                       repeats: true) { [weak self] timer in
+                        guard let self = self else { return }
+                        self.durationWhenWasPaused += LocalConstants.timerForProgressWidthDurationTime
+                        self.progressWidth += LocalConstants.timerForProgressWidthDurationTime / durationTime
+                        self.view?.setupVideoProgressViewWidth(percentWidth: self.progressWidth)
+                    }
+                    
+                    guard let timerForProgressWidth = self.timerForProgressWidth else { return }
+                    timerForProgressWidth.tolerance = LocalConstants.timerForProgressWidthTolerance
+                    RunLoop.current.add(timerForProgressWidth, forMode: .common)
+                }
             case .failure(_):
                 break // fix this
             }
-        }
-        
-        // StoryVideo
-        self.view?.videoPlayer.pause()
-        view?.videoPlayer.replaceCurrentItem(with: nil)
-        useCase.downloadCurrentStoryVideo(urlString: stories[selectedStoryIndex].contentURLString) { [weak self] videoURL in
-            // Play video
-            guard let self = self else { return }
-            guard self.view?.isBeingDismissed != true else { return }
-            self.view?.videoPlayer = AVPlayer(url: videoURL)
-            self.view?.videoPlayerLayer.player = self.view?.videoPlayer
-            self.view?.videoPlayer.play()
-            
-            // Fire timer
-            let asset = AVAsset(url: videoURL)
-            let duration = asset.duration
-            var durationTime: TimeInterval = CMTimeGetSeconds(duration)
-            if durationTime == 0 {
-                durationTime = LocalConstants.mainTimerDurationTime
-            }
-            
-            if self.timer != nil {
-                self.timer?.invalidate()
-            }
-            
-            self.timer = Timer(timeInterval: durationTime, target: self,
-                               selector: #selector(self.timerWasFired),
-                               userInfo: nil,
-                               repeats: false)
-            
-            guard let timer = self.timer else { return }
-            timer.addObserver(self, forKeyPath: "rate", options: NSKeyValueObservingOptions.new, context: nil)
-            timer.tolerance = LocalConstants.mainTimerTolerance
-            RunLoop.current.add(timer, forMode: .common)
-            
-            self.progressWidth = 0
-            self.timerForProgressWidth = Timer(timeInterval: LocalConstants.timerForProgressWidthDurationTime,
-                                               repeats: true) { [weak self] timer in
-                guard let self = self else { return }
-                if self.timer?.isValid == false {
-                    timer.invalidate()
-                    self.progressWidth = 0
-                    return
-                }
-                self.progressWidth += LocalConstants.timerForProgressWidthDurationTime / durationTime
-                self.view?.setupVideoProgressViewWidth(percentWidth: self.progressWidth)
-            }
-            
-            guard let timerForProgressWidth = self.timerForProgressWidth else { return }
-            timerForProgressWidth.tolerance = LocalConstants.timerForProgressWidthTolerance
-            RunLoop.current.add(timerForProgressWidth, forMode: .common)
         }
     }
 }
 
 //MARK: - extension + StoryPresenterProtocol
 extension StoryPresenter: StoryPresenterProtocol {
-    
+
     func viewDidLoad() {
         // Title
         let title = "@" + username
@@ -160,7 +163,6 @@ extension StoryPresenter: StoryPresenterProtocol {
     func viewDidDisappear() {
         view?.videoPlayer.pause()
         view?.videoPlayer.replaceCurrentItem(with: nil)
-        timer?.removeObserver(self, forKeyPath: "rate")
         timer?.invalidate()
         timerForProgressWidth?.invalidate()
     }
@@ -170,6 +172,8 @@ extension StoryPresenter: StoryPresenterProtocol {
         timerForProgressWidth?.invalidate()
         progressWidth = 0
         view?.setupVideoProgressViewWidth(percentWidth: progressWidth)
+        durationWhenWasPaused = 0
+        previousDurationWhenWasPaused = 0
         
         if selectedStoryIndex < stories.count - 1 {
             selectedStoryIndex += 1
@@ -184,9 +188,81 @@ extension StoryPresenter: StoryPresenterProtocol {
         timerForProgressWidth?.invalidate()
         progressWidth = 0
         view?.setupVideoProgressViewWidth(percentWidth: progressWidth)
+        durationWhenWasPaused = 0
+        previousDurationWhenWasPaused = 0
         
         if selectedStoryIndex > 0 {
             selectedStoryIndex -= 1
+        } else {
+            selectedStoryIndex = 0
+        }
+    }
+    
+    func saveVideoToLibrary(storyIndex: Int) {
+        PHPhotoLibrary.shared().performChanges({ [weak self] in
+            guard let self = self else { return }
+            let storyVideoPath = VideoCacheManager.shared.directoryFor(stringUrl: self.stories[storyIndex].contentURLString)
+            PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: storyVideoPath)
+        }) { saved, error in
+            if saved {
+                DispatchQueue.main.async {
+                    self.view?.showAlertController(title: Text.success.getText(),
+                                                   message: Text.videoSaved.getText())
+                }
+            }
+        }
+    }
+    
+    func shareStory(storyIndex: Int) {
+        let storyVideoPath = VideoCacheManager.shared.directoryFor(stringUrl: self.stories[storyIndex].contentURLString)
+        let objectsToShare = [storyVideoPath]
+        let excludedActivityTypes = [UIActivity.ActivityType.airDrop,
+                                     UIActivity.ActivityType.copyToPasteboard,
+                                     UIActivity.ActivityType.message,
+                                     UIActivity.ActivityType.postToTencentWeibo,
+                                     UIActivity.ActivityType.postToWeibo]
+        if let transitionHandler = transitionHandler {
+            view?.videoPlayer.pause()
+            timerForProgressWidth?.invalidate()
+            timer?.invalidate()
+            
+            let completion: ()->() = { [weak self] in
+                guard let self = self else { return }
+                self.view?.videoPlayer.play()
+            
+                let remainderOfStoryDuration = self.durationForCurrentStory - (self.previousDurationWhenWasPaused + self.durationWhenWasPaused)
+                
+                self.previousDurationWhenWasPaused += self.durationWhenWasPaused
+                self.durationWhenWasPaused = 0
+                self.timer = Timer(timeInterval: remainderOfStoryDuration, target: self,
+                                   selector: #selector(self.timerWasFired),
+                                   userInfo: nil,
+                                   repeats: false)
+                
+                guard let timer = self.timer else { return }
+                timer.tolerance = LocalConstants.mainTimerTolerance
+                RunLoop.current.add(timer, forMode: .common)
+
+                self.timerForProgressWidth = Timer(timeInterval: LocalConstants.timerForProgressWidthDurationTime,
+                                                   repeats: true) { [weak self] timer in
+                    guard let self = self else { return }
+                    self.durationWhenWasPaused += LocalConstants.timerForProgressWidthDurationTime
+                    self.progressWidth += LocalConstants.timerForProgressWidthDurationTime / self.durationForCurrentStory
+                    self.view?.setupVideoProgressViewWidth(percentWidth: self.progressWidth)
+                }
+
+                guard let timerForProgressWidth = self.timerForProgressWidth else { return }
+                timerForProgressWidth.tolerance = LocalConstants.timerForProgressWidthTolerance
+                RunLoop.current.add(timerForProgressWidth, forMode: .common)
+            }
+            coordinator.presentActivityViewController(
+                type: .video(ActivityViewControllerSettings(
+                    key: "subject",
+                    value: "Video",
+                    objectsToShare: objectsToShare,
+                    excludedActivityTypes: excludedActivityTypes)),
+                transitionHandler: transitionHandler,
+                completion: completion)
         }
     }
     
@@ -196,12 +272,13 @@ extension StoryPresenter: StoryPresenterProtocol {
         timerForProgressWidth?.invalidate()
         progressWidth = 0
         view?.setupVideoProgressViewWidth(percentWidth: progressWidth)
+        durationWhenWasPaused = 0
+        previousDurationWhenWasPaused = 0
         
         if selectedStoryIndex < stories.count  - 1 {
             selectedStoryIndex += 1
             return
         }
-        
         view?.dismiss(animated: true, completion: nil)
     }
 }

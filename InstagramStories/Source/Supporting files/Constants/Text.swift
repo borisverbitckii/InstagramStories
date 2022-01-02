@@ -22,6 +22,8 @@ enum Text {
     case isPrivate
     case error
     case errorInUsername
+    case videoSaved
+    case success
     
     func getText() -> String {
         switch self {
@@ -65,6 +67,10 @@ enum Text {
             return "Ошибка".localized
         case .errorInUsername:
             return "Пожалуйста, не используйте пробел".localized
+        case .videoSaved:
+            return "Видео сохранено".localized
+        case .success:
+            return "Успех".localized
         }
     }
 }

@@ -15,8 +15,8 @@ protocol ModuleFactoryProtocol: AnyObject {
     func buildFavoritesNavigationController() -> UINavigationController
     func buildPreferencesNavigationController() -> UINavigationController
     func buildSplashViewController() -> UIViewController
-    func buildProfileViewController(with user: InstagramUser, secret: Secret) -> UIViewController
-    func buildStoryViewController(user: InstagramUser, stories: [Story], selectedStoryIndex: Int, secret: Secret) -> UIViewController
+    func buildProfileViewController(with user: RealmInstagramUserProtocol, secret: Secret) -> UIViewController
+    func buildStoryViewController(with user: RealmInstagramUserProtocol, stories: [Story], selectedStoryIndex: Int, secret: Secret) -> UIViewController
 }
 
 final class ModuleFactory: ModuleFactoryProtocol {
@@ -55,12 +55,14 @@ final class ModuleFactory: ModuleFactoryProtocol {
     func buildSearchNavigationController(secret: Secret) -> UINavigationController {
         guard let coordinator = coordinator,
               let searchUseCase = useCasesFactory.getSearchUserUseCase() as? SearchUserUseCase,
-              let recentUsersUseCase = useCasesFactory.getShowRecentsUsersUseCase() as? ShowRecentsUsersUseCase else {
+              let changeRecentUsersUseCase = useCasesFactory.getChangeRecentsUserUseCase() as? ChangeRecentUseCaseProtocol,
+              let changeFavoritesUseCase = useCasesFactory.getSaveFavoritesUsersUseCase() as? ChangeFavoritesUseCaseProtocol else {
             return UINavigationController()
         }
         let presenter = SearchPresenter(coordinator: coordinator,
                                         searchUseCase: searchUseCase,
-                                        recentUsersUseCase: recentUsersUseCase,
+                                        changeRecentUsersUseCase: changeRecentUsersUseCase,
+                                        changeFavoritesUseCase: changeFavoritesUseCase,
                                         secret: secret)
         let view = SearchViewController(type: .search,
                                         presenter: presenter)
@@ -72,12 +74,13 @@ final class ModuleFactory: ModuleFactoryProtocol {
     
     func buildFavoritesNavigationController() -> UINavigationController {
         guard let coordinator = coordinator,
-              let useCase = useCasesFactory.getShowFavoritesUsersUseCase() as? ShowFavoritesUseCaseProtocol else {
+              let changeFavoritesUseCase = useCasesFactory.getSaveFavoritesUsersUseCase() as? ChangeFavoritesUseCaseProtocol
+        else {
             return UINavigationController()
         }
         
         let presenter = FavoritesPresenter(coordinator: coordinator,
-                                           favoritesUseCase: useCase)
+                                           changeFavoritesUseCase: changeFavoritesUseCase)
         let view = FavoritesViewController(type: .favorites, presenter: presenter)
         presenter.injectView(view: view)
         let navigationController = UINavigationController(rootViewController: view)
@@ -111,19 +114,25 @@ final class ModuleFactory: ModuleFactoryProtocol {
         return view
     }
     
-    func buildProfileViewController(with user: InstagramUser, secret: Secret) -> UIViewController {
+    func buildProfileViewController(with user: RealmInstagramUserProtocol, secret: Secret) -> UIViewController {
         guard let coordinator = coordinator,
-              let useCase = useCasesFactory.getLoadUserProfileUseCase() as? LoadUserProfileUseCase else {
+              let loadUserProfileUseCase = useCasesFactory.getLoadUserProfileUseCase() as? LoadUserProfileUseCase,
+              let saveFavoritesUseCase = useCasesFactory.getSaveFavoritesUsersUseCase() as? ChangeFavoritesUseCaseProtocol
+        else {
             return UIViewController()
         }
         
-        let presenter = ProfilePresenter(coordinator: coordinator, useCase: useCase, secret: secret, user: user)
+        let presenter = ProfilePresenter(coordinator: coordinator,
+                                         loadUserProfileUseCase: loadUserProfileUseCase,
+                                         saveFavoritesUseCase: saveFavoritesUseCase,
+                                         secret: secret,
+                                         user: user)
         let view = ProfileViewController(presenter: presenter)
         presenter.injectView(view: view)
         return view
     }
     
-    func buildStoryViewController(user: InstagramUser, stories: [Story], selectedStoryIndex: Int, secret: Secret) -> UIViewController {
+    func buildStoryViewController(with user: RealmInstagramUserProtocol, stories: [Story], selectedStoryIndex: Int, secret: Secret) -> UIViewController {
         guard let coordinator = coordinator,
               let useCase = useCasesFactory.getShowStoryUseCase() as? ShowStoryUseCaseProtocol else {
             return UIViewController()
@@ -136,6 +145,7 @@ final class ModuleFactory: ModuleFactoryProtocol {
                                        selectedStoryIndex: selectedStoryIndex)
         let view = StoryViewController(presenter: presenter)
         presenter.injectView(view: view)
+        presenter.injectTransitionHandler(view: view)
         return view
     }
     

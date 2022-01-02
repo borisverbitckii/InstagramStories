@@ -12,7 +12,6 @@ enum Images {
     case favoritesTabIcon
     case preferencesTabIcon
     case trailingCellButton(InstagramUserCellType)
-    case userImageIsEmpty
     
     func getImage() -> UIImage? {
         switch self {
@@ -24,13 +23,11 @@ enum Images {
             return UIImage(systemName: "heart")
         case .trailingCellButton(let cellType):
             switch cellType {
-            case .fromDB:
+            case .removeFromRecent:
                 return  UIImage(systemName: "xmark.circle")
-            case .fromNetwork:
+            case .favorite:
                 return UIImage(systemName: "heart")
             }
-        case .userImageIsEmpty:
-            return UIImage(systemName: "heart")
         }
     }
 }

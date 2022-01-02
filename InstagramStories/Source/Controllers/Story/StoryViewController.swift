@@ -15,6 +15,8 @@ protocol StoryViewProtocol: AnyObject {
     var videoPlayerLayer: AVPlayerLayer { get set }
     var isBeingDismissed: Bool { get }
     // Methods
+    func present(viewController: UIViewController)
+    func showAlertController(title: String, message: String)
     func dismiss(animated flag: Bool, completion: (() -> Void)?)
     func showStoryPreview(with image: UIImage)
     func layoutStoryWasPostedTimeLabel()
@@ -33,7 +35,7 @@ final class StoryViewController: UIViewController, UINavigationBarDelegate {
     private let presenter: StoryPresenterProtocol
     private var storiesCount = 0
     private var currentStoriesIndex: Int?
-    
+
     //UI Elements
     private var navBar: UINavigationBar = {
         let navItem = UINavigationItem()
@@ -207,11 +209,15 @@ final class StoryViewController: UIViewController, UINavigationBarDelegate {
     }
     
     @objc private func shareButtonTapped() {
-        print("share")
+        if let currentStoriesIndex = currentStoriesIndex {
+            presenter.shareStory(storyIndex: currentStoriesIndex)
+        }
     }
     
     @objc private func saveButtonTapped() {
-        print("save")
+        if let currentStoriesIndex = currentStoriesIndex {
+            presenter.saveVideoToLibrary(storyIndex: currentStoriesIndex)
+        }
     }
 }
 
@@ -245,6 +251,14 @@ extension StoryViewController: UICollectionViewDataSource, UICollectionViewDeleg
 
 //MARK: - extension + StoryViewProtocol
 extension StoryViewController: StoryViewProtocol {
+    func present(viewController: UIViewController) {
+        presentViewController(viewController, animated: true)
+    }
+    
+    func showAlertController(title: String, message: String) {
+        showAlertController(title: title, message: message, completion: nil)
+    }
+    
     func setupVideoProgressViewWidth(percentWidth: CGFloat) {
         videoProgressView.pin
             .below(of: collectionViewForStories).marginTop(LocalConstants.videoProgressViewTopInset)

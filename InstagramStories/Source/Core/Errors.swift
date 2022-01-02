@@ -17,6 +17,7 @@ enum Errors {
     case cantDownloadStory
     case cantFetchUserProfile
     case cantFetchUsers
+    case noUserInDataBase
     
     var error: NSError {
         switch self {
@@ -38,6 +39,8 @@ enum Errors {
             return NSError(domain: "Cant fetch user profile", code: 7)
         case .cantFetchUsers:
             return NSError(domain: "Cant fetch users", code: 8)
+        case .noUserInDataBase:
+            return NSError(domain: "No user in dataBase", code: 9)
         }
     }
 }

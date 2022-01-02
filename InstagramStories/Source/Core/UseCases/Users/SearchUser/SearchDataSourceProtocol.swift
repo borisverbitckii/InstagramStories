@@ -6,10 +6,11 @@
 //
 
 import Swiftagram
+import RealmSwift
 
 protocol SearchDataSourceProtocol {
     func fetchInstagramUsers(searchingTitle: String,
                              secret: Secret,
-                             completion: @escaping (Result<[InstagramUser], Error>)->())
+                             completion: @escaping (Result <[InstagramUser], Error>)->())
     func stopLastOperation()
 }

@@ -5,18 +5,14 @@
 //  Created by Борис on 06.12.2021.
 //
 
-import Foundation.NSError
-
-enum UseCaseType {
-    case preferencesViewController
-}
-
 protocol UseCaseFactoryProtocol {
     func getAuthUseCase() -> UseCase
     func getLoadUserProfileUseCase() -> UseCase
     func getSearchUserUseCase() -> UseCase
-    func getShowRecentsUsersUseCase() -> UseCase
+    func getChangeRecentsUsersUseCase() -> UseCase
     func getShowFavoritesUsersUseCase() -> UseCase
+    func getChangeRecentsUserUseCase() -> UseCase
+    func getSaveFavoritesUsersUseCase() -> UseCase
     func getShowPreferencesUseCase() -> UseCase
     func getShowStoryUseCase() -> UseCase
 }
@@ -24,8 +20,7 @@ protocol UseCaseFactoryProtocol {
 /// Only for  inheritance
 class UseCase {}
 
-final class UseCasesFactory: UseCaseFactoryProtocol {
-    
+final class UseCasesFactory {
     //MARK: - Private properties
     private let managerFactory: ManagerFactoryProtocol
     private let repositoryFactory: RepositoryFactoryProtocol
@@ -36,19 +31,23 @@ final class UseCasesFactory: UseCaseFactoryProtocol {
         self.managerFactory = managerFactory
         self.repositoryFactory = repositoryFactory
     }
+}
+
+extension UseCasesFactory: UseCaseFactoryProtocol {
     
     func getAuthUseCase() -> UseCase {
         return AuthUseCase(authRepository: repositoryFactory.getAuthRepository())
     }
     
-    func getShowRecentsUsersUseCase() -> UseCase {
-        return ShowRecentsUsersUseCase(recentUsersRepository: repositoryFactory.getRecentUsersRepository())
+    func getChangeRecentsUsersUseCase() -> UseCase {
+        return ChangeRecentUseCase(usersRepository: repositoryFactory.getUsersRepository())
     }
     
     func getSearchUserUseCase() -> UseCase {
         return SearchUserUseCase(
             fetchImageRepository: repositoryFactory.getUserImageRepository(),
-            searchUserRepository: repositoryFactory.getSearchUserRepository()
+            searchUserRepository: repositoryFactory.getSearchUserRepository(),
+            usersRepository: repositoryFactory.getUsersRepository()
         )
     }
     
@@ -60,7 +59,17 @@ final class UseCasesFactory: UseCaseFactoryProtocol {
     }
     
     func getShowFavoritesUsersUseCase() -> UseCase {
-        return ShowFavoritesUseCase(favoritesRepository: repositoryFactory.getFavoritesUsersRepository())
+        return ChangeFavoritesUseCase(usersRepository: repositoryFactory.getUsersRepository(),
+                                    fetchImageRepository: repositoryFactory.getUserImageRepository())
+    }
+    
+    func getChangeRecentsUserUseCase() -> UseCase {
+        return ChangeRecentUseCase(usersRepository: repositoryFactory.getUsersRepository())
+    }
+    
+    func getSaveFavoritesUsersUseCase() -> UseCase {
+        return ChangeFavoritesUseCase(usersRepository: repositoryFactory.getUsersRepository(),
+                                      fetchImageRepository: repositoryFactory.getUserImageRepository())
     }
     
     func getShowPreferencesUseCase() -> UseCase {

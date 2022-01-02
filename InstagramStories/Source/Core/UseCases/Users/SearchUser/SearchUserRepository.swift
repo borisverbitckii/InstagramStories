@@ -7,6 +7,7 @@
 
 import Foundation
 import Swiftagram
+import RealmSwift
 
 protocol SearchUserRepositoryProtocol {
     func fetchInstagramUsersFromNetwork(searchingTitle: String,
@@ -30,7 +31,7 @@ final class SearchUserRepository {
 extension SearchUserRepository: SearchUserRepositoryProtocol {
     func fetchInstagramUsersFromNetwork(searchingTitle: String,
                                         secret: Secret,
-                                        completion: @escaping (Result<[InstagramUser], Error>) -> ()) {
+                                        completion: @escaping (Result <[InstagramUser], Error>)->()) {
         remoteDataSource.fetchInstagramUsers(searchingTitle: searchingTitle,
                                              secret: secret,
                                              completion: completion)

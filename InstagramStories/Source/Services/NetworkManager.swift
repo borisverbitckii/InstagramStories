@@ -8,6 +8,7 @@
 import Foundation
 import SwiftagramCrypto
 import UIKit.UIImage
+import RealmSwift
 
 protocol NetworkManagerProtocol: ManagerProtocol {}
 
@@ -16,17 +17,14 @@ final class NetworkManager {
     //MARK: - Private properties
     private var bin: Set<AnyCancellable> = []
     private let imageCacheManager: ImageCacheManagerProtocol
+    private let videoCacheManager: VideoCacheManagerProtocol
     private var dataTaskForStory: URLSessionDataTask?
-    private let fileManager = FileManager.default
-    private lazy var mainDirectoryUrl: URL = {
-        let documentsUrl = self.fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first!
-        return documentsUrl
-    }()
-    
     
     //MARK: - Init
-    init(imageCacheManager: ImageCacheManagerProtocol) {
+    init(imageCacheManager: ImageCacheManagerProtocol,
+         videoCacheManager: VideoCacheManagerProtocol) {
         self.imageCacheManager = imageCacheManager
+        self.videoCacheManager = videoCacheManager
     }
     
     //MARK: - Public methods
@@ -37,7 +35,7 @@ final class NetworkManager {
     //MARK: - Private methods
     private func fetchUserProfile(id: Int,
                                   secret: Secret,
-                                  completion: @escaping (InstagramUser) -> ()) {
+                                  completion: @escaping (RealmInstagramUser) -> ()) {
         
         Endpoint
             .user(String(id))
@@ -52,15 +50,29 @@ final class NetworkManager {
             } receiveValue: { userInfo in
                 let user = userInfo["user"]
                 
-                let instagramUser = InstagramUser(name: userInfo.user?.name ?? "",
-                                                  profileDescription: userInfo.user?.biography ?? "",
-                                                  instagramUsername: userInfo.user?.username ?? "",
-                                                  id: id,
-                                                  userIconURL: userInfo.user?.thumbnail?.absoluteString ?? "",
-                                                  posts: userInfo.user?.counter?.posts ?? 0,
-                                                  subscribers: userInfo.user?.counter?.followers ?? 0,
-                                                  subscriptions: userInfo.user?.counter?.following ?? 0,
-                                                  isPrivate: user["isPrivate"].bool() ?? false)
+                let name = userInfo.user?.name ?? ""
+                let profileDescription = userInfo.user?.biography ?? ""
+                let instagramUsername = userInfo.user?.username ?? ""
+                let id = id
+                let userIconURL = userInfo.user?.thumbnail?.absoluteString ?? ""
+                let posts = userInfo.user?.counter?.posts ?? 0
+                let subscribers = userInfo.user?.counter?.followers ?? 0
+                let subscriptions = userInfo.user?.counter?.following ?? 0
+                let isPrivate = user["isPrivate"].bool() ?? false
+                let isOnFavorite = false
+                let isRecent = false
+                
+                let instagramUser = RealmInstagramUser(name: name,
+                                                       profileDescription: profileDescription,
+                                                       instagramUsername: instagramUsername,
+                                                       id: id,
+                                                       userIconURL: userIconURL,
+                                                       posts: posts,
+                                                       subscribers: subscribers,
+                                                       subscription: subscriptions,
+                                                       isPrivate: isPrivate,
+                                                       isOnFavorite: isOnFavorite,
+                                                       isRecent: isRecent)
                 completion(instagramUser)
             }.store(in: &self.bin)
     }
@@ -110,7 +122,9 @@ extension NetworkManager: UserImageDataSourceProtocol {
             URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
                 if let error = error {
                     print(#file, #line, error)
-                    completion(.failure(error))
+                    DispatchQueue.main.async {
+                        completion(.failure(error))
+                    }
                     return
                 }
                 
@@ -164,7 +178,6 @@ extension NetworkManager: StoriesDataSourceProtocol {
                 
                 for item in items {
                     
-                    var type: StoryType!
                     var previewURLString = ""
                     var contentURLString = ""
                     
@@ -177,7 +190,6 @@ extension NetworkManager: StoriesDataSourceProtocol {
                                 previewURLString = url
                             }
                             contentURLString = url
-                            type = .video
                         }
                     } else {
                         let candidates = item["imageVersions2"]["candidates"].array()
@@ -185,12 +197,11 @@ extension NetworkManager: StoriesDataSourceProtocol {
                         let url = firstCandidate["url"].description
                         previewURLString = url
                         contentURLString = url
-                        type = .photo
                     }
                     let date = item["deviceTimestamp"].int()
                     let correctDate = self?.timeFormatHandle(date: date)
                     
-                    let story = Story(time: correctDate ?? 0, type: type, previewImageURL: previewURLString, contentURL: contentURLString)
+                    let story = Story(time: correctDate ?? 0, previewImageURL: previewURLString, contentURL: contentURLString)
                     storiesArray.append(story)
                 }
                 DispatchQueue.main.async {
@@ -205,14 +216,14 @@ extension NetworkManager: StoriesDataSourceProtocol {
 extension NetworkManager: SearchDataSourceProtocol {
     func fetchInstagramUsers(searchingTitle: String,
                              secret: Secret,
-                             completion: @escaping (Result<[InstagramUser], Error>)->()){
+                             completion: @escaping (Result <[InstagramUser], Error>)->()){
         bin.removeAll()
         
         Endpoint
             .users(matching: searchingTitle)
             .unlock(with: secret)
             .session(URLSession.instagram)
-            .pages(.max, delay: 0.5)
+            .pages(.max)
             .sink {  response in
                 switch response {
                 case .finished: break
@@ -224,22 +235,39 @@ extension NetworkManager: SearchDataSourceProtocol {
                     }
                 }
             } receiveValue: { users in
-                DispatchQueue.global().async { [weak self] in
+                DispatchQueue.global().async {
                     guard let usersArray = users.users else { return }
                     var instagramUsers = [InstagramUser]()
-                    let dispatchGroup = DispatchGroup()
-                    let dispatchSemaphore = DispatchSemaphore(value: 3)
                     for user in usersArray {
-                        dispatchGroup.enter()
-                        dispatchSemaphore.wait()
-                        self?.fetchUserProfile(id: user["pk"].int() ?? 0, secret: secret, completion: { user in
-                            instagramUsers.append(user)
-                            dispatchGroup.leave()
-                            dispatchSemaphore.signal()
-                        })
+                        
+                        let name = user.name ?? ""
+                        let profileDescription = user.biography ?? ""
+                        let instagramUsername = user.username ?? ""
+                        let id = Int(user.identifier) ?? 0
+                        let userIconURL = user.thumbnail?.absoluteString ?? ""
+                        let posts = user.counter?.posts ?? 0
+                        let subscribers = user.counter?.followers ?? 0
+                        let subscriptions = user.counter?.following ?? 0
+                        let isPrivate = user["isPrivate"].bool() ?? false
+                        let isOnFavorite = false
+                        let isRecent = false
+                        
+                        let instagramUser = InstagramUser(name: name,
+                                                          profileDescription: profileDescription,
+                                                          instagramUsername: instagramUsername,
+                                                          id: id,
+                                                          userIconURL: userIconURL,
+                                                          posts: posts,
+                                                          subscribers: subscribers,
+                                                          subscription: subscriptions,
+                                                          isPrivate: isPrivate,
+                                                          isOnFavorite: isOnFavorite,
+                                                          isRecent: isRecent)
+                    
+                        instagramUsers.append(instagramUser)
                     }
                     
-                    dispatchGroup.notify(queue: .main) {
+                    DispatchQueue.main.async {
                         instagramUsers = instagramUsers.sorted { $0.subscribers > $1.subscribers}
                         completion(.success(instagramUsers))
                     }
@@ -253,9 +281,9 @@ extension NetworkManager: StoriesVideoSourceProtocol {
         
         DispatchQueue.global().async { [weak self] in
             guard let self = self else { return }
-            let video = self.directoryFor(stringUrl: urlString)
+            let video = self.videoCacheManager.directoryFor(stringUrl: urlString)
             
-            guard !self.fileManager.fileExists(atPath: video.path) else {
+            guard !self.videoCacheManager.fileExists(atPath: video.path) else {
                 DispatchQueue.main.async {
                     completion(video)
                 }
@@ -284,14 +312,6 @@ extension NetworkManager: StoriesVideoSourceProtocol {
                 return
             }
         }
-        
-    }
-    
-    private func directoryFor(stringUrl: String) -> URL {
-        guard let url = URL(string: stringUrl) else { return URL(fileReferenceLiteralResourceName: "")}
-        let fileURL = url.lastPathComponent
-        let file = self.mainDirectoryUrl.appendingPathComponent(fileURL)
-        return file
     }
 }
 

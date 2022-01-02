@@ -35,10 +35,15 @@ extension AuthManager: AuthDataSourceProtocol {
     //MARK: - Public methods
     func checkAuthorization(completion: @escaping(Secret?)->()) {
         do {
-            if UserDefaults.standard.value(forKey: "UUID") == nil { //TODO: fix auth bug
+            if UserDefaults.standard.value(forKey: "secret.identifier") == nil {
                 completion(nil)
-            } else if let secret = try KeychainStorage<Secret>().items().last {
-                completion(secret)
+            } else if let identifier = UserDefaults.standard.value(forKey: "secret.identifier") as? String,
+                      let secret = try KeychainStorage<Secret>().items().last {
+                if identifier == secret.identifier {
+                    completion(secret)
+                }
+            } else {
+                completion(nil)
             }
         } catch {
             print(#file, #line, Errors.noSecretIntoKeychainStorage.error)
@@ -76,6 +81,7 @@ extension AuthManager: AuthDataSourceProtocol {
                       receiveValue: { [weak self] secret in
                     self?.storeSecret(secret)
                     DispatchQueue.main.async {
+                        UserDefaults.standard.set(secret.identifier, forKey: "secret.identifier")
                         completion(.success(secret))
                     }
                 }).store(in: &self.bin)

@@ -20,17 +20,20 @@ final class ProfilePresenter {
     private weak var view: ProfileViewProtocol?
     private weak var transitionHandler: TransitionProtocol?
     private let coordinator: CoordinatorProtocol
-    private let useCase: LoadUserProfileUseCase
-    private var user: InstagramUser?
+    private let loadUserProfileUseCase: LoadUserProfileUseCase
+    private let saveFavoritesUseCase: ChangeFavoritesUseCaseProtocol
+    private var user: RealmInstagramUserProtocol?
     private let secret: Secret
     
     //MARK: - Init
     init(coordinator: CoordinatorProtocol,
-         useCase: LoadUserProfileUseCase,
+         loadUserProfileUseCase: LoadUserProfileUseCase,
+         saveFavoritesUseCase: ChangeFavoritesUseCaseProtocol,
          secret: Secret,
-         user: InstagramUser) {
+         user: RealmInstagramUserProtocol) {
         self.coordinator = coordinator
-        self.useCase = useCase
+        self.loadUserProfileUseCase = loadUserProfileUseCase
+        self.saveFavoritesUseCase = saveFavoritesUseCase
         self.secret = secret
         self.user = user
     }
@@ -52,7 +55,7 @@ extension ProfilePresenter: ProfilePresenterProtocol {
             view?.showProfileIsPrivate()
             return
         }
-        useCase.fetchUserStories(userID: String(user.id), secret: secret) { [weak self] result in
+        loadUserProfileUseCase.fetchUserStories(userID: String(user.id), secret: secret) { [weak self] result in
             switch result {
             case .success(let stories):
                 self?.view?.showStoriesPreview(stories: stories)
@@ -63,7 +66,7 @@ extension ProfilePresenter: ProfilePresenterProtocol {
     }
     
     func fetchImage(stringURL: String, completion: @escaping (Result<UIImage, Error>)->()) {
-        useCase.fetchImageData(urlString: stringURL) { result in
+        loadUserProfileUseCase.fetchImageData(urlString: stringURL) { result in
             switch result {
             case .success(let imageData):
                 guard let image = UIImage(data: imageData) else { return }

@@ -8,7 +8,7 @@
 import UIKit
 
 protocol ProfileViewProtocol: AnyObject {
-    func showUser(_ user: InstagramUser)
+    func showUser(_ user: RealmInstagramUserProtocol)
     func showStoriesPreview(stories: [Story])
     func showProfileIsPrivate()
 }
@@ -28,7 +28,7 @@ final class ProfileViewController: UIViewController {
         }
     }
     
-    private var user: InstagramUser? {
+    private var user: RealmInstagramUserProtocol? { // move to presenter
         didSet {
             guard let instagramUsername = user?.instagramUsername else { return }
             title = "@" + instagramUsername
@@ -161,7 +161,7 @@ final class ProfileViewController: UIViewController {
     }
     
     private func setupStackViews() {
-        subscriptionsStackView = getColumnStackView(value: String(user?.subscriptions ?? 0), name: Text.subscriptions.getText())
+        subscriptionsStackView = getColumnStackView(value: String(user?.subscription ?? 0), name: Text.subscriptions.getText())
         subscribersStackView = getColumnStackView(value: String(user?.subscribers ?? 0), name: Text.subscribers.getText())
         postsStackView = getColumnStackView(value: String(user?.posts ?? 0), name: Text.posts.getText())
     }
@@ -336,7 +336,7 @@ extension ProfileViewController: ProfileViewProtocol {
         self.stories = stories
     }
     
-    func showUser(_ user: InstagramUser) {
+    func showUser(_ user: RealmInstagramUserProtocol) {
         self.user = user
     }
     
