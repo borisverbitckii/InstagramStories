@@ -13,6 +13,7 @@ protocol ChangeFavoritesUseCaseProtocol {
     func changeFavoriteUser(user: RealmInstagramUserProtocol, isChangedCompletion: @escaping (Bool)->())
     func loadFavoritesUsers(completion: @escaping ([RealmInstagramUserProtocol]) -> ())
     func fetchImage(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> ())
+    func removeFavoriteUser(user: RealmInstagramUserProtocol, isRemovedCompletion: @escaping (Bool)->())
 }
 
 final class ChangeFavoritesUseCase: UseCase {
@@ -30,6 +31,10 @@ final class ChangeFavoritesUseCase: UseCase {
 
 //MARK: - extension + SaveRecentUseCaseProtocol
 extension ChangeFavoritesUseCase: ChangeFavoritesUseCaseProtocol {
+    func removeFavoriteUser(user: RealmInstagramUserProtocol, isRemovedCompletion: @escaping (Bool) -> ()) {
+        usersRepository.removeUserFromBD(user: user, isDeletedCompletion: isRemovedCompletion)
+    }
+    
     func loadFavoritesUsers(completion: @escaping ([RealmInstagramUserProtocol]) -> ()) {
         usersRepository.fetchUsersFromBD(userType: .favorite, completion: completion)
     }

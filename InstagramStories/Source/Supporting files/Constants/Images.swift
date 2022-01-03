@@ -10,7 +10,6 @@ import UIKit.UIImage
 enum Images {
     case searchTabIcon
     case favoritesTabIcon
-    case preferencesTabIcon
     case trailingCellButton(InstagramUserCellType)
     
     func getImage() -> UIImage? {
@@ -18,8 +17,6 @@ enum Images {
         case .searchTabIcon:
             return UIImage(systemName: "heart")
         case .favoritesTabIcon:
-            return UIImage(systemName: "heart")
-        case .preferencesTabIcon:
             return UIImage(systemName: "heart")
         case .trailingCellButton(let cellType):
             switch cellType {

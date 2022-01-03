@@ -16,6 +16,13 @@ enum DataBaseOperationType {
     case getUserWithPrimaryKey
 }
 
+enum UserState {
+    case notExist
+    case onlyOnFavorites
+    case onlyOnRecents
+    case onFavoritesAndRecents
+}
+
 protocol DataManagerSettingsProtocol {
     var type: DataBaseOperationType? { get }
     var user: RealmInstagramUserProtocol? { get }
@@ -28,19 +35,25 @@ protocol DataBaseManagerProtocol: ManagerProtocol {
     func executeDBOperation<T:DataManagerSettingsProtocol, Y>(settings: T,completion: @escaping (Result<Y, Error>)->())
 }
 
-enum UserState {
-    case onlyExist
-    case onlyOnFavorites
-    case onlyOnRecents
-    case onFavoritesAndRecents
-}
-
 final class DataBaseManager {
     
     //MARK: - Private properties
     private let realm = try! Realm()
     
     //MARK: - Public methods
+    static func getUserState(user: RealmInstagramUserProtocol) -> UserState {
+        let searchedUser = try! Realm().object(ofType: RealmInstagramUser.self, forPrimaryKey: user.id)
+        if searchedUser?.isOnFavorite == true && searchedUser?.isRecent == true {
+            return .onFavoritesAndRecents
+        } else if searchedUser?.isOnFavorite == true {
+            return .onlyOnFavorites
+        } else if searchedUser?.isRecent == true {
+            return .onlyOnRecents
+        } else {
+            return .notExist
+        }
+    }
+    
     static func isAlreadyExist(user: RealmInstagramUserProtocol) -> Bool {
         let searchedUser = try! Realm().object(ofType: RealmInstagramUser.self, forPrimaryKey: user.id)
         return searchedUser != nil
@@ -126,15 +139,10 @@ extension DataBaseManager : DataBaseManagerProtocol {
                 if let user = settings.user {
                     let userToUpdate = realm.object(ofType: RealmInstagramUser.self, forPrimaryKey: user.id)
                     try realm.write({
-                        
                         userToUpdate?.name = user.name
                         userToUpdate?.date = user.date
-                        userToUpdate?.profileDescription = user.profileDescription
                         userToUpdate?.instagramUsername = user.instagramUsername
                         userToUpdate?.userIconURL = user.userIconURL
-                        userToUpdate?.posts = user.posts
-                        userToUpdate?.subscribers = user.subscribers
-                        userToUpdate?.subscription = user.subscription
                         userToUpdate?.isPrivate = user.isPrivate
                         userToUpdate?.isRecent = user.isRecent // fix this because of data model
                         userToUpdate?.isOnFavorite = user.isOnFavorite

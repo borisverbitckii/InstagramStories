@@ -19,7 +19,6 @@ final class TabBarController: UITabBarController {
     //MARK: - Private properties
     private let navigationControllerForSearch: UINavigationController
     private let navigationControllerForFavorites : UINavigationController
-    private let navigationControllerForPreferences: UINavigationController
     
     private let indicatorView: UIView = {
         $0.backgroundColor = Palette.green.color
@@ -31,19 +30,16 @@ final class TabBarController: UITabBarController {
     
     //MARK: - Init
     init(navigationControllerForSearch: UINavigationController,
-         navigationControllerForFavorites : UINavigationController,
-         navigationControllerForPreferences: UINavigationController) {
+         navigationControllerForFavorites : UINavigationController) {
         self.navigationControllerForSearch = navigationControllerForSearch
         self.navigationControllerForFavorites = navigationControllerForFavorites
-        self.navigationControllerForPreferences = navigationControllerForPreferences
         
         super.init(nibName: nil, bundle: nil)
         
         setupTabBar()
         setupTabBarItems()
         setViewControllers([navigationControllerForSearch,
-                            navigationControllerForFavorites,
-                            navigationControllerForPreferences], animated: true)
+                            navigationControllerForFavorites], animated: true)
         
         delegate = self
     }
@@ -77,20 +73,15 @@ final class TabBarController: UITabBarController {
         navigationControllerForFavorites.tabBarItem = UITabBarItem(title: "",
                                                                    image: Images.favoritesTabIcon.getImage(),
                                                                    selectedImage: Images.favoritesTabIcon.getImage())
-        navigationControllerForPreferences.tabBarItem = UITabBarItem(title: "",
-                                                                   image: Images.preferencesTabIcon.getImage(),
-                                                                   selectedImage: Images.preferencesTabIcon.getImage())
     }
     
     private func animateIndicator(index: Int) {
         UIView.animate(withDuration: LocalConstants.indicatorViewAnimationDuration) { [weak self] in
             guard let self = self else { return }
             if index == 1 {
-                self.indicatorView.center.x = self.tabBar.frame.width/3/2
+                self.indicatorView.center.x = self.tabBar.frame.width/2/2
             } else if index == 2 {
-                self.indicatorView.center.x = self.tabBar.frame.width/3/2 + self.tabBar.frame.width/3
-            } else if index == 3 {
-                self.indicatorView.center.x = self.tabBar.frame.width/3/2 + self.tabBar.frame.width/3 * 2
+                self.indicatorView.center.x = self.tabBar.frame.width/2/2 + self.tabBar.frame.width/2
             }
         }
     }

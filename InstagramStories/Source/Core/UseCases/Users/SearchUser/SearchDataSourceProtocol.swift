@@ -12,5 +12,8 @@ protocol SearchDataSourceProtocol {
     func fetchInstagramUsers(searchingTitle: String,
                              secret: Secret,
                              completion: @escaping (Result <[InstagramUser], Error>)->())
+    func fetchUserProfile(id: Int,
+                          secret: Secret,
+                          completion: @escaping (Result<AdditionalUserDetails, Error>) -> ())
     func stopLastOperation()
 }

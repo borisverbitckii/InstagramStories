@@ -12,8 +12,8 @@ protocol ModuleFactoryProtocol: AnyObject {
     func buildTabBarController(secret: Secret) -> UIViewController
     func buildPresentationViewController() -> UIViewController
     func buildSearchNavigationController(secret: Secret) -> UINavigationController
-    func buildFavoritesNavigationController() -> UINavigationController
-    func buildPreferencesNavigationController() -> UINavigationController
+    func buildFavoritesNavigationController(secret: Secret) -> UINavigationController
+//    func buildPreferencesNavigationController() -> UINavigationController
     func buildSplashViewController() -> UIViewController
     func buildProfileViewController(with user: RealmInstagramUserProtocol, secret: Secret) -> UIViewController
     func buildStoryViewController(with user: RealmInstagramUserProtocol, stories: [Story], selectedStoryIndex: Int, secret: Secret) -> UIViewController
@@ -38,11 +38,9 @@ final class ModuleFactory: ModuleFactoryProtocol {
     
     func buildTabBarController(secret: Secret) -> UIViewController {
         let searchVC = buildSearchNavigationController(secret: secret)
-        let favoritesVC = buildFavoritesNavigationController()
-        let preferencesVC = buildPreferencesNavigationController()
+        let favoritesVC = buildFavoritesNavigationController(secret: secret)
         return TabBarController(navigationControllerForSearch: searchVC,
-                                    navigationControllerForFavorites: favoritesVC,
-                                    navigationControllerForPreferences: preferencesVC)
+                                    navigationControllerForFavorites: favoritesVC)
     }
     
     func buildPresentationViewController() -> UIViewController {
@@ -72,7 +70,7 @@ final class ModuleFactory: ModuleFactoryProtocol {
         return navigationController
     }
     
-    func buildFavoritesNavigationController() -> UINavigationController {
+    func buildFavoritesNavigationController(secret: Secret) -> UINavigationController {
         guard let coordinator = coordinator,
               let changeFavoritesUseCase = useCasesFactory.getSaveFavoritesUsersUseCase() as? ChangeFavoritesUseCaseProtocol
         else {
@@ -80,22 +78,9 @@ final class ModuleFactory: ModuleFactoryProtocol {
         }
         
         let presenter = FavoritesPresenter(coordinator: coordinator,
-                                           changeFavoritesUseCase: changeFavoritesUseCase)
+                                           changeFavoritesUseCase: changeFavoritesUseCase,
+                                           secret: secret)
         let view = FavoritesViewController(type: .favorites, presenter: presenter)
-        presenter.injectView(view: view)
-        let navigationController = UINavigationController(rootViewController: view)
-        presenter.injectTransitionHandler(view: view)
-        return navigationController
-    }
-    
-    func buildPreferencesNavigationController() -> UINavigationController {
-        guard let coordinator = coordinator,
-              let useCase = useCasesFactory.getShowPreferencesUseCase() as? ShowPreferencesUseCase else {
-            return UINavigationController()
-        }
-        
-        let presenter = PreferencesPresenter(coordinator: coordinator,preferencesUseCase: useCase)
-        let view = PreferencesViewController(type: .preferences,presenter: presenter)
         presenter.injectView(view: view)
         let navigationController = UINavigationController(rootViewController: view)
         presenter.injectTransitionHandler(view: view)

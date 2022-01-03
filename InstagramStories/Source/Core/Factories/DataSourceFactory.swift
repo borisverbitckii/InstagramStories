@@ -13,7 +13,6 @@ protocol DataSourceFactoryProtocol {
     func getAuthDataSource() -> AuthDataSourceProtocol
     func getStoriesDataSource() -> StoriesDataSourceProtocol
     func getRecentUsersDataSource() -> UsersDataSourceProtocol
-    func getPreferencesDataSource() -> PreferencesDataSourceProtocol
     func getStoryDataSource() -> StoriesVideoSourceProtocol
 }
 
@@ -47,10 +46,6 @@ extension DataSourceFactory: DataSourceFactoryProtocol {
     
     func getRecentUsersDataSource() -> UsersDataSourceProtocol {
         return UsersDataSource(dataBaseManager: managerFactory.getDataBaseManager()) as UsersDataSourceProtocol
-    }
-    
-    func getPreferencesDataSource() -> PreferencesDataSourceProtocol {
-        return Preferences() as PreferencesDataSourceProtocol
     }
     
     func getStoryDataSource() -> StoriesVideoSourceProtocol {

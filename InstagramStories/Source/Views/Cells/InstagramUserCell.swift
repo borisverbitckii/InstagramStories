@@ -115,7 +115,7 @@ final class InstagramUserCell: UICollectionViewCell {
         case .favorite(let favoriteType):
             switch favoriteType {
             case .add:
-                break
+                break //TODO: Fix image
             case .remove:
                 break
             case .none:

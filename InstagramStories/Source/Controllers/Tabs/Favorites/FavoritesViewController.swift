@@ -10,6 +10,7 @@ import UIKit.UIViewController
 protocol FavoritesViewProtocol: AnyObject {
     func showAlertController(title: String, message: String, completion: (()->())?)
     func setupFavoritesCount(number: Int)
+    func hideStateView()
 }
 
 final class FavoritesViewController: CommonViewController {
@@ -22,6 +23,13 @@ final class FavoritesViewController: CommonViewController {
             collectionView.reloadWithFade()
         }
     }
+    
+    // UIElements
+    
+    private let stateView: StateView = {
+        $0.isHidden = true
+        return $0
+    }(StateView(type: .noSearchResults))
     
     //MARK: - Init
     init(type: TabViewControllerType,
@@ -39,15 +47,42 @@ final class FavoritesViewController: CommonViewController {
     }
     
     //MARK: - Override methods
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        addSubviews()
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         presenter.viewWillAppear()
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        layout()
+    }
+    
+    //MARK: - Private methods
+    private func addSubviews() {
+        view.addSubview(stateView)
+    }
+    
+    private func layout() {
+        guard let navigationBar = navigationController?.navigationBar else { return }
+        
+        stateView.pin
+            .below(of: navigationBar).marginTop(LocalConstants.stateViewTopInset)
+            .hCenter()
     }
 }
 
 
 //MARK: - extension + FavoritesViewProtocol
 extension FavoritesViewController: FavoritesViewProtocol {
+    func hideStateView() {
+        stateView.isHidden = true
+    }
+    
     func setupFavoritesCount(number: Int) {
         favoritesUsersCount = number
     }
@@ -57,6 +92,12 @@ extension FavoritesViewController: FavoritesViewProtocol {
 extension FavoritesViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if favoritesUsersCount == 0 {
+            stateView.type = .noFavorites
+            stateView.showWithFade(with: LocalConstants.stateViewAnimationDuration)
+            return 0
+        }
+        stateView.hideWithFade(with: LocalConstants.stateViewAnimationDuration)
         return favoritesUsersCount
     }
     
@@ -73,9 +114,7 @@ extension FavoritesViewController: UICollectionViewDataSource, UICollectionViewD
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
-        // rootCoordinator
-//        guard let user = presenter?.favoritesUsers?[indexPath.row] else { return }
-//        presenter.
+        presenter.cellWasTapped(indexPath: indexPath.item)
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: collectionView.frame.width - 32, height: ConstantsForCommonViewController.cellHeight)
@@ -99,4 +138,9 @@ extension FavoritesViewController: InstagramUserCellButtonDelegate {
     func trailingButtonTapped(type: InstagramUserCellType, user: RealmInstagramUserProtocol) {
         presenter.trailingButtonTapped(type: type, user: user)
     }
+}
+
+private enum LocalConstants {
+    static let stateViewAnimationDuration: TimeInterval = 0.6
+    static let stateViewTopInset: CGFloat = 50
 }

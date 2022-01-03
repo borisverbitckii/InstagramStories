@@ -13,6 +13,9 @@ protocol SearchUserRepositoryProtocol {
     func fetchInstagramUsersFromNetwork(searchingTitle: String,
                                         secret: Secret,
                                         completion: @escaping (Result <[InstagramUser], Error>)->())
+    func fetchInstagramUserProfileFromNetwork(userID: Int,
+                                              secret: Secret,
+                                              completion: @escaping (Result<AdditionalUserDetails, Error>) -> ())
     func stopLastOperation()
 }
 
@@ -29,6 +32,13 @@ final class SearchUserRepository {
 
 //MARK: - extension + SearchUserRepositoryProtocol
 extension SearchUserRepository: SearchUserRepositoryProtocol {
+    func fetchInstagramUserProfileFromNetwork(userID: Int, secret: Secret, completion: @escaping (Result<AdditionalUserDetails, Error>) -> ()) {
+        
+        remoteDataSource.fetchUserProfile(id: userID,
+                                          secret: secret,
+                                          completion: completion)
+    }
+    
     func fetchInstagramUsersFromNetwork(searchingTitle: String,
                                         secret: Secret,
                                         completion: @escaping (Result <[InstagramUser], Error>)->()) {

@@ -13,7 +13,6 @@ protocol RepositoryFactoryProtocol {
     func getSearchUserRepository() -> SearchUserRepositoryProtocol
     func getStoriesRepository() -> StoriesPreviewRepositoryProtocol
     func getUsersRepository() -> UsersRepositoryProtocol
-    func getPreferencesRepository() -> PreferencesRepositoryProtocol
     func getStoryRepository() -> StoryRepositoryProtocol
 }
 
@@ -49,10 +48,6 @@ extension RepositoryFactory: RepositoryFactoryProtocol {
     
     func getUsersRepository() -> UsersRepositoryProtocol {
         return UsersRepository(localDataSource: dataSourceFactory.getRecentUsersDataSource())
-    }
-    
-    func getPreferencesRepository() -> PreferencesRepositoryProtocol {
-        return PreferencesRepository(localDataSource: dataSourceFactory.getPreferencesDataSource())
     }
     
     func getStoryRepository() -> StoryRepositoryProtocol {

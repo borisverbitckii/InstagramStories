@@ -7,7 +7,6 @@
 
 import UIKit
 import Swiftagram
-import RealmSwift
 
 protocol SearchPresenterProtocol {
     var searchingInstagramUsers: [RealmInstagramUserProtocol] { get }
@@ -71,50 +70,44 @@ extension SearchPresenter: SearchPresenterProtocol {
     }
     
     func trailingButtonTapped(type: InstagramUserCellType, user: RealmInstagramUserProtocol) {
+        let userState = DataBaseManager.getUserState(user: user)
         switch type {
         case .removeFromRecent:
-            if user.isRecent {
-                if !DataBaseManager.isOnFavorite(user: user) {
-                    changeRecentUsersUseCase.removeRecentUser(user: user) { [weak self] _ in
-                        self?.changeRecentUsersUseCase.fetchRecentUsersFromBD { users in
-                            self?.view?.setupRecentUsersCount(number: users.count) // fix reloadData to reloadItem
-                            self?.recentUsers = users
-                        }
-                    }
-                } else {
-                    var notRecentUser = user
-                    notRecentUser.isRecent = false
-                    changeRecentUsersUseCase.changeRecentUser(user: notRecentUser) { [weak self] _ in
-                        self?.changeRecentUsersUseCase.fetchRecentUsersFromBD { users in
-                            self?.view?.setupRecentUsersCount(number: users.count) // fix reloadData to reloadItem
-                            self?.recentUsers = users
-                        }
+            switch userState {
+            case .onlyOnRecents:
+                changeRecentUsersUseCase.removeRecentUser(user: user) { [weak self] _ in
+                    self?.changeRecentUsersUseCase.fetchRecentUsersFromBD { users in
+                        self?.renewRecents() // fix reload items
                     }
                 }
+            case .onFavoritesAndRecents:
+                var notRecentUser = user
+                notRecentUser.isRecent = false
+                changeRecentUsersUseCase.changeRecentUser(user: notRecentUser) { [weak self] _ in
+                    self?.changeRecentUsersUseCase.fetchRecentUsersFromBD { users in
+                        self?.renewRecents() // fix reload items
+                    }
+                }
+            case .notExist, .onlyOnFavorites: break
             }
-        case .favorite(_):
             
-            if DataBaseManager.isOnFavorite(user: user) {
-                var notFavoriteUser = user
-                notFavoriteUser.isOnFavorite = false
-                changeFavoritesUseCase.changeFavoriteUser(user: notFavoriteUser) { _ in
-                    return
-                        //TODO: fix with deleting user which is not necessary
-                }
-            } else {
-                var favoriteUser = user
-                if DataBaseManager.isAlreadyExist(user: user) {
-                    favoriteUser.isOnFavorite = true
-                    if DataBaseManager.isRecent(user: user ) {
-                        favoriteUser.isRecent = true
-                        changeFavoritesUseCase.changeFavoriteUser(user: favoriteUser) { _ in }
-                    } else {
-                        changeFavoritesUseCase.changeFavoriteUser(user: favoriteUser) { _ in }
-                    }
-                } else {
-                    favoriteUser.isOnFavorite = true
-                    changeFavoritesUseCase.saveFavoritesUser(user: favoriteUser) { _ in }
-                }
+        case .favorite:
+            var favoriteUser = user
+            
+            switch userState {
+            case .notExist:
+                favoriteUser.isOnFavorite = true
+                changeFavoritesUseCase.saveFavoritesUser(user: favoriteUser) { _ in }
+            case .onlyOnFavorites:
+                changeRecentUsersUseCase.removeRecentUser(user: user) { _ in }
+            case .onlyOnRecents:
+                favoriteUser.isRecent = true
+                favoriteUser.isOnFavorite = true
+                changeFavoritesUseCase.changeFavoriteUser(user: favoriteUser) { _ in }
+            case .onFavoritesAndRecents:
+                favoriteUser.isRecent = true
+                favoriteUser.isOnFavorite = false
+                changeFavoritesUseCase.changeFavoriteUser(user: favoriteUser) { _ in }
             }
         }
     }
@@ -128,20 +121,20 @@ extension SearchPresenter: SearchPresenterProtocol {
         }
         
         var user = searchingInstagramUsers[indexPath]
-        if !DataBaseManager.isAlreadyExist(user: user) {
+        let userState = DataBaseManager.getUserState(user: user)
+        
+        switch userState {
+        case .notExist:
             user.isRecent = true
             changeRecentUsersUseCase.saveRecentUser(user: user) { _ in }
-        } else {
-            if DataBaseManager.isOnFavorite(user: user) {
-                user.isOnFavorite = true
-                user.isRecent = true
-                changeRecentUsersUseCase.changeRecentUser(user: user) { _ in }
-            } else {
-                user.isRecent = true
-                changeRecentUsersUseCase.changeRecentUser(user: user) { _ in }
-            }
-            
+        case .onlyOnFavorites:
+            user.isOnFavorite = true
+            user.isRecent = true
+            changeRecentUsersUseCase.changeRecentUser(user: user) { _ in }
+        case .onlyOnRecents, .onFavoritesAndRecents:
+            break
         }
+        
         presentProfile(with: user)
     }
     
@@ -149,7 +142,6 @@ extension SearchPresenter: SearchPresenterProtocol {
         searchUseCase.fetchImage(stringURL: stringURL, completion: completion)
     }
     
-    //MARK: - Public methods
     func viewDidLoad() {
         changeRecentUsersUseCase.fetchRecentUsersFromBD { [weak self] users in
             self?.view?.setupRecentUsersCount(number: users.count)
@@ -173,8 +165,7 @@ extension SearchPresenter: SearchPresenterProtocol {
     func searchBarCancelButtonClicked() {
         searchUseCase.stopLastOperation()
         changeRecentUsersUseCase.fetchRecentUsersFromBD { [weak self] users in
-            self?.recentUsers = users
-            self?.view?.setupRecentUsersCount(number: users.count)
+            self?.renewRecents()
             self?.view?.setupSearchingUsersCount(number: 0)
         }
     }
@@ -182,26 +173,13 @@ extension SearchPresenter: SearchPresenterProtocol {
     //MARK: - Navigation
     private func presentProfile(with user: RealmInstagramUserProtocol) {
         guard let transitionHandler = transitionHandler else { return }
-        coordinator.presentProfileViewController(transitionHandler: transitionHandler,with: user, secret: secret)
-    }
-}
-
-final class UserStateHandler { // StateHandler
-    
-    func onlyExist() -> Bool {
-        return false
+        coordinator.presentProfileViewController(transitionHandler: transitionHandler, with: user, secret: secret)
     }
     
-    func onlyOnFavorite() -> Bool {
-        return false
+    private func renewRecents() {
+        changeRecentUsersUseCase.fetchRecentUsersFromBD { [weak self] users in
+            self?.recentUsers = users
+            self?.view?.setupRecentUsersCount(number: users.count)
+        }
     }
-    
-    func onlyOnRecents() -> Bool {
-        return false
-    }
-    
-    func onFavoritesAndRecents() -> Bool {
-        return false
-    }
-    
 }

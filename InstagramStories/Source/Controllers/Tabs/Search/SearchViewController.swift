@@ -18,6 +18,8 @@ protocol SearchViewProtocol: AnyObject {
 final class SearchViewController: CommonViewController {
     
     //MARK: - Private properties
+    private let presenter: SearchPresenterProtocol?
+    
     private var recentUsersCount = 0 {
         didSet{
             collectionView.reloadWithFade()
@@ -35,7 +37,6 @@ final class SearchViewController: CommonViewController {
     }
     
     private var previousValue: String?
-    private let presenter: SearchPresenterProtocol?
     
     // UI elements
     private let searchController: UISearchController = {
@@ -49,7 +50,7 @@ final class SearchViewController: CommonViewController {
         return $0
     }(CustomActivityIndicator())
     
-    private let noSearchResults: StateView = {
+    private let stateView: StateView = {
         $0.isHidden = true
         return $0
     }(StateView(type: .noSearchResults))
@@ -106,17 +107,28 @@ final class SearchViewController: CommonViewController {
         activityIndicator.hide()
     }
     
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        super.scrollViewDidScroll(scrollView)
+        layoutStateView()
+    }
+    
     //MARK: - Private methods
     private func addSubviews() {
         view.addSubview(activityIndicator)
-        view.addSubview(noSearchResults)
+        view.addSubview(stateView)
     }
     
     private func layout() {
         activityIndicator.pin.center()
+
+        layoutStateView()
+    }
     
-        noSearchResults.pin
-            .top(view.frame.height / 5)
+    private func layoutStateView() {
+        guard let navigationBar = navigationController?.navigationBar else { return }
+        
+        stateView.pin
+            .below(of: navigationBar).marginTop(LocalConstants.stateViewTopInset)
             .hCenter()
     }
     
@@ -135,7 +147,7 @@ final class SearchViewController: CommonViewController {
         searchController.searchBar.searchTextField.textColor = Palette.lightGray.color
         searchController.searchBar.searchTextField.attributedPlaceholder = NSAttributedString(string: Text.searchBarPlaceholderText.getText(), attributes: [.foregroundColor : Palette.lightGray.color, .font : Fonts.avenir(.book).getFont(size: .medium)])
         
-        // searchBar textField background colod
+        // searchBar textField background color
         if let textField = searchController.searchBar.value(forKey: "searchField") as? UITextField {
             let backgroundView = textField.subviews.first
             backgroundView?.subviews.forEach({ $0.removeFromSuperview() })
@@ -168,13 +180,17 @@ extension SearchViewController: UICollectionViewDataSource, UICollectionViewDele
     // Rows
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if !searchBarIsEmpty && searchingInstagramUsersCount == 0 {
-            noSearchResults.showWithFade(with: LocalConstants.noSearchResultAnimationDuration)
+            stateView.type = .noSearchResults
+            stateView.showWithFade(with: LocalConstants.stateViewAnimationDuration)
             return 0
+        } else if searchingInstagramUsersCount == 0 && recentUsersCount == 0 {
+            stateView.type = .noRecents
+            stateView.showWithFade(with: LocalConstants.stateViewAnimationDuration)
+            return recentUsersCount
         } else if searchingInstagramUsersCount == 0 {
-            noSearchResults.hideWithFade(with: LocalConstants.noSearchResultAnimationDuration)
             return recentUsersCount
         }
-        noSearchResults.hideWithFade(with: LocalConstants.noSearchResultAnimationDuration)
+        stateView.hideWithFade(with: LocalConstants.stateViewAnimationDuration)
         return searchingInstagramUsersCount
     }
     
@@ -248,7 +264,7 @@ extension SearchViewController: UISearchResultsUpdating {
             searchController.searchBar.text?.removeLast()
             return }
         activityIndicator.show()
-        noSearchResults.hideWithFade(with: LocalConstants.noSearchResultAnimationDuration)
+        stateView.hideWithFade(with: LocalConstants.stateViewAnimationDuration)
         presenter?.searchResultWasUpdated(username: text)
         previousValue = text
     }
@@ -285,5 +301,6 @@ extension SearchViewController: InstagramUserCellImageDelegate {
 private enum LocalConstants {
     static let headerReuseIdentifier = "header"
     static let headerHeight: CGFloat = 30
-    static let noSearchResultAnimationDuration: TimeInterval = 0.6
+    static let stateViewAnimationDuration: TimeInterval = 0.6
+    static let stateViewTopInset: CGFloat = 50
 }

@@ -10,7 +10,6 @@ import UIKit
 enum TabViewControllerType {
     case search
     case favorites
-    case preferences
 }
 
 ///  Only for inheritance
@@ -117,8 +116,6 @@ class CommonViewController: UIViewController {
             navigationItem.title = Text.navTitle(.search).getText()
         case .favorites:
             navigationItem.title = Text.navTitle(.favorites).getText()
-        case .preferences:
-            navigationItem.title = Text.navTitle(.preferences).getText()
         }
     }
     
@@ -143,19 +140,15 @@ class CommonViewController: UIViewController {
             .left()
             .right()
         
-        guard let tabBar = tabBarController?.tabBar else { return }
-        
         scrollToTopButton.pin
             .right(ConstantsForCommonViewController.scrollToTopButtonRightInset)
             .bottom(ConstantsForCommonViewController.scrollToTopButtonBottomInset)
     }
     
     private func registerCollectionViewCell() {
-        switch type{
+        switch type {
         case .search, .favorites:
             collectionView.register(InstagramUserCell.self, forCellWithReuseIdentifier: ConstantsForCommonViewController.reuseIdentifier)
-        case .preferences:
-            collectionView.register(SettingsCell.self, forCellWithReuseIdentifier: ConstantsForCommonViewController.reuseIdentifier)
         }
     }
     

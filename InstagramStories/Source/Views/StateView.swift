@@ -6,11 +6,12 @@
 //
 
 import UIKit.UIView
-import UIKit
 
 enum StateViewType {
     case noStories
     case noSearchResults
+    case noRecents
+    case noFavorites
     case isPrivate
 }
 
@@ -66,15 +67,23 @@ final class StateView: UIView {
         switch type {
         case .noStories:
             image.image = UIImage(systemName: "heart")
-            label.text = Text.noStories.getText()
+            label.text = Text.stateView(.noStories).getText()
             secondaryLabel.text = Text.tryLatter.getText()
         case .noSearchResults:
             image.image = UIImage(systemName: "heart")
-            label.text = Text.noSearchResult.getText()
+            label.text = Text.stateView(.noSearchResults).getText()
             secondaryLabel.text = Text.tryAgain.getText()
         case .isPrivate:
             image.image = UIImage(systemName: "heart")
-            label.text = Text.isPrivate.getText()
+            label.text = Text.stateView(.isPrivate).getText()
+            secondaryLabel.text = ""
+        case .noRecents:
+            image.image = UIImage(systemName: "heart")
+            label.text = Text.stateView(.noRecents).getText()
+            secondaryLabel.text = ""
+        case .noFavorites:
+            image.image = UIImage(systemName: "heart")
+            label.text = Text.stateView(.noFavorites).getText()
             secondaryLabel.text = ""
         }
         layout()

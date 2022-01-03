@@ -15,15 +15,13 @@ enum Text {
     case posts
     case subscribers
     case subscriptions
-    case noSearchResult
     case tryAgain
-    case noStories
     case tryLatter
-    case isPrivate
     case error
     case errorInUsername
     case videoSaved
     case success
+    case stateView(StateViewType)
     
     func getText() -> String {
         switch self {
@@ -33,8 +31,6 @@ enum Text {
                 return "Поиск".localized
             case .favorites:
                 return "Избранное".localized
-            case .preferences:
-                return "Настройки".localized
             }
         case .searchBarPlaceholderText:
             return "Введите ник в Instagram".localized
@@ -53,16 +49,10 @@ enum Text {
             return "Подписчики".localized
         case .subscriptions:
             return "Подписки".localized
-        case .noSearchResult:
-            return "Пользователь не найден".localized
         case .tryAgain:
             return "Попробуйте еще раз".localized
-        case .noStories:
-            return "Нет новых stories".localized
         case .tryLatter:
             return "Попробуйте позже".localized
-        case .isPrivate:
-            return "Профиль закрыт"
         case .error:
             return "Ошибка".localized
         case .errorInUsername:
@@ -71,6 +61,19 @@ enum Text {
             return "Видео сохранено".localized
         case .success:
             return "Успех".localized
+        case .stateView(let stateViewType):
+            switch stateViewType {
+            case .noStories:
+                return "Нет новых stories".localized
+            case .noSearchResults:
+                return "Пользователь не найден".localized
+            case .noRecents:
+                return "Начните свой первый поиск".localized
+            case .noFavorites:
+                return "Вы еще не добавили никого в избранные"
+            case .isPrivate:
+                return "Профиль закрыт".localized
+            }
         }
     }
 }

@@ -13,7 +13,6 @@ protocol UseCaseFactoryProtocol {
     func getShowFavoritesUsersUseCase() -> UseCase
     func getChangeRecentsUserUseCase() -> UseCase
     func getSaveFavoritesUsersUseCase() -> UseCase
-    func getShowPreferencesUseCase() -> UseCase
     func getShowStoryUseCase() -> UseCase
 }
 
@@ -54,7 +53,8 @@ extension UseCasesFactory: UseCaseFactoryProtocol {
     func getLoadUserProfileUseCase() -> UseCase {
         return LoadUserProfileUseCase(
             repository: repositoryFactory.getUserImageRepository(),
-            storiesRepository: repositoryFactory.getStoriesRepository()
+            storiesRepository: repositoryFactory.getStoriesRepository(),
+            searchUserRepository: repositoryFactory.getSearchUserRepository()
         )
     }
     
@@ -70,10 +70,6 @@ extension UseCasesFactory: UseCaseFactoryProtocol {
     func getSaveFavoritesUsersUseCase() -> UseCase {
         return ChangeFavoritesUseCase(usersRepository: repositoryFactory.getUsersRepository(),
                                       fetchImageRepository: repositoryFactory.getUserImageRepository())
-    }
-    
-    func getShowPreferencesUseCase() -> UseCase {
-        return ShowPreferencesUseCase(preferencesRepository: repositoryFactory.getPreferencesRepository())
     }
     
     func getShowStoryUseCase() -> UseCase {

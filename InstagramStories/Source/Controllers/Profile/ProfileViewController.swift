@@ -8,8 +8,9 @@
 import UIKit
 
 protocol ProfileViewProtocol: AnyObject {
-    func showUser(_ user: RealmInstagramUserProtocol)
-    func showStoriesPreview(stories: [Story])
+    func setupUserDetails(details: UserDetails)
+    func setupStoriesCount(_ number: Int)
+    func setupUserImage(image: UIImage)
     func showProfileIsPrivate()
 }
 
@@ -17,10 +18,10 @@ final class ProfileViewController: UIViewController {
     
     //MARK: - Private properties
     private let presenter: ProfilePresenterProtocol
-    private var stories: [Story]? {
+    private var storiesCount: Int = 0 {
         didSet{
             activityIndicator.hide()
-            if stories?.count == 0 {
+            if storiesCount == 0 {
                 stateView.showWithFade(with: LocalConstants.noStoriesAnimationDuration)
             }
             storiesCollectionView.reloadWithFade()
@@ -28,20 +29,19 @@ final class ProfileViewController: UIViewController {
         }
     }
     
-    private var user: RealmInstagramUserProtocol? { // move to presenter
+    private var userDetails: UserDetails? {
         didSet {
-            guard let instagramUsername = user?.instagramUsername else { return }
-            title = "@" + instagramUsername
-            nameLabel.text = user?.name
-            descriptionLabel.text = user?.profileDescription
-            presenter.fetchImage(stringURL: user?.userIconURL ?? "") { [weak self] result in
-                switch result {
-                case .success(let image):
-                    self?.userImage.image = image
-                case .failure(_):
-                    // fix this
-                    break
-                }
+            title = userDetails?.title
+            nameLabel.text = userDetails?.instagramUsername
+            if let additionalUserDetails = userDetails?.additionalUserDetails {
+                descriptionLabel.text = additionalUserDetails.description
+                
+                guard let posts = postsStackView?.arrangedSubviews.first as? UILabel,
+                      let subscribers = subscribersStackView?.arrangedSubviews.first as? UILabel,
+                        let subscriptions =  subscriptionsStackView?.arrangedSubviews.first as? UILabel else { return }
+                posts.text = String(additionalUserDetails.posts ?? 0)
+                subscribers.text = String(additionalUserDetails.subscribers ?? 0)
+                subscriptions.text = String(additionalUserDetails.subscription ?? 0)
             }
         }
     }
@@ -157,13 +157,13 @@ final class ProfileViewController: UIViewController {
     private func setupNavigationBar() {
         navigationController?.navigationBar.topItem?.backButtonTitle = ""
         navigationController?.navigationBar.tintColor = Palette.black.color
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: Images.searchTabIcon.getImage(), style: .done, target: self, action: #selector(addToFavorites)) // fix image
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: Images.searchTabIcon.getImage(), style: .done, target: self, action: #selector(favoritesButtonTapped)) // fix image
     }
     
     private func setupStackViews() {
-        subscriptionsStackView = getColumnStackView(value: String(user?.subscription ?? 0), name: Text.subscriptions.getText())
-        subscribersStackView = getColumnStackView(value: String(user?.subscribers ?? 0), name: Text.subscribers.getText())
-        postsStackView = getColumnStackView(value: String(user?.posts ?? 0), name: Text.posts.getText())
+        subscriptionsStackView = getColumnStackView(value: String(userDetails?.additionalUserDetails?.subscription ?? 0), name: Text.subscriptions.getText())
+        subscribersStackView = getColumnStackView(value: String(userDetails?.additionalUserDetails?.subscription ?? 0), name: Text.subscribers.getText())
+        postsStackView = getColumnStackView(value: String(userDetails?.additionalUserDetails?.subscription ?? 0), name: Text.posts.getText())
     }
     
     private func getColumnStackView(value: String, name: String) -> UIStackView {
@@ -291,8 +291,8 @@ final class ProfileViewController: UIViewController {
     }
     
     //MARK: - OBJC methods
-    @objc private func addToFavorites() {
-        
+    @objc private func favoritesButtonTapped() {
+        presenter.favoritesButtonTapped()
     }
     
     @objc private  func handleSwipes(_ sender:UISwipeGestureRecognizer) {
@@ -307,13 +307,13 @@ final class ProfileViewController: UIViewController {
 
 extension ProfileViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return stories?.count ?? 0
+        return storiesCount
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: LocalConstants.reuseIdentifier, for: indexPath) as? StoryCell else { return UICollectionViewCell()}
         cell.imageDelegate = self
-        if let story = stories?[indexPath.item] {
+        if let story = presenter.stories?[indexPath.item] {
             cell.configure(story: story)
         }
         return cell
@@ -324,20 +324,23 @@ extension ProfileViewController: UICollectionViewDataSource, UICollectionViewDel
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let stories = stories, let navigationController = navigationController else { return }
-        presenter.presentStory(transitionHandler: navigationController,with: stories, selectedStoryIndex: indexPath.item)
+        guard let navigationController = navigationController else { return }
+        presenter.presentStory(transitionHandler: navigationController, selectedStoryIndex: indexPath.item)
     }
 }
 
 //MARK: - extension + ProfileViewProtocol
 extension ProfileViewController: ProfileViewProtocol {
-    
-    func showStoriesPreview(stories: [Story]) {
-        self.stories = stories
+    func setupStoriesCount(_ number: Int) {
+        self.storiesCount = number
     }
     
-    func showUser(_ user: RealmInstagramUserProtocol) {
-        self.user = user
+    func setupUserDetails(details: UserDetails) {
+        self.userDetails = details
+    }
+    
+    func setupUserImage(image: UIImage) {
+        userImage.image = image
     }
     
     func showProfileIsPrivate() {
@@ -369,8 +372,8 @@ private enum LocalConstants {
     static let rightInset: CGFloat = 16
     static let userImage = CGSize(width: 90, height: 90)
     static let userImageTopInset: CGFloat = 10
-    static let valuesLeftInset: CGFloat = 50
-    static let valuesRightInset: CGFloat = 50
+    static let valuesLeftInset: CGFloat = 32
+    static let valuesRightInset: CGFloat = 32
     static let valuesHeight: CGFloat = 40
     static let nameLabelTopInset: CGFloat = 10
     static let descriptionLabelTopInset: CGFloat = 2

@@ -32,51 +32,6 @@ final class NetworkManager {
         bin.removeAll()
     }
     
-    //MARK: - Private methods
-    private func fetchUserProfile(id: Int,
-                                  secret: Secret,
-                                  completion: @escaping (RealmInstagramUser) -> ()) {
-        
-        Endpoint
-            .user(String(id))
-            .unlock(with: secret)
-            .session(URLSession.instagram)
-            .sink { error in
-                switch error {
-                case .finished: break
-                case .failure(_):
-                    print(#file, #line, Errors.cantFetchUserProfile.error)
-                }
-            } receiveValue: { userInfo in
-                let user = userInfo["user"]
-                
-                let name = userInfo.user?.name ?? ""
-                let profileDescription = userInfo.user?.biography ?? ""
-                let instagramUsername = userInfo.user?.username ?? ""
-                let id = id
-                let userIconURL = userInfo.user?.thumbnail?.absoluteString ?? ""
-                let posts = userInfo.user?.counter?.posts ?? 0
-                let subscribers = userInfo.user?.counter?.followers ?? 0
-                let subscriptions = userInfo.user?.counter?.following ?? 0
-                let isPrivate = user["isPrivate"].bool() ?? false
-                let isOnFavorite = false
-                let isRecent = false
-                
-                let instagramUser = RealmInstagramUser(name: name,
-                                                       profileDescription: profileDescription,
-                                                       instagramUsername: instagramUsername,
-                                                       id: id,
-                                                       userIconURL: userIconURL,
-                                                       posts: posts,
-                                                       subscribers: subscribers,
-                                                       subscription: subscriptions,
-                                                       isPrivate: isPrivate,
-                                                       isOnFavorite: isOnFavorite,
-                                                       isRecent: isRecent)
-                completion(instagramUser)
-            }.store(in: &self.bin)
-    }
-    
     private func timeFormatHandle(date: Int?) -> Int {
         let dateFormat = 1000000000000000
         var correctDate = 0
@@ -214,6 +169,36 @@ extension NetworkManager: StoriesDataSourceProtocol {
 
 //MARK: - extension + SearchDataSourceProtocol
 extension NetworkManager: SearchDataSourceProtocol {
+    func fetchUserProfile(id: Int,
+                          secret: Secret,
+                          completion: @escaping (Result<AdditionalUserDetails, Error>) -> ()) {
+        
+        Endpoint
+            .user(String(id))
+            .unlock(with: secret)
+            .session(URLSession.instagram)
+            .sink { error in
+                switch error {
+                case .finished: break
+                case .failure(_):
+                    print(#file, #line, Errors.cantFetchUserProfile.error)
+                }
+            } receiveValue: { userInfo in
+                let profileDescription = userInfo.user?.biography ?? ""
+                let posts = userInfo.user?.counter?.posts ?? 0
+                let subscribers = userInfo.user?.counter?.followers ?? 0
+                let subscriptions = userInfo.user?.counter?.following ?? 0
+                
+                let additionalUserDetails = AdditionalUserDetails(description: profileDescription,
+                                                                  subscription: subscriptions,
+                                                                  subscribers: subscribers,
+                                                                  posts: posts)
+                DispatchQueue.main.async {
+                    completion(.success(additionalUserDetails))
+                }
+            }.store(in: &self.bin)
+    }
+    
     func fetchInstagramUsers(searchingTitle: String,
                              secret: Secret,
                              completion: @escaping (Result <[InstagramUser], Error>)->()){
@@ -268,7 +253,6 @@ extension NetworkManager: SearchDataSourceProtocol {
                     }
                     
                     DispatchQueue.main.async {
-                        instagramUsers = instagramUsers.sorted { $0.subscribers > $1.subscribers}
                         completion(.success(instagramUsers))
                     }
                 }
