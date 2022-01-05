@@ -9,6 +9,8 @@ import SwiftagramCrypto
 import Foundation
 
 protocol AuthManagerProtocol {
+    func authInInstagram(username: String, password: String, completion: @escaping (Result<Secret,Error>) -> ())
+    func checkAuthorization(completion: @escaping(Secret?)->())
 }
 
 final class AuthManager {
@@ -17,7 +19,7 @@ final class AuthManager {
 }
 
 //MARK: - extension + AuthManagerProtocol
-extension AuthManager: AuthManagerProtocol {
+extension AuthManager {
     
     //MARK: - Private methods
     private func storeSecret(_ secret: Secret) {
@@ -29,8 +31,8 @@ extension AuthManager: AuthManagerProtocol {
     }
 }
 
-//MARK: - extension + AuthDataSourceProtocol
-extension AuthManager: AuthDataSourceProtocol {
+//MARK: - extension + AuthManagerProtocol
+extension AuthManager: AuthManagerProtocol {
     
     //MARK: - Public methods
     func checkAuthorization(completion: @escaping(Secret?)->()) {
@@ -87,5 +89,4 @@ extension AuthManager: AuthDataSourceProtocol {
                 }).store(in: &self.bin)
         }
     }
-    
 }

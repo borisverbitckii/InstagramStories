@@ -54,7 +54,7 @@ final class FavoritesPresenter {
 extension FavoritesPresenter: FavoritesPresenterProtocol {
     
     func viewWillAppear() {
-        renewFavorites()
+        renewFavorites(type: .reload)
         if favoritesUsers.count != 0 {
             view?.hideStateView()
         }
@@ -67,6 +67,7 @@ extension FavoritesPresenter: FavoritesPresenterProtocol {
     func trailingButtonTapped(type: InstagramUserCellType, user: RealmInstagramUserProtocol) {
         
         let userState = DataBaseManager.getUserState(user: user)
+        let firstIndexOfUser = favoritesUsers.firstIndex { $0.id == user.id } ?? 0
         
         switch type {
         case .removeFromRecent: break
@@ -74,14 +75,14 @@ extension FavoritesPresenter: FavoritesPresenterProtocol {
             switch userState {
             case .onlyOnFavorites:
                 changeFavoritesUseCase.removeFavoriteUser(user: user) { [weak self] _ in
-                    self?.renewFavorites()
+                    self?.renewFavorites(type: .remove(index: firstIndexOfUser))
                 }
             case .onFavoritesAndRecents:
                 var notFavoriteUser = user
                 notFavoriteUser.isOnFavorite = false
                 notFavoriteUser.isRecent = true
                 changeFavoritesUseCase.changeFavoriteUser(user: notFavoriteUser) { [weak self] _ in
-                    self?.renewFavorites()
+                    self?.renewFavorites(type: .remove(index: firstIndexOfUser))
                 }
             case .notExist, .onlyOnRecents: break
             }
@@ -95,10 +96,20 @@ extension FavoritesPresenter: FavoritesPresenterProtocol {
     }
     
     //MARK: - Private methods
-    private func renewFavorites() {
-        changeFavoritesUseCase.loadFavoritesUsers { [weak self] users in
-            self?.favoritesUsers = users
-            self?.view?.setupFavoritesCount(number: users.count)
+    private func renewFavorites(type: RenewCollectionViewType) {
+        
+        switch type {
+        case .remove(index: let index):
+            view?.removeItem(at: index)
+            changeFavoritesUseCase.loadFavoritesUsers { [weak self] users in
+                self?.favoritesUsers = users
+                self?.view?.setupFavoritesCount(number: users.count)
+            }
+        case .reload:
+            changeFavoritesUseCase.loadFavoritesUsers { [weak self] users in
+                self?.favoritesUsers = users
+                self?.view?.setupFavoritesCount(number: users.count)
+            }
         }
     }
 }

@@ -10,10 +10,8 @@ import Swiftagram
 
 protocol ModuleFactoryProtocol: AnyObject {
     func buildTabBarController(secret: Secret) -> UIViewController
-    func buildPresentationViewController() -> UIViewController
     func buildSearchNavigationController(secret: Secret) -> UINavigationController
     func buildFavoritesNavigationController(secret: Secret) -> UINavigationController
-//    func buildPreferencesNavigationController() -> UINavigationController
     func buildSplashViewController() -> UIViewController
     func buildProfileViewController(with user: RealmInstagramUserProtocol, secret: Secret) -> UIViewController
     func buildStoryViewController(with user: RealmInstagramUserProtocol, stories: [Story], selectedStoryIndex: Int, secret: Secret) -> UIViewController
@@ -41,13 +39,6 @@ final class ModuleFactory: ModuleFactoryProtocol {
         let favoritesVC = buildFavoritesNavigationController(secret: secret)
         return TabBarController(navigationControllerForSearch: searchVC,
                                     navigationControllerForFavorites: favoritesVC)
-    }
-    
-    func buildPresentationViewController() -> UIViewController {
-        let presenter = PresentationPresenter()
-        let view = PresentationViewController(presenter: presenter)
-        presenter.injectView(view: view)
-        return view
     }
     
     func buildSearchNavigationController(secret: Secret) -> UINavigationController {
@@ -133,5 +124,4 @@ final class ModuleFactory: ModuleFactoryProtocol {
         presenter.injectTransitionHandler(view: view)
         return view
     }
-    
 }

@@ -12,6 +12,7 @@ protocol SearchViewProtocol: AnyObject {
     func showAlertController(title: String, message: String, completion: (()->())?)
     func hideActivityIndicator()
     func setupRecentUsersCount(number: Int)
+    func removeItem(at index: Int)
     func setupSearchingUsersCount(number: Int)
 }
 
@@ -20,11 +21,7 @@ final class SearchViewController: CommonViewController {
     //MARK: - Private properties
     private let presenter: SearchPresenterProtocol?
     
-    private var recentUsersCount = 0 {
-        didSet{
-            collectionView.reloadWithFade()
-        }
-    }
+    private var recentUsersCount = 0
     private var searchingInstagramUsersCount = 0 {
         didSet{
             collectionView.reloadWithFade()
@@ -80,7 +77,6 @@ final class SearchViewController: CommonViewController {
     //MARK: - Override methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        presenter?.viewDidLoad()
         view.backgroundColor = Palette.white.color
         setupSearchBar()
         addSubviews()
@@ -89,6 +85,11 @@ final class SearchViewController: CommonViewController {
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         layout()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        presenter?.viewWillAppear()
     }
     
     override func viewDidLayoutSubviews() {
@@ -120,7 +121,6 @@ final class SearchViewController: CommonViewController {
     
     private func layout() {
         activityIndicator.pin.center()
-
         layoutStateView()
     }
     
@@ -161,6 +161,12 @@ extension SearchViewController: SearchViewProtocol {
     
     func setupRecentUsersCount(number: Int) {
         recentUsersCount = number
+        collectionView.reloadData()
+    }
+    
+    func removeItem(at index: Int) {
+        recentUsersCount -= 1
+        collectionView.deleteItems(at: [IndexPath(row: index, section: 0)])
     }
     
     func setupSearchingUsersCount(number: Int) {
@@ -188,6 +194,7 @@ extension SearchViewController: UICollectionViewDataSource, UICollectionViewDele
             stateView.showWithFade(with: LocalConstants.stateViewAnimationDuration)
             return recentUsersCount
         } else if searchingInstagramUsersCount == 0 {
+            stateView.hideWithFade(with: LocalConstants.stateViewAnimationDuration)
             return recentUsersCount
         }
         stateView.hideWithFade(with: LocalConstants.stateViewAnimationDuration)

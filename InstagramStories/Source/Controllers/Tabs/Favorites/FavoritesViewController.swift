@@ -10,6 +10,7 @@ import UIKit.UIViewController
 protocol FavoritesViewProtocol: AnyObject {
     func showAlertController(title: String, message: String, completion: (()->())?)
     func setupFavoritesCount(number: Int)
+    func removeItem(at index: Int)
     func hideStateView()
 }
 
@@ -18,14 +19,9 @@ final class FavoritesViewController: CommonViewController {
     //MARK: - Private properties
     private let presenter: FavoritesPresenterProtocol
     
-    private var favoritesUsersCount = 0 {
-        didSet{
-            collectionView.reloadWithFade()
-        }
-    }
+    private var favoritesUsersCount = 0
     
     // UIElements
-    
     private let stateView: StateView = {
         $0.isHidden = true
         return $0
@@ -79,12 +75,19 @@ final class FavoritesViewController: CommonViewController {
 
 //MARK: - extension + FavoritesViewProtocol
 extension FavoritesViewController: FavoritesViewProtocol {
+    
     func hideStateView() {
         stateView.isHidden = true
     }
     
     func setupFavoritesCount(number: Int) {
         favoritesUsersCount = number
+        collectionView.reloadData()
+    }
+    
+    func removeItem(at index: Int) {
+        favoritesUsersCount -= 1
+        collectionView.deleteItems(at: [IndexPath(row: index, section: 0)])
     }
 }
 

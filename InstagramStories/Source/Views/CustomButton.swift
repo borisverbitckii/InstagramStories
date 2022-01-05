@@ -8,18 +8,19 @@
 import UIKit
 
 enum CustomButtonType {
-    case close
-    case share
-    case save
     case scroll
 }
 
 final class CustomButton : UIButton {
     
     //MARK: - Private methods
-    private let button: UIImageView = {
-        $0.backgroundColor = Palette.white.color
+    private let button: UIView = {
         $0.clipsToBounds = true
+        $0.backgroundColor = Palette.white.color
+        return $0
+    }(UIImageView())
+    
+    private let buttonImage: UIImageView = {
         return $0
     }(UIImageView())
     
@@ -30,15 +31,10 @@ final class CustomButton : UIButton {
         addSubviews()
         
         switch buttonType {
-        case .close:
-            break
-        case .share:
-            break
-        case .save:
-            break
         case .scroll:
             isHidden = true
-            break
+            buttonImage.image = Images.scrollToTop.getImage()
+            button.tintColor = Palette.purple.color
         }
         layout()
         button.isUserInteractionEnabled = false
@@ -51,6 +47,7 @@ final class CustomButton : UIButton {
     //MARK: - Private methods
     private func addSubviews() {
         addSubview(button)
+        button.addSubview(buttonImage)
     }
     
     private func layout(){
@@ -63,10 +60,15 @@ final class CustomButton : UIButton {
             .top()
             .bottom()
         
+        buttonImage.pin
+            .center()
+            .size(LocalConstants.buttonImageSize)
+        
         button.layer.cornerRadius = button.frame.height / 2
     }
 }
 
 private enum LocalConstants {
     static let scrollToTopButtonSize = CGSize(width: 70, height: 70)
+    static let buttonImageSize = CGSize(width: 25, height: 25)
 }

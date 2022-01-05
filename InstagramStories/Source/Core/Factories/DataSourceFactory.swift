@@ -13,7 +13,7 @@ protocol DataSourceFactoryProtocol {
     func getAuthDataSource() -> AuthDataSourceProtocol
     func getStoriesDataSource() -> StoriesDataSourceProtocol
     func getRecentUsersDataSource() -> UsersDataSourceProtocol
-    func getStoryDataSource() -> StoriesVideoSourceProtocol
+    func getStoryDataSource() -> StoriesVideoDataSourceProtocol
 }
 
 final class DataSourceFactory {
@@ -29,26 +29,26 @@ final class DataSourceFactory {
 //MARK: - extension + DataSourceFactoryProtocol
 extension DataSourceFactory: DataSourceFactoryProtocol {
     func getSearchDataSource() -> SearchDataSourceProtocol {
-        return managerFactory.getNetworkManager() as! SearchDataSourceProtocol
+        return SearchDataSource(networkManager: managerFactory.getNetworkManager()) as SearchDataSourceProtocol
     }
     
     func getUserImageDataSource() -> UserImageDataSourceProtocol {
-        return managerFactory.getNetworkManager() as! UserImageDataSourceProtocol
+        return UserImageDataSource(networkManager: managerFactory.getNetworkManager()) as UserImageDataSourceProtocol
     }
     
     func getAuthDataSource() -> AuthDataSourceProtocol {
-        return managerFactory.getAuthManager() as! AuthDataSourceProtocol
+        return AuthDataSource(authManager: managerFactory.getAuthManager()) as AuthDataSourceProtocol
     }
     
     func getStoriesDataSource() -> StoriesDataSourceProtocol {
-        return managerFactory.getNetworkManager() as! StoriesDataSourceProtocol
+        return StoriesDataSource(networkManager: managerFactory.getNetworkManager()) as StoriesDataSourceProtocol
     }
     
     func getRecentUsersDataSource() -> UsersDataSourceProtocol {
         return UsersDataSource(dataBaseManager: managerFactory.getDataBaseManager()) as UsersDataSourceProtocol
     }
     
-    func getStoryDataSource() -> StoriesVideoSourceProtocol {
-        return managerFactory.getNetworkManager() as! StoriesVideoSourceProtocol
+    func getStoryDataSource() -> StoriesVideoDataSourceProtocol {
+        return StoriesVideoDataSource(networkManager: managerFactory.getNetworkManager()) as StoriesVideoDataSource
     }
 }

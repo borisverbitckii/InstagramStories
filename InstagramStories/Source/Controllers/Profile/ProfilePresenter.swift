@@ -12,9 +12,11 @@ protocol ProfilePresenterProtocol {
     var stories: [Story]? { get }
     
     func viewDidLoad()
+    func viewWillAppear()
     func presentStory(transitionHandler: TransitionProtocol, selectedStoryIndex: Int)
     func favoritesButtonTapped()
     func fetchImage(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> ())
+
 }
 
 final class ProfilePresenter {
@@ -59,6 +61,7 @@ extension ProfilePresenter: ProfilePresenterProtocol {
         
         view?.setupUserDetails(details: userDetails)
         
+        // Fetch user avatar
         fetchImage(stringURL: user.userIconURL) { [weak self] result in
             switch result {
             case .success(let image):
@@ -68,29 +71,54 @@ extension ProfilePresenter: ProfilePresenterProtocol {
             }
         }
         
+        // Show that profile is private
         if user.isPrivate {
             view?.showProfileIsPrivate()
             return
         }
         
-        loadUserProfileUseCase.fetchUserDetails(userID: user.id, secret: secret) { [weak self] result in
+        // UserAdditionalDetails
+        
+        let group = DispatchGroup()
+        
+        group.enter()
+        self.loadUserProfileUseCase.fetchUserDetails(userID: self.user.id, secret: self.secret) { [weak self] result in
+            guard let self = self else { return }
             switch result {
             case .success(let details):
                 userDetails.additionalUserDetails = details
-                self?.view?.setupUserDetails(details: userDetails)
+                self.view?.setupUserDetails(details: userDetails)
             case .failure(let error):
                 print(#file, #line, error)
             }
+            group.leave()
         }
         
-        loadUserProfileUseCase.fetchUserStories(userID: String(user.id), secret: secret) { [weak self] result in
-            switch result {
-            case .success(let stories):
-                self?.stories = stories
-                self?.view?.setupStoriesCount(stories.count)
-            case .failure(let error): break
-                break //TODO: Fix this
+        // UserStories
+        /// UserStories should be downloaded after addition user info because it is not sure which description label height will be
+        self.loadUserProfileUseCase.fetchUserStories(userID: String(self.user.id), secret: self.secret) { [weak self] result in
+            group.notify(queue: .main) {
+                switch result {
+                case .success(let stories):
+                    self?.stories = stories
+                    self?.view?.setupStoriesCount(stories.count)
+                case .failure(_): break
+                }
             }
+        }
+    }
+    
+    func viewWillAppear() {
+        // Set favorite button image
+        let userState = DataBaseManager.getUserState(user: user)
+        switch userState {
+        case .notExist: break
+        case .onlyOnFavorites:
+            view?.setFavoriteButtonImage(Images.rightBarButton(.remove).getImage() ?? UIImage())
+        case .onlyOnRecents:
+            view?.setFavoriteButtonImage(Images.rightBarButton(.add).getImage() ?? UIImage())
+        case .onFavoritesAndRecents:
+            view?.setFavoriteButtonImage(Images.rightBarButton(.remove).getImage() ?? UIImage())
         }
     }
     
@@ -101,14 +129,17 @@ extension ProfilePresenter: ProfilePresenterProtocol {
         switch userState {
         case .onlyOnFavorites:
             changeFavoritesUseCase.removeFavoriteUser(user: user) { _ in }
+            view?.setFavoriteButtonImage(Images.rightBarButton(.add).getImage() ?? UIImage())
         case .onlyOnRecents:
             favoriteUser.isOnFavorite = true
             favoriteUser.isRecent = true
             changeFavoritesUseCase.changeFavoriteUser(user: favoriteUser) { _ in }
+            view?.setFavoriteButtonImage(Images.rightBarButton(.remove).getImage() ?? UIImage())
         case .onFavoritesAndRecents:
             favoriteUser.isRecent = true
             favoriteUser.isOnFavorite = false
             changeFavoritesUseCase.changeFavoriteUser(user: favoriteUser) { _ in }
+            view?.setFavoriteButtonImage(Images.rightBarButton(.add).getImage() ?? UIImage())
         case .notExist: break
         }
     }

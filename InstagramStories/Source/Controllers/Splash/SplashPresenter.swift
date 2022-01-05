@@ -38,7 +38,7 @@ extension SplashPresenter: SplashPresenterProtocol {
         useCase.authInInstagram {[weak self] result in
             switch result {
             case .success(let secret):
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     self?.coordinator.presentTabBarController(secret: secret)
                 }
             case .failure(let error):

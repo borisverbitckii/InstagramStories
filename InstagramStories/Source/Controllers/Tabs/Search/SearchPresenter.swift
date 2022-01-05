@@ -12,7 +12,7 @@ protocol SearchPresenterProtocol {
     var searchingInstagramUsers: [RealmInstagramUserProtocol] { get }
     var recentUsers: [RealmInstagramUserProtocol] { get }
     
-    func viewDidLoad()
+    func viewWillAppear()
     func searchResultWasUpdated(username: String)
     func userImageWillBeShown(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> ())
     func cellWasTapped(indexPath: Int, isRecent: Bool)
@@ -65,19 +65,32 @@ final class SearchPresenter {
 
 extension SearchPresenter: SearchPresenterProtocol {
     
+    func viewWillAppear() {
+        if recentUsers.isEmpty {
+            changeRecentUsersUseCase.fetchRecentUsersFromBD { [weak self] users in
+                self?.view?.setupRecentUsersCount(number: users.count)
+                self?.recentUsers = users
+            }
+        }
+        
+        renewRecents(type: .reload)
+    }
+    
+    
     func cellForItemIsExecute(user: RealmInstagramUserProtocol) -> Bool {
         DataBaseManager.isOnFavorite(user: user)
     }
     
     func trailingButtonTapped(type: InstagramUserCellType, user: RealmInstagramUserProtocol) {
         let userState = DataBaseManager.getUserState(user: user)
+        let firstIndexOfUser = recentUsers.firstIndex { $0.id == user.id} ?? 0
         switch type {
         case .removeFromRecent:
             switch userState {
             case .onlyOnRecents:
                 changeRecentUsersUseCase.removeRecentUser(user: user) { [weak self] _ in
                     self?.changeRecentUsersUseCase.fetchRecentUsersFromBD { users in
-                        self?.renewRecents() // fix reload items
+                        self?.renewRecents(type: .remove(index: firstIndexOfUser))
                     }
                 }
             case .onFavoritesAndRecents:
@@ -85,7 +98,7 @@ extension SearchPresenter: SearchPresenterProtocol {
                 notRecentUser.isRecent = false
                 changeRecentUsersUseCase.changeRecentUser(user: notRecentUser) { [weak self] _ in
                     self?.changeRecentUsersUseCase.fetchRecentUsersFromBD { users in
-                        self?.renewRecents() // fix reload items
+                        self?.renewRecents(type: .remove(index: firstIndexOfUser))
                     }
                 }
             case .notExist, .onlyOnFavorites: break
@@ -142,13 +155,6 @@ extension SearchPresenter: SearchPresenterProtocol {
         searchUseCase.fetchImage(stringURL: stringURL, completion: completion)
     }
     
-    func viewDidLoad() {
-        changeRecentUsersUseCase.fetchRecentUsersFromBD { [weak self] users in
-            self?.view?.setupRecentUsersCount(number: users.count)
-            self?.recentUsers = users
-        }
-    }
-    
     func searchResultWasUpdated(username: String) {
         searchUseCase.fetchInstagramUsersFromNetwork(searchingTitle: username, secret: secret) { [weak self] result in
             switch result {
@@ -165,7 +171,7 @@ extension SearchPresenter: SearchPresenterProtocol {
     func searchBarCancelButtonClicked() {
         searchUseCase.stopLastOperation()
         changeRecentUsersUseCase.fetchRecentUsersFromBD { [weak self] users in
-            self?.renewRecents()
+            self?.renewRecents(type: .reload)
             self?.view?.setupSearchingUsersCount(number: 0)
         }
     }
@@ -176,10 +182,18 @@ extension SearchPresenter: SearchPresenterProtocol {
         coordinator.presentProfileViewController(transitionHandler: transitionHandler, with: user, secret: secret)
     }
     
-    private func renewRecents() {
-        changeRecentUsersUseCase.fetchRecentUsersFromBD { [weak self] users in
-            self?.recentUsers = users
-            self?.view?.setupRecentUsersCount(number: users.count)
+    private func renewRecents(type: RenewCollectionViewType) {
+        switch type {
+        case .remove(index: let index):
+            view?.removeItem(at: index)
+            changeRecentUsersUseCase.fetchRecentUsersFromBD { [weak self] users in
+                self?.recentUsers = users
+            }
+        case .reload:
+            changeRecentUsersUseCase.fetchRecentUsersFromBD { [weak self] users in
+                self?.recentUsers = users
+                self?.view?.setupRecentUsersCount(number: users.count)
+            }
         }
     }
 }

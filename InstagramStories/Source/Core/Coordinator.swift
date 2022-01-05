@@ -10,7 +10,7 @@ import Swiftagram
 
 protocol CoordinatorProtocol: AnyObject {
     func presentTabBarController(secret: Secret)
-    func presentPresentationViewController()
+    func presentSplashViewController()
     func presentProfileViewController(transitionHandler: TransitionProtocol,
                                       with user: RealmInstagramUserProtocol,
                                       secret: Secret)
@@ -53,12 +53,6 @@ final class Coordinator {
         guard let sceneDelegate: SceneDelegate = (scene?.delegate as? SceneDelegate) else { return }
         window = sceneDelegate.window
         
-        if UserDefaults.standard.value(forKey: "UUID") == nil {
-            UserDefaults.standard.set(UUID().uuidString, forKey: "UUID")
-            presentPresentationViewController()
-            return
-        }
-        
         presentSplashViewController()
     }
 }
@@ -76,11 +70,6 @@ extension Coordinator: CoordinatorProtocol {
                           duration: LocalConstants.tabBarTransitionDuration,
                           options: [.transitionCrossDissolve],
                           animations: nil)
-    }
-    
-    func presentPresentationViewController() {
-        window?.rootViewController = moduleFactory.buildPresentationViewController()
-        window?.makeKeyAndVisible()
     }
     
     func presentSplashViewController() {

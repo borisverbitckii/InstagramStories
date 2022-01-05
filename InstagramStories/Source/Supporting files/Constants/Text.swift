@@ -16,12 +16,13 @@ enum Text {
     case subscribers
     case subscriptions
     case tryAgain
-    case tryLatter
     case error
     case errorInUsername
     case videoSaved
     case success
-    case stateView(StateViewType)
+    case stateViewMain(StateViewType)
+    case stateViewSecondary(StateViewType)
+    case next
     
     func getText() -> String {
         switch self {
@@ -51,8 +52,6 @@ enum Text {
             return "Подписки".localized
         case .tryAgain:
             return "Попробуйте еще раз".localized
-        case .tryLatter:
-            return "Попробуйте позже".localized
         case .error:
             return "Ошибка".localized
         case .errorInUsername:
@@ -60,8 +59,8 @@ enum Text {
         case .videoSaved:
             return "Видео сохранено".localized
         case .success:
-            return "Успех".localized
-        case .stateView(let stateViewType):
+            return "Прекрасно!".localized
+        case .stateViewMain(let stateViewType):
             switch stateViewType {
             case .noStories:
                 return "Нет новых stories".localized
@@ -74,6 +73,22 @@ enum Text {
             case .isPrivate:
                 return "Профиль закрыт".localized
             }
+        case .stateViewSecondary(let stateViewType):
+            switch stateViewType {
+            case .noStories:
+                return "Попробуйте зайти позже".localized
+            case .noSearchResults:
+                return "Может вы где-то ошиблись?".localized
+            case .noRecents:
+                return "История поиска будет отображена здесь".localized
+            case .noFavorites:
+                return "Просто нажмите на сердечко в профиле".localized
+            case .isPrivate:
+                return "К сожалению, истории этого пользователя никак не посмотреть".localized
+            }
+            
+        case .next:
+            return "Далее".localized
         }
     }
 }

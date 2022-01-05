@@ -10,7 +10,18 @@ import SwiftagramCrypto
 import UIKit.UIImage
 import RealmSwift
 
-protocol NetworkManagerProtocol: ManagerProtocol {}
+protocol NetworkManagerProtocol: ManagerProtocol {
+    func fetchImageData(urlString: String, completion: @escaping (Result<Data, Error>)->())
+    func stopLastOperation()
+    func fetchInstagramUsers(searchingTitle: String,
+                             secret: Secret,
+                             completion: @escaping (Result <[InstagramUser], Error>)->())
+    func fetchUserProfile(id: Int,
+                          secret: Secret,
+                          completion: @escaping (Result<AdditionalUserDetails, Error>) -> ())
+    func fetchStories(userID: String, secret: Secret, completion: @escaping (Result<[Story],Error>)->())
+    func downloadCurrentStoryVideo(urlString: String, completion: @escaping (URL)->())
+}
 
 final class NetworkManager {
     
@@ -52,10 +63,8 @@ final class NetworkManager {
 }
 
 //MARK: - extension + NetworkManagerProtocol
-extension NetworkManager: NetworkManagerProtocol {}
-
-//MARK: - extension + UserImageDataSourceProtocol
-extension NetworkManager: UserImageDataSourceProtocol {
+extension NetworkManager: NetworkManagerProtocol {
+    
     func fetchImageData(urlString: String, completion: @escaping (Result<Data, Error>)->()) {
         
         DispatchQueue.global().async { [weak self] in
@@ -102,73 +111,7 @@ extension NetworkManager: UserImageDataSourceProtocol {
             }.resume()
         }
     }
-}
-
-
-//MARK: - extension + StoriesDataSourceProtocol
-extension NetworkManager: StoriesDataSourceProtocol {
     
-    func fetchStories(userID: String, secret: Secret, completion: @escaping (Result<[Story],Error>)->()) {
-        Endpoint.user(userID)
-            .stories.unlock(with: secret)
-            .session(URLSession.instagram)
-            .sink { response in
-                
-                switch response {
-                case .finished:
-                    break
-                case .failure(let error):
-                    DispatchQueue.main.async {
-                        completion(.failure(error))
-                    }
-                }
-            } receiveValue: { [weak self] stories in
-                var storiesArray = [Story]()
-                
-                guard let items = stories["reel"]["items"].array() else {
-                    DispatchQueue.main.async {
-                        completion(.success(storiesArray))
-                    }
-                    return }
-                
-                for item in items {
-                    
-                    var previewURLString = ""
-                    var contentURLString = ""
-                    
-                    if let videoVersions = item["videoVersions"].array() {
-                        if let firstVideoVersion = videoVersions.first {
-                            let url = firstVideoVersion["url"].description
-                            if let imageVersions = item["imageVersions2"]["candidates"].array() {
-                                guard let firstImageVersion = imageVersions.first else { return }
-                                let url = firstImageVersion["url"].description
-                                previewURLString = url
-                            }
-                            contentURLString = url
-                        }
-                    } else {
-                        let candidates = item["imageVersions2"]["candidates"].array()
-                        guard let firstCandidate = candidates?.first else { return }
-                        let url = firstCandidate["url"].description
-                        previewURLString = url
-                        contentURLString = url
-                    }
-                    let date = item["deviceTimestamp"].int()
-                    let correctDate = self?.timeFormatHandle(date: date)
-                    
-                    let story = Story(time: correctDate ?? 0, previewImageURL: previewURLString, contentURL: contentURLString)
-                    storiesArray.append(story)
-                }
-                DispatchQueue.main.async {
-                    storiesArray = storiesArray.sorted(by: { $0.time > $1.time})
-                    completion(.success(storiesArray))
-                }
-            }.store(in: &bin)
-    }
-}
-
-//MARK: - extension + SearchDataSourceProtocol
-extension NetworkManager: SearchDataSourceProtocol {
     func fetchUserProfile(id: Int,
                           secret: Secret,
                           completion: @escaping (Result<AdditionalUserDetails, Error>) -> ()) {
@@ -258,9 +201,65 @@ extension NetworkManager: SearchDataSourceProtocol {
                 }
             }.store(in: &bin)
     }
-}
-
-extension NetworkManager: StoriesVideoSourceProtocol {
+    
+    func fetchStories(userID: String, secret: Secret, completion: @escaping (Result<[Story],Error>)->()) {
+        Endpoint.user(userID)
+            .stories.unlock(with: secret)
+            .session(URLSession.instagram)
+            .sink { response in
+                
+                switch response {
+                case .finished:
+                    break
+                case .failure(let error):
+                    DispatchQueue.main.async {
+                        completion(.failure(error))
+                    }
+                }
+            } receiveValue: { [weak self] stories in
+                var storiesArray = [Story]()
+                
+                guard let items = stories["reel"]["items"].array() else {
+                    DispatchQueue.main.async {
+                        completion(.success(storiesArray))
+                    }
+                    return }
+                
+                for item in items {
+                    
+                    var previewURLString = ""
+                    var contentURLString = ""
+                    
+                    if let videoVersions = item["videoVersions"].array() {
+                        if let firstVideoVersion = videoVersions.first {
+                            let url = firstVideoVersion["url"].description
+                            if let imageVersions = item["imageVersions2"]["candidates"].array() {
+                                guard let firstImageVersion = imageVersions.first else { return }
+                                let url = firstImageVersion["url"].description
+                                previewURLString = url
+                            }
+                            contentURLString = url
+                        }
+                    } else {
+                        let candidates = item["imageVersions2"]["candidates"].array()
+                        guard let firstCandidate = candidates?.first else { return }
+                        let url = firstCandidate["url"].description
+                        previewURLString = url
+                        contentURLString = url
+                    }
+                    let date = item["deviceTimestamp"].int()
+                    let correctDate = self?.timeFormatHandle(date: date)
+                    
+                    let story = Story(time: correctDate ?? 0, previewImageURL: previewURLString, contentURL: contentURLString)
+                    storiesArray.append(story)
+                }
+                DispatchQueue.main.async {
+                    storiesArray = storiesArray.sorted(by: { $0.time > $1.time})
+                    completion(.success(storiesArray))
+                }
+            }.store(in: &bin)
+    }
+    
     func downloadCurrentStoryVideo(urlString: String, completion: @escaping (URL) -> ()) {
         
         DispatchQueue.global().async { [weak self] in

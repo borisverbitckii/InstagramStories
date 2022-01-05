@@ -34,8 +34,33 @@ final class InstagramUserCell: UICollectionViewCell {
     var imageDelegate: InstagramUserCellImageDelegate?
     
     //MARK: - Private properties
-    private var type: InstagramUserCellType?
+    private var type: InstagramUserCellType? {
+        didSet {
+            switch type {
+            case .removeFromRecent:
+                trailingButton.setImage(Images.trailingCellButton(.removeFromRecent).getImage(),
+                                        for: .normal)
+                activityIndicator.hide()
+            case .favorite(let favoriteType):
+                switch favoriteType {
+                case .add:
+                    trailingButton.setImage(Images.trailingCellButton(.favorite(.add)).getImage(),
+                                            for: .normal)
+                case .remove:
+                    trailingButton.setImage(Images.trailingCellButton(.favorite(.remove)).getImage(),
+                                            for: .normal)
+                case .none:
+                    break
+                }
+            case .none: break
+            }
+            trailingButton.tintColor = Palette.purple.color
+        }
+    }
     private var user: RealmInstagramUserProtocol?
+    private var defaultButtonState = true
+    
+    // UIElements
     private var activityIndicator: CustomActivityIndicator = {
         $0.type = .defaultActivityIndicator(.medium)
         $0.hide()
@@ -99,31 +124,13 @@ final class InstagramUserCell: UICollectionViewCell {
     }
     
     //MARK: - Public methods
-    func configure(type: InstagramUserCellType,user: RealmInstagramUserProtocol) {
+    func configure(type: InstagramUserCellType, user: RealmInstagramUserProtocol) {
         self.type = type
         self.user = user
         
         nameLabel.text = user.name
         nickNameLabel.text = "@" + user.instagramUsername
         trailingButton.addTarget(self, action: #selector(trailingButtonTapped), for: .touchUpInside)
-        
-        switch type {
-        case .removeFromRecent:
-            trailingButton.setImage(Images.trailingCellButton(.removeFromRecent).getImage(),
-                                    for: .normal)
-            activityIndicator.hide()
-        case .favorite(let favoriteType):
-            switch favoriteType {
-            case .add:
-                break //TODO: Fix image
-            case .remove:
-                break
-            case .none:
-                break
-            }
-            trailingButton.setImage(Images.trailingCellButton(.favorite(.add)).getImage(),
-                                    for: .normal)
-        }
         
         ImageCacheManager.isAlreadyCached(stringURL: user.userIconURL)
             ? activityIndicator.hide()
@@ -183,9 +190,27 @@ final class InstagramUserCell: UICollectionViewCell {
         
     }
     
+    private func changeButtonImage() {
+        defaultButtonState.toggle()
+        
+        switch type {
+        case .favorite(let favoriteType):
+            switch favoriteType {
+            case .add:
+                type = .favorite(.remove)
+            case .remove:
+                type = .favorite(.add)
+            case .none:
+                break
+            }
+        case .removeFromRecent, .none: break
+        }
+    }
+    
     //MARK: - OBJC methods
     @objc private func trailingButtonTapped() {
         if let type = type, let user = user {
+            changeButtonImage()
             buttonDelegate?.trailingButtonTapped(type: type, user: user)
         }
     }

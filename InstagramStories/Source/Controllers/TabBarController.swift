@@ -21,7 +21,7 @@ final class TabBarController: UITabBarController {
     private let navigationControllerForFavorites : UINavigationController
     
     private let indicatorView: UIView = {
-        $0.backgroundColor = Palette.green.color
+        $0.backgroundColor = Palette.purple.color
         $0.clipsToBounds = true
         $0.frame.size = LocalConstants.indicatorViewSize
         $0.layer.cornerRadius = $0.frame.height / 2
@@ -59,7 +59,7 @@ final class TabBarController: UITabBarController {
         let tabBar = CustomTabBar(frame: .zero)
         tabBar.delegate = self
         setValue(tabBar, forKey: "tabBar")
-        tabBar.tintColor = Palette.green.color
+        tabBar.tintColor = Palette.purple.color
         tabBar.unselectedItemTintColor = Palette.lightGray.color
         tabBar.addSubview(indicatorView)
         indicatorView.center.x =  tabBar.frame.width/3/2
@@ -68,11 +68,11 @@ final class TabBarController: UITabBarController {
  
     private func setupTabBarItems() {
         navigationControllerForSearch.tabBarItem = UITabBarItem(title: "",
-                                                                image: Images.searchTabIcon.getImage(),
-                                                                selectedImage: Images.searchTabIcon.getImage())
+                                                                image: Images.tabBarImages(.search).getImage(),
+                                                                selectedImage: Images.tabBarImages(.search).getImage())
         navigationControllerForFavorites.tabBarItem = UITabBarItem(title: "",
-                                                                   image: Images.favoritesTabIcon.getImage(),
-                                                                   selectedImage: Images.favoritesTabIcon.getImage())
+                                                                   image: Images.tabBarImages(.favorites).getImage(),
+                                                                   selectedImage: Images.tabBarImages(.favorites).getImage())
     }
     
     private func animateIndicator(index: Int) {

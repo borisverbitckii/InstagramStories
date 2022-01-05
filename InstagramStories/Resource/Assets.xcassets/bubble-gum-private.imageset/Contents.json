@@ -1,0 +1,23 @@
+{
+  "images" : [
+    {
+      "filename" : "bubble-gum-recruiter-with-a-magnifying-glass-is-looking-for-new-employees-online.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "bubble-gum-recruiter-with-a-magnifying-glass-is-looking-for-new-employees-online-1.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "bubble-gum-recruiter-with-a-magnifying-glass-is-looking-for-new-employees-online-2.png",
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

@@ -13,7 +13,7 @@ enum Palette {
     case gray
     case lightGray
     case superLightGray
-    case green
+    case purple
     case clear
     
     var color: UIColor {
@@ -28,8 +28,8 @@ enum Palette {
             return .black.withAlphaComponent(0.3)
         case .superLightGray:
             return .black.withAlphaComponent(0.04)
-        case .green:
-            return UIColor(hexString: "04FAB3")
+        case .purple:
+            return UIColor(hexString: "B2B0F7")
         case .clear:
             return .clear
         }

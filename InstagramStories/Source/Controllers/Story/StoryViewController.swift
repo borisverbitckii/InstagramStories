@@ -40,10 +40,14 @@ final class StoryViewController: UIViewController, UINavigationBarDelegate {
     private var navBar: UINavigationBar = {
         let navItem = UINavigationItem()
         
-        let saveItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(saveButtonTapped))
-        let shareItem = UIBarButtonItem(barButtonSystemItem: .reply, target: self, action: #selector(shareButtonTapped))
+        let saveItem = UIBarButtonItem(image: Images.storyButtons(.save).getImage(), style: .plain, target: self, action: #selector(saveButtonTapped))
+        let shareItem = UIBarButtonItem(image: Images.storyButtons(.share).getImage(), style: .plain, target: self, action: #selector(shareButtonTapped))
         let closeItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(closeBarButtonTapped))
         navItem.rightBarButtonItems = [closeItem, saveItem, shareItem]
+        
+        saveItem.tintColor = Palette.purple.color
+        shareItem.tintColor = Palette.purple.color
+        
         $0.setItems([navItem], animated: false)
 
         let standardAppearance = UINavigationBarAppearance()
@@ -229,7 +233,7 @@ extension StoryViewController: UICollectionViewDataSource, UICollectionViewDeleg
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: LocalConstants.reuseIdentifier, for: indexPath)
         if indexPath.item == currentStoriesIndex {
-            cell.backgroundColor = Palette.green.color
+            cell.backgroundColor = Palette.purple.color
             return cell
         }
         cell.backgroundColor = Palette.superLightGray.color

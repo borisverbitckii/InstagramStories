@@ -15,7 +15,6 @@ enum StateViewType {
     case isPrivate
 }
 
-
 final class StateView: UIView {
     
     //MARK: - Public properties
@@ -39,7 +38,6 @@ final class StateView: UIView {
     }(UILabel())
     
     private let image: UIImageView = {
-        $0.backgroundColor = Palette.superLightGray.color
         $0.contentMode = .scaleAspectFit
         return $0
     }(UIImageView())
@@ -66,26 +64,28 @@ final class StateView: UIView {
     private func setupSelf(type: StateViewType) {
         switch type {
         case .noStories:
-            image.image = UIImage(systemName: "heart")
-            label.text = Text.stateView(.noStories).getText()
-            secondaryLabel.text = Text.tryLatter.getText()
+            image.image = Images.stateView(.noStories).getImage()
+            label.text = Text.stateViewMain(.noStories).getText()
+            secondaryLabel.text = Text.stateViewSecondary(.noStories).getText()
         case .noSearchResults:
-            image.image = UIImage(systemName: "heart")
-            label.text = Text.stateView(.noSearchResults).getText()
-            secondaryLabel.text = Text.tryAgain.getText()
+            image.image = Images.stateView(.noSearchResults).getImage()
+            label.text = Text.stateViewMain(.noSearchResults).getText()
+            secondaryLabel.text = Text.stateViewSecondary(.noSearchResults).getText()
         case .isPrivate:
-            image.image = UIImage(systemName: "heart")
-            label.text = Text.stateView(.isPrivate).getText()
-            secondaryLabel.text = ""
+            image.image = Images.stateView(.isPrivate).getImage()
+            label.text = Text.stateViewMain(.isPrivate).getText()
+            secondaryLabel.text = Text.stateViewSecondary(.isPrivate).getText()
         case .noRecents:
-            image.image = UIImage(systemName: "heart")
-            label.text = Text.stateView(.noRecents).getText()
-            secondaryLabel.text = ""
+            image.image = Images.stateView(.noRecents).getImage()
+            label.text = Text.stateViewMain(.noRecents).getText()
+            secondaryLabel.text = Text.stateViewSecondary(.noRecents).getText()
         case .noFavorites:
-            image.image = UIImage(systemName: "heart")
-            label.text = Text.stateView(.noFavorites).getText()
-            secondaryLabel.text = ""
+            image.image = Images.stateView(.noFavorites).getImage()
+            label.text = Text.stateViewMain(.noFavorites).getText()
+            secondaryLabel.text = Text.stateViewSecondary(.noFavorites).getText()
         }
+        
+        label.textColor = Palette.purple.color
         layout()
     }
     
@@ -96,31 +96,28 @@ final class StateView: UIView {
     }
     
     private func layout() {
-        pin.size(LocalConstants.noSearchResultSize)
-        
         image.pin
             .size(LocalConstants.imageSize)
             .top(LocalConstants.imageTopInset)
             .hCenter()
         
-        secondaryLabel.pin
-            .bottom(LocalConstants.secondaryLabelBottomInset)
-            .hCenter()
-        
         label.pin
-            .above(of: secondaryLabel).marginTop(LocalConstants.labelBottomInset)
-            .hCenter()
+            .below(of: image, aligned: .center).marginBottom(LocalConstants.labelTopInset)
+        
+        secondaryLabel.pin
+            .below(of: label, aligned: .center).marginBottom(LocalConstants.secondaryLabelTopInset)
         
         label.sizeToFit()
         secondaryLabel.sizeToFit()
+        
+        let viewHeight = image.frame.height + label.frame.height + secondaryLabel.frame.height + LocalConstants.labelTopInset + LocalConstants.secondaryLabelTopInset
+        pin.size(CGSize(width: image.frame.width, height: viewHeight))
     }
 }
 
 private enum LocalConstants {
-    static let noSearchResultCornerRadius: CGFloat = 30
-    static let noSearchResultSize = CGSize(width: 200, height: 200)
-    static let secondaryLabelBottomInset: CGFloat = 30
-    static let labelBottomInset: CGFloat = 30
-    static let imageSize = CGSize(width: 100, height: 100)
+    static let labelTopInset: CGFloat = 16
+    static let secondaryLabelTopInset: CGFloat = 16
+    static let imageSize = CGSize(width: 350, height: 350)
     static let imageTopInset: CGFloat = 16
 }

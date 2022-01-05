@@ -34,7 +34,7 @@ final class CustomActivityIndicator: UIView {
     //MARK: - Private properties
     
     private let activityIndicator: AnimationView = {
-        $0.animation = Animation.named("9131-loading-green")
+        $0.animation = Animation.named("lf30_editor_dcdvztif")
         $0.contentMode = .scaleAspectFill
         return $0
     } (AnimationView())

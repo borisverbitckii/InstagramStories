@@ -14,10 +14,10 @@ protocol StoryRepositoryProtocol {
 final class StoryRepository {
     
     //MARK: - Private properties
-    private let remoteDataSource: StoriesVideoSourceProtocol
+    private let remoteDataSource: StoriesVideoDataSourceProtocol
     
     //MARK: - Init
-    init(remoteDataSource: StoriesVideoSourceProtocol) {
+    init(remoteDataSource: StoriesVideoDataSourceProtocol) {
         self.remoteDataSource = remoteDataSource
     }
     
