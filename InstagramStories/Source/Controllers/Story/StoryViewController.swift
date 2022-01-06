@@ -39,13 +39,14 @@ final class StoryViewController: UIViewController, UINavigationBarDelegate {
     private var navBar: UINavigationBar = {
         let navItem = UINavigationItem()
         
-        let saveItem = UIBarButtonItem(image: Images.storyButtons(.save).getImage(), style: .plain, target: self, action: #selector(saveButtonTapped))
-        let shareItem = UIBarButtonItem(image: Images.storyButtons(.share).getImage(), style: .plain, target: self, action: #selector(shareButtonTapped))
+        /// Disable downloading and sharing because of apple regulations
+//        let saveItem = UIBarButtonItem(image: Images.storyButtons(.save).getImage(), style: .plain, target: self, action: #selector(saveButtonTapped))
+//        let shareItem = UIBarButtonItem(image: Images.storyButtons(.share).getImage(), style: .plain, target: self, action: #selector(shareButtonTapped))
         let closeItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(closeBarButtonTapped))
-        navItem.rightBarButtonItems = [closeItem, saveItem, shareItem]
+        navItem.rightBarButtonItems = [closeItem]
         
-        saveItem.tintColor = Palette.purple.color
-        shareItem.tintColor = Palette.purple.color
+//        saveItem.tintColor = Palette.purple.color
+//        shareItem.tintColor = Palette.purple.color
         
         $0.setItems([navItem], animated: false)
 
@@ -211,17 +212,19 @@ final class StoryViewController: UIViewController, UINavigationBarDelegate {
         self.dismiss(animated: true)
     }
     
-    @objc private func shareButtonTapped() {
-        if let currentStoriesIndex = currentStoriesIndex {
-            presenter.shareStory(storyIndex: currentStoriesIndex)
-        }
-    }
     
-    @objc private func saveButtonTapped() {
-        if let currentStoriesIndex = currentStoriesIndex {
-            presenter.saveVideoToLibrary(storyIndex: currentStoriesIndex)
-        }
-    }
+    /// Disable downloading and sharing because of apple regulations
+//    @objc private func shareButtonTapped() {
+//        if let currentStoriesIndex = currentStoriesIndex {
+//            presenter.shareStory(storyIndex: currentStoriesIndex)
+//        }
+//    }
+    
+//    @objc private func saveButtonTapped() {
+//        if let currentStoriesIndex = currentStoriesIndex {
+//            presenter.saveVideoToLibrary(storyIndex: currentStoriesIndex)
+//        }
+//    }
 }
 
 extension StoryViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {

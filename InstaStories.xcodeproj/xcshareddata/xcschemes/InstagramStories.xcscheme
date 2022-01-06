@@ -16,8 +16,8 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A1DBE26B275E2B040075176C"
                BuildableName = "InstagramStories.app"
-               BlueprintName = "InstagramStories"
-               ReferencedContainer = "container:InstagramStories.xcodeproj">
+               BlueprintName = "InstaStories"
+               ReferencedContainer = "container:InstaStories.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -34,8 +34,8 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A1DBE281275E2B050075176C"
                BuildableName = "InstagramStoriesTests.xctest"
-               BlueprintName = "InstagramStoriesTests"
-               ReferencedContainer = "container:InstagramStories.xcodeproj">
+               BlueprintName = "InstaStoriesTests"
+               ReferencedContainer = "container:InstaStories.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
@@ -44,8 +44,8 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A1DBE28B275E2B050075176C"
                BuildableName = "InstagramStoriesUITests.xctest"
-               BlueprintName = "InstagramStoriesUITests"
-               ReferencedContainer = "container:InstagramStories.xcodeproj">
+               BlueprintName = "InstaStoriesUITests"
+               ReferencedContainer = "container:InstaStories.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -66,8 +66,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A1DBE26B275E2B040075176C"
             BuildableName = "InstagramStories.app"
-            BlueprintName = "InstagramStories"
-            ReferencedContainer = "container:InstagramStories.xcodeproj">
+            BlueprintName = "InstaStories"
+            ReferencedContainer = "container:InstaStories.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -83,8 +83,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A1DBE26B275E2B040075176C"
             BuildableName = "InstagramStories.app"
-            BlueprintName = "InstagramStories"
-            ReferencedContainer = "container:InstagramStories.xcodeproj">
+            BlueprintName = "InstaStories"
+            ReferencedContainer = "container:InstaStories.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

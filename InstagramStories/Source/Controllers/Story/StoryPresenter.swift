@@ -15,8 +15,9 @@ protocol StoryPresenterProtocol {
     func viewDidDisappear()
     func selectedStoryIndexWasIncreased()
     func selectedStoryIndexWasDecreased()
-    func saveVideoToLibrary(storyIndex: Int)
-    func shareStory(storyIndex: Int)
+    /// Disable downloading and sharing because of apple regulations
+//    func saveVideoToLibrary(storyIndex: Int)
+//    func shareStory(storyIndex: Int)
 }
 
 final class StoryPresenter {
@@ -198,73 +199,74 @@ extension StoryPresenter: StoryPresenterProtocol {
         }
     }
     
-    func saveVideoToLibrary(storyIndex: Int) {
-        PHPhotoLibrary.shared().performChanges({ [weak self] in
-            guard let self = self else { return }
-            let storyVideoPath = VideoCacheManager.shared.directoryFor(stringUrl: self.stories[storyIndex].contentURLString)
-            PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: storyVideoPath)
-        }) { saved, error in
-            if saved {
-                DispatchQueue.main.async {
-                    self.view?.showAlertController(title: Text.success.getText(),
-                                                   message: Text.videoSaved.getText())
-                }
-            }
-        }
-    }
+    /// Disable downloading and sharing because of apple regulations
+//    func saveVideoToLibrary(storyIndex: Int) {
+//        PHPhotoLibrary.shared().performChanges({ [weak self] in
+//            guard let self = self else { return }
+//            let storyVideoPath = VideoCacheManager.shared.directoryFor(stringUrl: self.stories[storyIndex].contentURLString)
+//            PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: storyVideoPath)
+//        }) { saved, error in
+//            if saved {
+//                DispatchQueue.main.async {
+//                    self.view?.showAlertController(title: Text.success.getText(),
+//                                                   message: Text.videoSaved.getText())
+//                }
+//            }
+//        }
+//    }
     
-    func shareStory(storyIndex: Int) {
-        let storyVideoPath = VideoCacheManager.shared.directoryFor(stringUrl: self.stories[storyIndex].contentURLString)
-        let objectsToShare = [storyVideoPath]
-        let excludedActivityTypes = [UIActivity.ActivityType.airDrop,
-                                     UIActivity.ActivityType.copyToPasteboard,
-                                     UIActivity.ActivityType.message,
-                                     UIActivity.ActivityType.postToTencentWeibo,
-                                     UIActivity.ActivityType.postToWeibo]
-        if let transitionHandler = transitionHandler {
-            view?.videoPlayer.pause()
-            timerForProgressWidth?.invalidate()
-            timer?.invalidate()
-            
-            let completion: ()->() = { [weak self] in
-                guard let self = self else { return }
-                self.view?.videoPlayer.play()
-            
-                let remainderOfStoryDuration = self.durationForCurrentStory - (self.previousDurationWhenWasPaused + self.durationWhenWasPaused)
-                
-                self.previousDurationWhenWasPaused += self.durationWhenWasPaused
-                self.durationWhenWasPaused = 0
-                self.timer = Timer(timeInterval: remainderOfStoryDuration, target: self,
-                                   selector: #selector(self.timerWasFired),
-                                   userInfo: nil,
-                                   repeats: false)
-                
-                guard let timer = self.timer else { return }
-                timer.tolerance = LocalConstants.mainTimerTolerance
-                RunLoop.current.add(timer, forMode: .common)
-
-                self.timerForProgressWidth = Timer(timeInterval: LocalConstants.timerForProgressWidthDurationTime,
-                                                   repeats: true) { [weak self] timer in
-                    guard let self = self else { return }
-                    self.durationWhenWasPaused += LocalConstants.timerForProgressWidthDurationTime
-                    self.progressWidth += LocalConstants.timerForProgressWidthDurationTime / self.durationForCurrentStory
-                    self.view?.setupVideoProgressViewWidth(percentWidth: self.progressWidth)
-                }
-
-                guard let timerForProgressWidth = self.timerForProgressWidth else { return }
-                timerForProgressWidth.tolerance = LocalConstants.timerForProgressWidthTolerance
-                RunLoop.current.add(timerForProgressWidth, forMode: .common)
-            }
-            coordinator.presentActivityViewController(
-                type: .video(ActivityViewControllerSettings(
-                    key: "subject",
-                    value: "Video",
-                    objectsToShare: objectsToShare,
-                    excludedActivityTypes: excludedActivityTypes)),
-                transitionHandler: transitionHandler,
-                completion: completion)
-        }
-    }
+//    func shareStory(storyIndex: Int) {
+//        let storyVideoPath = VideoCacheManager.shared.directoryFor(stringUrl: self.stories[storyIndex].contentURLString)
+//        let objectsToShare = [storyVideoPath]
+//        let excludedActivityTypes = [UIActivity.ActivityType.airDrop,
+//                                     UIActivity.ActivityType.copyToPasteboard,
+//                                     UIActivity.ActivityType.message,
+//                                     UIActivity.ActivityType.postToTencentWeibo,
+//                                     UIActivity.ActivityType.postToWeibo]
+//        if let transitionHandler = transitionHandler {
+//            view?.videoPlayer.pause()
+//            timerForProgressWidth?.invalidate()
+//            timer?.invalidate()
+//
+//            let completion: ()->() = { [weak self] in
+//                guard let self = self else { return }
+//                self.view?.videoPlayer.play()
+//
+//                let remainderOfStoryDuration = self.durationForCurrentStory - (self.previousDurationWhenWasPaused + self.durationWhenWasPaused)
+//
+//                self.previousDurationWhenWasPaused += self.durationWhenWasPaused
+//                self.durationWhenWasPaused = 0
+//                self.timer = Timer(timeInterval: remainderOfStoryDuration, target: self,
+//                                   selector: #selector(self.timerWasFired),
+//                                   userInfo: nil,
+//                                   repeats: false)
+//
+//                guard let timer = self.timer else { return }
+//                timer.tolerance = LocalConstants.mainTimerTolerance
+//                RunLoop.current.add(timer, forMode: .common)
+//
+//                self.timerForProgressWidth = Timer(timeInterval: LocalConstants.timerForProgressWidthDurationTime,
+//                                                   repeats: true) { [weak self] timer in
+//                    guard let self = self else { return }
+//                    self.durationWhenWasPaused += LocalConstants.timerForProgressWidthDurationTime
+//                    self.progressWidth += LocalConstants.timerForProgressWidthDurationTime / self.durationForCurrentStory
+//                    self.view?.setupVideoProgressViewWidth(percentWidth: self.progressWidth)
+//                }
+//
+//                guard let timerForProgressWidth = self.timerForProgressWidth else { return }
+//                timerForProgressWidth.tolerance = LocalConstants.timerForProgressWidthTolerance
+//                RunLoop.current.add(timerForProgressWidth, forMode: .common)
+//            }
+//            coordinator.presentActivityViewController(
+//                type: .video(ActivityViewControllerSettings(
+//                    key: "subject",
+//                    value: "Video",
+//                    objectsToShare: objectsToShare,
+//                    excludedActivityTypes: excludedActivityTypes)),
+//                transitionHandler: transitionHandler,
+//                completion: completion)
+//        }
+//    }
     
     //MARK: - OBJC methods
     @objc private func timerWasFired() {

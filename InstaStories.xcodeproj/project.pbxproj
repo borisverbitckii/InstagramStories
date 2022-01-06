@@ -25,7 +25,7 @@
 		A128A4002763154400CAAF9B /* SplashPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A128A3FF2763154400CAAF9B /* SplashPresenter.swift */; };
 		A128A4022763168500CAAF9B /* AuthUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = A128A4012763168500CAAF9B /* AuthUseCase.swift */; };
 		A128A4042763186300CAAF9B /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A128A4032763186300CAAF9B /* AuthManager.swift */; };
-		A128A4062763195A00CAAF9B /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = A128A4052763195A00CAAF9B /* Constants.swift */; };
+		A128A4062763195A00CAAF9B /* Credentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = A128A4052763195A00CAAF9B /* Credentials.swift */; };
 		A128A408276328E800CAAF9B /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A128A407276328E800CAAF9B /* Errors.swift */; };
 		A12C900B275EF359005CD963 /* FavoritesPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12C900A275EF359005CD963 /* FavoritesPresenter.swift */; };
 		A12C9020275F1802005CD963 /* InstagramUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12C901F275F1802005CD963 /* InstagramUserCell.swift */; };
@@ -127,7 +127,7 @@
 		A128A3FF2763154400CAAF9B /* SplashPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashPresenter.swift; sourceTree = "<group>"; };
 		A128A4012763168500CAAF9B /* AuthUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthUseCase.swift; sourceTree = "<group>"; };
 		A128A4032763186300CAAF9B /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
-		A128A4052763195A00CAAF9B /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		A128A4052763195A00CAAF9B /* Credentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Credentials.swift; sourceTree = "<group>"; };
 		A128A407276328E800CAAF9B /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 		A12C900A275EF359005CD963 /* FavoritesPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesPresenter.swift; sourceTree = "<group>"; };
 		A12C901F275F1802005CD963 /* InstagramUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstagramUserCell.swift; sourceTree = "<group>"; };
@@ -148,14 +148,14 @@
 		A16E73CF2784B48A0067D919 /* lf30_editor_dcdvztif.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = lf30_editor_dcdvztif.json; sourceTree = "<group>"; };
 		A16E73D12784B6270067D919 /* extension+UILabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "extension+UILabel.swift"; sourceTree = "<group>"; };
 		A18F136F275E3C2D003D3651 /* SearchPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchPresenter.swift; sourceTree = "<group>"; };
-		A1DBE26C275E2B040075176C /* InstagramStories.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InstagramStories.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1DBE26C275E2B040075176C /* InstaStories.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InstaStories.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1DBE26F275E2B040075176C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A1DBE271275E2B040075176C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		A1DBE278275E2B050075176C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A1DBE27D275E2B050075176C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A1DBE282275E2B050075176C /* InstagramStoriesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InstagramStoriesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1DBE282275E2B050075176C /* InstaStoriesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InstaStoriesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1DBE286275E2B050075176C /* InstagramStoriesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstagramStoriesTests.swift; sourceTree = "<group>"; };
-		A1DBE28C275E2B050075176C /* InstagramStoriesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InstagramStoriesUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1DBE28C275E2B050075176C /* InstaStoriesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InstaStoriesUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1DBE290275E2B050075176C /* InstagramStoriesUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstagramStoriesUITests.swift; sourceTree = "<group>"; };
 		A1DBE292275E2B050075176C /* InstagramStoriesUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstagramStoriesUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		A1DBE29F275E2B5A0075176C /* RealmInstagramUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmInstagramUser.swift; sourceTree = "<group>"; };
@@ -404,9 +404,9 @@
 		A1DBE26D275E2B040075176C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A1DBE26C275E2B040075176C /* InstagramStories.app */,
-				A1DBE282275E2B050075176C /* InstagramStoriesTests.xctest */,
-				A1DBE28C275E2B050075176C /* InstagramStoriesUITests.xctest */,
+				A1DBE26C275E2B040075176C /* InstaStories.app */,
+				A1DBE282275E2B050075176C /* InstaStoriesTests.xctest */,
+				A1DBE28C275E2B050075176C /* InstaStoriesUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -549,7 +549,7 @@
 		A1F3E664276F7FE60039E547 /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				A128A4052763195A00CAAF9B /* Constants.swift */,
+				A128A4052763195A00CAAF9B /* Credentials.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -583,9 +583,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A1DBE26B275E2B040075176C /* InstagramStories */ = {
+		A1DBE26B275E2B040075176C /* InstaStories */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A1DBE296275E2B050075176C /* Build configuration list for PBXNativeTarget "InstagramStories" */;
+			buildConfigurationList = A1DBE296275E2B050075176C /* Build configuration list for PBXNativeTarget "InstaStories" */;
 			buildPhases = (
 				A1DBE268275E2B040075176C /* Sources */,
 				A1DBE269275E2B040075176C /* Frameworks */,
@@ -595,7 +595,7 @@
 			);
 			dependencies = (
 			);
-			name = InstagramStories;
+			name = InstaStories;
 			packageProductDependencies = (
 				A1FD9E5A27630CC20076BE38 /* Swiftagram */,
 				A1FD9E5C27630CC20076BE38 /* SwiftagramCrypto */,
@@ -605,12 +605,12 @@
 				A155B4C5276346D3005CA2C0 /* Lottie */,
 			);
 			productName = InstagramStories;
-			productReference = A1DBE26C275E2B040075176C /* InstagramStories.app */;
+			productReference = A1DBE26C275E2B040075176C /* InstaStories.app */;
 			productType = "com.apple.product-type.application";
 		};
-		A1DBE281275E2B050075176C /* InstagramStoriesTests */ = {
+		A1DBE281275E2B050075176C /* InstaStoriesTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A1DBE299275E2B050075176C /* Build configuration list for PBXNativeTarget "InstagramStoriesTests" */;
+			buildConfigurationList = A1DBE299275E2B050075176C /* Build configuration list for PBXNativeTarget "InstaStoriesTests" */;
 			buildPhases = (
 				A1DBE27E275E2B050075176C /* Sources */,
 				A1DBE27F275E2B050075176C /* Frameworks */,
@@ -621,14 +621,14 @@
 			dependencies = (
 				A1DBE284275E2B050075176C /* PBXTargetDependency */,
 			);
-			name = InstagramStoriesTests;
+			name = InstaStoriesTests;
 			productName = InstagramStoriesTests;
-			productReference = A1DBE282275E2B050075176C /* InstagramStoriesTests.xctest */;
+			productReference = A1DBE282275E2B050075176C /* InstaStoriesTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		A1DBE28B275E2B050075176C /* InstagramStoriesUITests */ = {
+		A1DBE28B275E2B050075176C /* InstaStoriesUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A1DBE29C275E2B050075176C /* Build configuration list for PBXNativeTarget "InstagramStoriesUITests" */;
+			buildConfigurationList = A1DBE29C275E2B050075176C /* Build configuration list for PBXNativeTarget "InstaStoriesUITests" */;
 			buildPhases = (
 				A1DBE288275E2B050075176C /* Sources */,
 				A1DBE289275E2B050075176C /* Frameworks */,
@@ -639,9 +639,9 @@
 			dependencies = (
 				A1DBE28E275E2B050075176C /* PBXTargetDependency */,
 			);
-			name = InstagramStoriesUITests;
+			name = InstaStoriesUITests;
 			productName = InstagramStoriesUITests;
-			productReference = A1DBE28C275E2B050075176C /* InstagramStoriesUITests.xctest */;
+			productReference = A1DBE28C275E2B050075176C /* InstaStoriesUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -667,7 +667,7 @@
 					};
 				};
 			};
-			buildConfigurationList = A1DBE267275E2B040075176C /* Build configuration list for PBXProject "InstagramStories" */;
+			buildConfigurationList = A1DBE267275E2B040075176C /* Build configuration list for PBXProject "InstaStories" */;
 			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -686,9 +686,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A1DBE26B275E2B040075176C /* InstagramStories */,
-				A1DBE281275E2B050075176C /* InstagramStoriesTests */,
-				A1DBE28B275E2B050075176C /* InstagramStoriesUITests */,
+				A1DBE26B275E2B040075176C /* InstaStories */,
+				A1DBE281275E2B050075176C /* InstaStoriesTests */,
+				A1DBE28B275E2B050075176C /* InstaStoriesUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -749,7 +749,7 @@
 				A12C9020275F1802005CD963 /* InstagramUserCell.swift in Sources */,
 				A1F3E636276DFB930039E547 /* DataSourceFactory.swift in Sources */,
 				A1316CAF2771E28800DA0199 /* StoriesVideoDataSourceProtocol.swift in Sources */,
-				A128A4062763195A00CAAF9B /* Constants.swift in Sources */,
+				A128A4062763195A00CAAF9B /* Credentials.swift in Sources */,
 				A12FF001276629D400F6C3B4 /* HeaderReusableView.swift in Sources */,
 				A1DBE2A0275E2B5A0075176C /* RealmInstagramUser.swift in Sources */,
 				A128A4042763186300CAAF9B /* AuthManager.swift in Sources */,
@@ -820,12 +820,12 @@
 /* Begin PBXTargetDependency section */
 		A1DBE284275E2B050075176C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = A1DBE26B275E2B040075176C /* InstagramStories */;
+			target = A1DBE26B275E2B040075176C /* InstaStories */;
 			targetProxy = A1DBE283275E2B050075176C /* PBXContainerItemProxy */;
 		};
 		A1DBE28E275E2B050075176C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = A1DBE26B275E2B040075176C /* InstagramStories */;
+			target = A1DBE26B275E2B040075176C /* InstaStories */;
 			targetProxy = A1DBE28D275E2B050075176C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -957,6 +957,8 @@
 				DEVELOPMENT_TEAM = PQ6LM8W269;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = InstagramStories/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = InstaStories;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Need acces to save storie video";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -968,7 +970,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Highlights.InstagramStories;
+				PRODUCT_BUNDLE_IDENTIFIER = com.highlights.InstagramStories;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -986,6 +988,8 @@
 				DEVELOPMENT_TEAM = PQ6LM8W269;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = InstagramStories/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = InstaStories;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Need acces to save storie video";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -997,7 +1001,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Highlights.InstagramStories;
+				PRODUCT_BUNDLE_IDENTIFIER = com.highlights.InstagramStories;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -1026,7 +1030,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/InstagramStories.app/InstagramStories";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/InstaStories.app/InstaStories";
 			};
 			name = Debug;
 		};
@@ -1051,7 +1055,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/InstagramStories.app/InstagramStories";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/InstaStories.app/InstaStories";
 			};
 			name = Release;
 		};
@@ -1104,7 +1108,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A1DBE267275E2B040075176C /* Build configuration list for PBXProject "InstagramStories" */ = {
+		A1DBE267275E2B040075176C /* Build configuration list for PBXProject "InstaStories" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A1DBE294275E2B050075176C /* Debug */,
@@ -1113,7 +1117,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A1DBE296275E2B050075176C /* Build configuration list for PBXNativeTarget "InstagramStories" */ = {
+		A1DBE296275E2B050075176C /* Build configuration list for PBXNativeTarget "InstaStories" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A1DBE297275E2B050075176C /* Debug */,
@@ -1122,7 +1126,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A1DBE299275E2B050075176C /* Build configuration list for PBXNativeTarget "InstagramStoriesTests" */ = {
+		A1DBE299275E2B050075176C /* Build configuration list for PBXNativeTarget "InstaStoriesTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A1DBE29A275E2B050075176C /* Debug */,
@@ -1131,7 +1135,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A1DBE29C275E2B050075176C /* Build configuration list for PBXNativeTarget "InstagramStoriesUITests" */ = {
+		A1DBE29C275E2B050075176C /* Build configuration list for PBXNativeTarget "InstaStoriesUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A1DBE29D275E2B050075176C /* Debug */,
