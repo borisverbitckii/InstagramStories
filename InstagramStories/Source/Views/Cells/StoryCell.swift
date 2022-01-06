@@ -24,7 +24,7 @@ final class StoryCell: UICollectionViewCell {
     }(CustomActivityIndicator())
     
     private let timeViewContainer: UIView = {
-        Utils.addShadow(type: .shadowIsBelow, layer: $0.layer) // check this
+        Utils.addShadow(type: .shadowIsBelow, layer: $0.layer)
         return $0
     }(UIView())
     

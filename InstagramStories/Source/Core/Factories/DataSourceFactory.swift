@@ -5,8 +5,6 @@
 //  Created by Борис on 18.12.2021.
 //
 
-import Foundation
-
 protocol DataSourceFactoryProtocol {
     func getUserImageDataSource() -> UserImageDataSourceProtocol
     func getSearchDataSource() -> SearchDataSourceProtocol

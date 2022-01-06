@@ -145,5 +145,5 @@ extension FavoritesViewController: InstagramUserCellButtonDelegate {
 
 private enum LocalConstants {
     static let stateViewAnimationDuration: TimeInterval = 0.6
-    static let stateViewTopInset: CGFloat = 50
+    static let stateViewTopInset: CGFloat = 0
 }

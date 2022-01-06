@@ -30,7 +30,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             let directoryContents = try FileManager.default.contentsOfDirectory( at: cacheURL, includingPropertiesForKeys: nil, options: [])
             for file in directoryContents {
                 do {
-                    try fileManager.removeItem(at: file) // TODO: Fix cleaning, clean only app files
+                    try fileManager.removeItem(at: file)
                 }
                 catch let error as NSError {
                     print(error)

@@ -151,8 +151,8 @@ final class InstagramUserCell: UICollectionViewCell {
                                   animations: {
                     self.userIcon.image = image })
                 
-            case .failure(_):
-                //TODO: Change this
+            case .failure(let error):
+                print(error)
                 break
             }
         })

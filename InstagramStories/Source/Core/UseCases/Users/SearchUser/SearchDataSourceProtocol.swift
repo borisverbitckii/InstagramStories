@@ -5,7 +5,7 @@
 //  Created by Борис on 19.12.2021.
 //
 
-import Swiftagram // fix import
+import Swiftagram
 
 protocol SearchDataSourceProtocol {
     func fetchInstagramUsers(searchingTitle: String,

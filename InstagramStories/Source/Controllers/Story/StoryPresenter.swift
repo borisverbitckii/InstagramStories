@@ -142,8 +142,8 @@ final class StoryPresenter {
                     timerForProgressWidth.tolerance = LocalConstants.timerForProgressWidthTolerance
                     RunLoop.current.add(timerForProgressWidth, forMode: .common)
                 }
-            case .failure(_):
-                break // fix this
+            case .failure(let error):
+                print(error)
             }
         }
     }

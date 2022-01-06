@@ -309,5 +309,5 @@ private enum LocalConstants {
     static let headerReuseIdentifier = "header"
     static let headerHeight: CGFloat = 30
     static let stateViewAnimationDuration: TimeInterval = 0.6
-    static let stateViewTopInset: CGFloat = 50
+    static let stateViewTopInset: CGFloat = 0
 }

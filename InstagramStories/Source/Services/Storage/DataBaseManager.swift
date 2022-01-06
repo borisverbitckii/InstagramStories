@@ -144,7 +144,7 @@ extension DataBaseManager : DataBaseManagerProtocol {
                         userToUpdate?.instagramUsername = user.instagramUsername
                         userToUpdate?.userIconURL = user.userIconURL
                         userToUpdate?.isPrivate = user.isPrivate
-                        userToUpdate?.isRecent = user.isRecent // fix this because of data model
+                        userToUpdate?.isRecent = user.isRecent
                         userToUpdate?.isOnFavorite = user.isOnFavorite
                         
                         guard let result = true as? Y else { return }

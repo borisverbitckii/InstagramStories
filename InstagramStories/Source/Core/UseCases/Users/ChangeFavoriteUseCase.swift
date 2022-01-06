@@ -5,7 +5,6 @@
 //  Created by Борис on 27.12.2021.
 //
 
-import RealmSwift
 import UIKit.UIImage
 
 protocol ChangeFavoritesUseCaseProtocol {

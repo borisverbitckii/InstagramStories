@@ -110,7 +110,7 @@ extension Coordinator: CoordinatorProtocol {
             activityViewController.excludedActivityTypes = settings.excludedActivityTypes
             activityViewController.completionWithItemsHandler = { _, _, _, error in
                 if let error = error {
-                    print(error) // fix with NSError
+                    print(error) 
                 }
                 if let completion = completion {
                     completion()

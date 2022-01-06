@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import RealmSwift
 
 protocol UsersDataSourceProtocol {
     func fetchUsersFromBD(userType: UserType,

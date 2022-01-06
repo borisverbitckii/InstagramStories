@@ -7,7 +7,6 @@
 
 import UIKit
 import Lottie
-import SwiftUI
 
 enum ActivityIndicatorType {
     case withBackgroundView(ActivityIndicatorSize)

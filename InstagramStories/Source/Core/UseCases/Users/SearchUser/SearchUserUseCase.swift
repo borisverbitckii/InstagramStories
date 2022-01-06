@@ -7,7 +7,6 @@
 
 import UIKit.UIImage
 import Swiftagram
-import RealmSwift
 
 protocol SearchUseCaseProtocol {
     func fetchInstagramUsersFromNetwork(searchingTitle: String,

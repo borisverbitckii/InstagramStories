@@ -7,7 +7,6 @@
 
 import Foundation
 import Swiftagram
-import RealmSwift
 
 protocol SearchUserRepositoryProtocol {
     func fetchInstagramUsersFromNetwork(searchingTitle: String,

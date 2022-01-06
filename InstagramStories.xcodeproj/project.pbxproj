@@ -50,9 +50,9 @@
 		A1AC5C1B27630FE000A6168E /* PinLayout in Frameworks */ = {isa = PBXBuildFile; productRef = A1AC5C1A27630FE000A6168E /* PinLayout */; };
 		A1AC5C1E2763105500A6168E /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = A1AC5C1D2763105500A6168E /* Realm */; };
 		A1AC5C202763105500A6168E /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = A1AC5C1F2763105500A6168E /* RealmSwift */; };
+		A1CE86512786CB9C00A2FE6A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1DBE278275E2B050075176C /* Assets.xcassets */; };
 		A1DBE270275E2B040075176C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DBE26F275E2B040075176C /* AppDelegate.swift */; };
 		A1DBE272275E2B040075176C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DBE271275E2B040075176C /* SceneDelegate.swift */; };
-		A1DBE279275E2B050075176C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1DBE278275E2B050075176C /* Assets.xcassets */; };
 		A1DBE287275E2B050075176C /* InstagramStoriesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DBE286275E2B050075176C /* InstagramStoriesTests.swift */; };
 		A1DBE291275E2B050075176C /* InstagramStoriesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DBE290275E2B050075176C /* InstagramStoriesUITests.swift */; };
 		A1DBE293275E2B050075176C /* InstagramStoriesUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DBE292275E2B050075176C /* InstagramStoriesUITestsLaunchTests.swift */; };
@@ -699,8 +699,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1DBE2C2275E32B50075176C /* Launch Screen.storyboard in Resources */,
+				A1CE86512786CB9C00A2FE6A /* Assets.xcassets in Resources */,
 				A16E73D02784B48A0067D919 /* lf30_editor_dcdvztif.json in Resources */,
-				A1DBE279275E2B050075176C /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

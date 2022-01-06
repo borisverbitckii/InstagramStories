@@ -5,8 +5,6 @@
 //  Created by Борис on 27.12.2021.
 //
 
-import RealmSwift
-
 protocol ChangeRecentUseCaseProtocol {
     func fetchRecentUsersFromBD(completion: @escaping ([RealmInstagramUserProtocol])->())
     func saveRecentUser(user: RealmInstagramUserProtocol, isSavedCompletion: @escaping (Bool)->())

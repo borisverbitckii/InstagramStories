@@ -8,7 +8,6 @@
 import Foundation
 import SwiftagramCrypto
 import UIKit.UIImage
-import RealmSwift
 
 protocol NetworkManagerProtocol: ManagerProtocol {
     func fetchImageData(urlString: String, completion: @escaping (Result<Data, Error>)->())
@@ -287,7 +286,7 @@ extension NetworkManager: NetworkManagerProtocol {
                             completion(video)
                         }
                     } catch {
-                        print(error) // fix to NSError
+                        print(error)
                     }
                 }
                 self.dataTaskForStory?.resume()

@@ -5,8 +5,6 @@
 //  Created by Борис on 19.12.2021.
 //
 
-import RealmSwift
-
 protocol UsersRepositoryProtocol {
     func fetchUsersFromBD(userType: UserType,
                           completion: @escaping ([RealmInstagramUserProtocol])->())
