@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A1DBE26B275E2B040075176C"
-               BuildableName = "InstagramStories.app"
+               BuildableName = "InstaStories.app"
                BlueprintName = "InstaStories"
                ReferencedContainer = "container:InstaStories.xcodeproj">
             </BuildableReference>
@@ -33,7 +33,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A1DBE281275E2B050075176C"
-               BuildableName = "InstagramStoriesTests.xctest"
+               BuildableName = "InstaStoriesTests.xctest"
                BlueprintName = "InstaStoriesTests"
                ReferencedContainer = "container:InstaStories.xcodeproj">
             </BuildableReference>
@@ -43,7 +43,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A1DBE28B275E2B050075176C"
-               BuildableName = "InstagramStoriesUITests.xctest"
+               BuildableName = "InstaStoriesUITests.xctest"
                BlueprintName = "InstaStoriesUITests"
                ReferencedContainer = "container:InstaStories.xcodeproj">
             </BuildableReference>
@@ -65,7 +65,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A1DBE26B275E2B040075176C"
-            BuildableName = "InstagramStories.app"
+            BuildableName = "InstaStories.app"
             BlueprintName = "InstaStories"
             ReferencedContainer = "container:InstaStories.xcodeproj">
          </BuildableReference>
@@ -82,7 +82,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A1DBE26B275E2B040075176C"
-            BuildableName = "InstagramStories.app"
+            BuildableName = "InstaStories.app"
             BlueprintName = "InstaStories"
             ReferencedContainer = "container:InstaStories.xcodeproj">
          </BuildableReference>

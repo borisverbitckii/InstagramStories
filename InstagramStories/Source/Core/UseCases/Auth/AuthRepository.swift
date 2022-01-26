@@ -44,10 +44,10 @@ extension AuthRepository: AuthRepositoryProtocol {
                 
                 self?.authDataSource.authInInstagram(username: username,
                                                      password: password) { result in
+                    UserDefaults.standard.set(usernameAndPassword, forKey: "lastAuthUserCredentials")
                     switch result {
                     case .success(let secret):
                         completion(.success(secret))
-                        UserDefaults.standard.set(usernameAndPassword, forKey: "lastAuthUserCredentials")
                     case .failure(let error):
                         if indexOfCredentialsForAuth == Credentials.allCases.count - 1 {
                             completion(.failure(error))
