@@ -158,7 +158,7 @@ extension NetworkManager: NetworkManagerProtocol {
                     print(error)
                     print(#file, #line, Errors.cantFetchUsers.error)
                     DispatchQueue.main.async {
-                        completion(.failure(error))
+                        completion(.failure(Errors.accountBlocked.error))
                     }
                 }
             } receiveValue: { users in

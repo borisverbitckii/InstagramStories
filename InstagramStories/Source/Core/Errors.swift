@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum Errors {
+enum Errors: Swift.Error {
     case networkIsNotAvailable
     case noSecretIntoKeychainStorage
     case needTwoFactorAuth
@@ -18,6 +18,7 @@ enum Errors {
     case cantFetchUserProfile
     case cantFetchUsers
     case noUserInDataBase
+    case accountBlocked
     
     var error: NSError {
         switch self {
@@ -41,6 +42,8 @@ enum Errors {
             return NSError(domain: "Cant fetch users", code: 8)
         case .noUserInDataBase:
             return NSError(domain: "No user in dataBase", code: 9)
+        case .accountBlocked:
+            return NSError(domain: "Аккаунт для просмотра историй заблокирован социальной сетью, к сожалению, сейчас функционал не доступен.", code: 10, userInfo: nil)
         }
     }
 }
