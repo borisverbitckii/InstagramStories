@@ -13,8 +13,7 @@
 
 Ссылка на AppStore: https://apps.apple.com/ru/app/instastories/id1603591536
 
-**PS.** Приложение удалено из AppStore из-за постоянных банов подготовленных пустых аккаунтов для авторизации в Instagram.
-Функцинал сохранения и возможности делиться видео историями отключен из-за нарушения авторских прав соц. сети.
+**PS.** Функцинал сохранения и возможности делиться видео историями отключен из-за нарушения авторских прав соц. сети.
 
 #### Скриншоты
 <img src="https://is3-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/c3/10/2e/c3102e17-aa3c-7d39-3123-18578ef7d832/97f7abec-2a84-413f-abcc-8a6196fe7c72_Simulator_Screen_Shot_-_iPhone_13_Pro_Max_-_2022-01-06_at_16.15.42.png/1284x2778bb.png" width="200"> <img src="https://is5-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/49/80/ed/4980ed6d-c2eb-ea95-e98b-fc7ff837c739/5d0dc62b-6fff-4714-b27c-2447adde1dfe_Simulator_Screen_Shot_-_iPhone_13_Pro_Max_-_2022-01-07_at_23.18.51.png/1284x2778bb.png" width="200">
