@@ -31,7 +31,7 @@ protocol DataManagerSettingsProtocol {
     var predicate: NSPredicate? { get }
 }
 
-protocol DataBaseManagerProtocol: ManagerProtocol {
+protocol DataBaseManagerProtocol {
     func executeDBOperation<T:DataManagerSettingsProtocol, Y>(settings: T,completion: @escaping (Result<Y, Error>)->())
 }
 

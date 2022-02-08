@@ -29,7 +29,8 @@ final class RepositoryFactory {
 extension RepositoryFactory: RepositoryFactoryProtocol {
     //MARK: - Public methods
     func getAuthRepository() -> AuthRepositoryProtocol {
-        return AuthRepository(authDataSource: dataSourceFactory.getAuthDataSource())
+        return AuthRepository(authDataSource: dataSourceFactory.getAuthDataSource(),
+                              credentialsDataSource: dataSourceFactory.getCredentialsDataSource())
     }
     
     func getUserImageRepository() -> UserImageRepositoryProtocol {

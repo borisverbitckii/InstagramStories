@@ -9,7 +9,7 @@ import Foundation
 import SwiftagramCrypto
 import UIKit.UIImage
 
-protocol NetworkManagerProtocol: ManagerProtocol {
+protocol NetworkManagerProtocol {
     func fetchImageData(urlString: String, completion: @escaping (Result<Data, Error>)->())
     func stopLastOperation()
     func fetchInstagramUsers(searchingTitle: String,
