@@ -8,27 +8,27 @@
 import Foundation
 
 protocol UserImageRepositoryProtocol {
-    func fetchImageData(urlString: String, completion: @escaping (Result<Data, Error>)->())
+    func fetchImageData(urlString: String, completion: @escaping (Result<Data, Error>) -> Void)
     func stopLastOperation()
 }
 
 final class UserImageRepository {
-    //MARK: - Private properties
+    // MARK: - Private properties
     private let remoteDataSource: UserImageDataSourceProtocol
-    
-    //MARK: - Init
+
+    // MARK: - Init
     init(remoteDataSource: UserImageDataSourceProtocol) {
         self.remoteDataSource = remoteDataSource
     }
 }
 
-//MARK: - extension + UserImageRepositoryProtocol
+// MARK: - extension + UserImageRepositoryProtocol
 extension UserImageRepository: UserImageRepositoryProtocol {
     func stopLastOperation() {
         remoteDataSource.stopLastOperation()
     }
-    
-    func fetchImageData(urlString: String, completion: @escaping (Result<Data, Error>)->()) {
+
+    func fetchImageData(urlString: String, completion: @escaping (Result<Data, Error>) -> Void) {
         remoteDataSource.fetchImageData(urlString: urlString, completion: completion)
     }
 }

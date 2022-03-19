@@ -16,41 +16,41 @@ protocol DataSourceFactoryProtocol {
 }
 
 final class DataSourceFactory {
-    //MARK: - Private properties
+    // MARK: - Private properties
     private let managerFactory: ManagerFactoryProtocol
-    
-    //MARK: - Init
+
+    // MARK: - Init
     init(managerFactory: ManagerFactoryProtocol) {
         self.managerFactory = managerFactory
     }
 }
 
-//MARK: - extension + DataSourceFactoryProtocol
+// MARK: - extension + DataSourceFactoryProtocol
 extension DataSourceFactory: DataSourceFactoryProtocol {
     func getSearchDataSource() -> SearchDataSourceProtocol {
         return SearchDataSource(networkManager: managerFactory.getNetworkManager())
     }
-    
+
     func getUserImageDataSource() -> UserImageDataSourceProtocol {
         return UserImageDataSource(networkManager: managerFactory.getNetworkManager())
     }
-    
+
     func getAuthDataSource() -> AuthDataSourceProtocol {
         return AuthDataSource(authManager: managerFactory.getAuthManager())
     }
-    
+
     func getStoriesDataSource() -> StoriesDataSourceProtocol {
         return StoriesDataSource(networkManager: managerFactory.getNetworkManager())
     }
-    
+
     func getRecentUsersDataSource() -> UsersDataSourceProtocol {
         return UsersDataSource(dataBaseManager: managerFactory.getDataBaseManager())
     }
-    
+
     func getStoryDataSource() -> StoriesVideoDataSourceProtocol {
         return StoriesVideoDataSource(networkManager: managerFactory.getNetworkManager())
     }
-    
+
     func getCredentialsDataSource() -> CredentialsDataSourceProtocol {
         return CredentialsDataSource(fireBaseManager: managerFactory.getFirebaseManager())
     }

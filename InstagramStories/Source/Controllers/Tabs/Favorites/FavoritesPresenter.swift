@@ -10,27 +10,26 @@ import Swiftagram
 
 protocol FavoritesPresenterProtocol {
     var favoritesUsers: [RealmInstagramUserProtocol] { get }
-    
+
     func viewWillAppear()
-    func userImageWillBeShown(stringURL: String, completion: @escaping (Result<UIImage,Error>)->())
+    func userImageWillBeShown(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> Void)
     func trailingButtonTapped(type: InstagramUserCellType, user: RealmInstagramUserProtocol)
     func cellWasTapped(indexPath: Int)
 }
 
 final class FavoritesPresenter {
-    
-    //MARK: - Public properties
+
+    // MARK: - Public properties
     var favoritesUsers: [RealmInstagramUserProtocol]
-    
-    //MARK: - Private properties
+
+    // MARK: - Private properties
     private weak var view: FavoritesViewProtocol?
     private weak var transitionHandler: TransitionProtocol?
     private let coordinator: CoordinatorProtocol
     private let changeFavoritesUseCase: ChangeFavoritesUseCaseProtocol
     private let secret: Secret
-    
-    
-    //MARK: - Init
+
+    // MARK: - Init
     init(coordinator: CoordinatorProtocol,
          changeFavoritesUseCase: ChangeFavoritesUseCaseProtocol,
          secret: Secret) {
@@ -39,36 +38,36 @@ final class FavoritesPresenter {
         self.changeFavoritesUseCase = changeFavoritesUseCase
         self.secret = secret
     }
-    
-    //MARK: - Public methods
+
+    // MARK: - Public methods
     func injectView(view: FavoritesViewProtocol) {
         self.view = view
     }
-    
+
     func injectTransitionHandler(view: TransitionProtocol) {
         self.transitionHandler = view
     }
 }
 
-//MARK: - FavoritesPresenterProtocol
+// MARK: - FavoritesPresenterProtocol
 extension FavoritesPresenter: FavoritesPresenterProtocol {
-    
+
     func viewWillAppear() {
         renewFavorites(type: .reload)
         if favoritesUsers.count != 0 {
             view?.hideStateView()
         }
     }
-    
-    func userImageWillBeShown(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> ()) {
+
+    func userImageWillBeShown(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> Void) {
         changeFavoritesUseCase.fetchImage(stringURL: stringURL, completion: completion)
     }
-    
+
     func trailingButtonTapped(type: InstagramUserCellType, user: RealmInstagramUserProtocol) {
-        
+
         let userState = DataBaseManager.getUserState(user: user)
         let firstIndexOfUser = favoritesUsers.firstIndex { $0.id == user.id } ?? 0
-        
+
         switch type {
         case .removeFromRecent: break
         case .favorite:
@@ -88,16 +87,16 @@ extension FavoritesPresenter: FavoritesPresenterProtocol {
             }
         }
     }
-    
+
     func cellWasTapped(indexPath: Int) {
         let user = favoritesUsers[indexPath]
         guard let transitionHandler = transitionHandler else { return }
         coordinator.presentProfileViewController(transitionHandler: transitionHandler, with: user, secret: secret)
     }
-    
-    //MARK: - Private methods
+
+    // MARK: - Private methods
     private func renewFavorites(type: RenewCollectionViewType) {
-        
+
         switch type {
         case .remove(index: let index):
             view?.removeItem(at: index)

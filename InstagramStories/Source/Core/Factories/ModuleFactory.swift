@@ -18,29 +18,28 @@ protocol ModuleFactoryProtocol: AnyObject {
 }
 
 final class ModuleFactory: ModuleFactoryProtocol {
-    
-    //MARK: - Private properties
+
+    // MARK: - Private properties
     private weak var coordinator: CoordinatorProtocol?
     private let useCasesFactory: UseCaseFactoryProtocol
-    
-    //MARK: - Init
+
+    // MARK: - Init
     init(useCasesFactory: UseCaseFactoryProtocol) {
         self.useCasesFactory = useCasesFactory
     }
-    
-    
-    //MARK: - Public methods
+
+    // MARK: - Public methods
     func injectCoordinator(coordinator: CoordinatorProtocol) {
         self.coordinator = coordinator
     }
-    
+
     func buildTabBarController(secret: Secret) -> UIViewController {
         let searchVC = buildSearchNavigationController(secret: secret)
         let favoritesVC = buildFavoritesNavigationController(secret: secret)
         return TabBarController(navigationControllerForSearch: searchVC,
                                     navigationControllerForFavorites: favoritesVC)
     }
-    
+
     func buildSearchNavigationController(secret: Secret) -> UINavigationController {
         guard let coordinator = coordinator,
               let searchUseCase = useCasesFactory.getSearchUserUseCase() as? SearchUserUseCase,
@@ -60,14 +59,14 @@ final class ModuleFactory: ModuleFactoryProtocol {
         presenter.injectTransitionHandler(view: view)
         return navigationController
     }
-    
+
     func buildFavoritesNavigationController(secret: Secret) -> UINavigationController {
         guard let coordinator = coordinator,
               let changeFavoritesUseCase = useCasesFactory.getSaveFavoritesUsersUseCase() as? ChangeFavoritesUseCaseProtocol
         else {
             return UINavigationController()
         }
-        
+
         let presenter = FavoritesPresenter(coordinator: coordinator,
                                            changeFavoritesUseCase: changeFavoritesUseCase,
                                            secret: secret)
@@ -83,13 +82,13 @@ final class ModuleFactory: ModuleFactoryProtocol {
               let useCase = useCasesFactory.getAuthUseCase() as? SplashUseCaseProtocol else {
             return UIViewController()
         }
-        
+
         let presenter = SplashPresenter(coordinator: coordinator, useCase: useCase)
         let view = SplashViewController(presenter: presenter)
         presenter.injectView(view: view)
         return view
     }
-    
+
     func buildProfileViewController(with user: RealmInstagramUserProtocol, secret: Secret) -> UIViewController {
         guard let coordinator = coordinator,
               let loadUserProfileUseCase = useCasesFactory.getLoadUserProfileUseCase() as? LoadUserProfileUseCase,
@@ -97,7 +96,7 @@ final class ModuleFactory: ModuleFactoryProtocol {
         else {
             return UIViewController()
         }
-        
+
         let presenter = ProfilePresenter(coordinator: coordinator,
                                          loadUserProfileUseCase: loadUserProfileUseCase,
                                          saveFavoritesUseCase: saveFavoritesUseCase,
@@ -107,7 +106,7 @@ final class ModuleFactory: ModuleFactoryProtocol {
         presenter.injectView(view: view)
         return view
     }
-    
+
     func buildStoryViewController(with user: RealmInstagramUserProtocol, stories: [Story], selectedStoryIndex: Int, secret: Secret) -> UIViewController {
         guard let coordinator = coordinator,
               let useCase = useCasesFactory.getShowStoryUseCase() as? ShowStoryUseCaseProtocol else {

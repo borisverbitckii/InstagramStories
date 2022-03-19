@@ -19,21 +19,21 @@ enum FavoriteButtonType {
     case remove
 }
 
-protocol InstagramUserCellButtonDelegate {
+protocol InstagramUserCellButtonDelegate: AnyObject {
     func trailingButtonTapped(type: InstagramUserCellType, user: RealmInstagramUserProtocol)
 }
 
-protocol InstagramUserCellImageDelegate {
-    func userImageWillBeShown(stringURL: String, completion: @escaping (Result<UIImage,Error>)->())
+protocol InstagramUserCellImageDelegate: AnyObject {
+    func userImageWillBeShown(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> Void)
 }
 
 final class InstagramUserCell: UICollectionViewCell {
-    
-    //MARK: - Public properties
-    var buttonDelegate: InstagramUserCellButtonDelegate?
-    var imageDelegate: InstagramUserCellImageDelegate?
-    
-    //MARK: - Private properties
+
+    // MARK: - Public properties
+    weak var buttonDelegate: InstagramUserCellButtonDelegate?
+    weak var imageDelegate: InstagramUserCellImageDelegate?
+
+    // MARK: - Private properties
     private var type: InstagramUserCellType? {
         didSet {
             switch type {
@@ -59,61 +59,61 @@ final class InstagramUserCell: UICollectionViewCell {
     }
     private var user: RealmInstagramUserProtocol?
     private var defaultButtonState = true
-    
+
     // UIElements
     private var activityIndicator: CustomActivityIndicator = {
         $0.type = .defaultActivityIndicator(.medium)
         $0.hide()
         return $0
     }(CustomActivityIndicator())
-    
+
     private let userIcon: UIImageView = {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
         return $0
     }(UIImageView())
-    
+
     private let nickNameLabel: UILabel = {
         $0.font = Fonts.avenir(.light).getFont(size: .small)
         $0.textColor = Palette.gray.color
         return $0
     }(UILabel())
-    
+
     private let nameLabel: UILabel = {
         $0.font = Fonts.avenir(.heavy).getFont(size: .medium)
         return $0
     }(UILabel())
-    
+
     private let stackViewForText: UIStackView = {
         $0.axis = .vertical
         $0.alignment = .leading
         return $0
     }(UIStackView())
-    
+
     private let trailingButton: UIButton = {
         $0.contentMode = .scaleAspectFill
         return $0
     }(UIButton())
-    
-    //MARK: - Init
+
+    // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubviews()
         backgroundColor = Palette.white.color
         layer.cornerRadius = LocalConstants.cellCornerRadius
-        Utils.addShadow(type: .shadowIsBelow , layer: layer)
+        Utils.addShadow(type: .shadowIsBelow, layer: layer)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    //MARK: - Override methods
+
+    // MARK: - Override methods
     override func layoutSubviews() {
         super.layoutSubviews()
         layout()
     }
-    
+
     override func prepareForReuse() {
         super.prepareForReuse()
         type = nil
@@ -122,24 +122,24 @@ final class InstagramUserCell: UICollectionViewCell {
         nameLabel.text = ""
         nickNameLabel.text = ""
     }
-    
-    //MARK: - Public methods
+
+    // MARK: - Public methods
     func configure(type: InstagramUserCellType, user: RealmInstagramUserProtocol) {
         self.type = type
         self.user = user
-        
+
         nameLabel.text = user.name
         nickNameLabel.text = "@" + user.instagramUsername
         trailingButton.addTarget(self, action: #selector(trailingButtonTapped), for: .touchUpInside)
-        
+
         ImageCacheManager.isAlreadyCached(stringURL: user.userIconURL)
             ? activityIndicator.hide()
             : activityIndicator.show()
 
         fetchImage(for: user)
     }
-    
-    //MARK: - Private methods
+
+    // MARK: - Private methods
     private func fetchImage(for user: RealmInstagramUserProtocol) {
         self.imageDelegate?.userImageWillBeShown(stringURL: user.userIconURL, completion: { result in
             switch result {
@@ -150,15 +150,15 @@ final class InstagramUserCell: UICollectionViewCell {
                                   options: .transitionCrossDissolve,
                                   animations: {
                     self.userIcon.image = image })
-                
+
             case .failure(let error):
                 print(error)
                 break
             }
         })
     }
-    
-    private func addSubviews(){
+
+    private func addSubviews() {
         stackViewForText.addArrangedSubview(nameLabel)
         stackViewForText.addArrangedSubview(nickNameLabel)
         contentView.addSubview(stackViewForText)
@@ -166,33 +166,33 @@ final class InstagramUserCell: UICollectionViewCell {
         contentView.addSubview(activityIndicator)
         contentView.addSubview(userIcon)
     }
-    
+
     private func layout() {
         userIcon.pin
             .left(LocalConstants.horizontalInset)
             .vCenter()
             .size(LocalConstants.userIconSize)
-        
+
         activityIndicator.frame = userIcon.frame
-        
+
         userIcon.layer.cornerRadius = userIcon.frame.height / 2
-        
+
         trailingButton.pin
             .right(LocalConstants.horizontalInset)
             .size(LocalConstants.deleteButtonSize)
             .vCenter()
-        
+
         stackViewForText.pin
             .after(of: userIcon).margin(LocalConstants.stackViewLeadingInset)
             .before(of: trailingButton)
             .vCenter()
             .height(contentView.frame.height * 0.6)
-        
+
     }
-    
+
     private func changeButtonImage() {
         defaultButtonState.toggle()
-        
+
         switch type {
         case .favorite(let favoriteType):
             switch favoriteType {
@@ -206,8 +206,8 @@ final class InstagramUserCell: UICollectionViewCell {
         case .removeFromRecent, .none: break
         }
     }
-    
-    //MARK: - OBJC methods
+
+    // MARK: - OBJC methods
     @objc private func trailingButtonTapped() {
         if let type = type, let user = user {
             changeButtonImage()
@@ -217,12 +217,12 @@ final class InstagramUserCell: UICollectionViewCell {
 }
 
 private enum LocalConstants {
-    //Sizes and insets
+    // Sizes and insets
     static let horizontalInset: CGFloat = 16
-    static let userIconSize = CGSize(width: 50 , height: 50)
+    static let userIconSize = CGSize(width: 50, height: 50)
     static let deleteButtonSize = CGSize(width: 30, height: 30)
     static let stackViewLeadingInset: CGFloat = 20
     static let cellCornerRadius: CGFloat = 35
-    
+
     static let animationDuration: TimeInterval = 0.45
 }

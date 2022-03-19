@@ -8,28 +8,28 @@
 import UIKit.UIImage
 
 protocol ShowStoryUseCaseProtocol {
-    func fetchStoryPreview(urlString: String, completion: @escaping (Result<UIImage, Error>) -> ())
-    func downloadCurrentStoryVideo(urlString: String, completion: @escaping (URL)->())
+    func fetchStoryPreview(urlString: String, completion: @escaping (Result<UIImage, Error>) -> Void)
+    func downloadCurrentStoryVideo(urlString: String, completion: @escaping (URL) -> Void)
 }
 
 final class ShowStoryUseCase: UseCase {
-    
-    //MARK: - Private properties
+
+    // MARK: - Private properties
     private let userImageRepository: UserImageRepositoryProtocol
     private let storyRepository: StoryRepositoryProtocol
-    
-    //MARK: - Init
+
+    // MARK: - Init
     init(userImageRepository: UserImageRepositoryProtocol,
          storyRepository: StoryRepositoryProtocol) {
         self.storyRepository = storyRepository
         self.userImageRepository = userImageRepository
     }
-    
+
 }
 
-//MARK: - extension + ShowStoryUseCaseProtocol
+// MARK: - extension + ShowStoryUseCaseProtocol
 extension ShowStoryUseCase: ShowStoryUseCaseProtocol {
-    func fetchStoryPreview(urlString: String, completion: @escaping (Result<UIImage, Error>) -> ()) {
+    func fetchStoryPreview(urlString: String, completion: @escaping (Result<UIImage, Error>) -> Void) {
         userImageRepository.fetchImageData(urlString: urlString) { result in
             switch result {
             case .success(let imageData):
@@ -40,8 +40,8 @@ extension ShowStoryUseCase: ShowStoryUseCaseProtocol {
             }
         }
     }
-    
-    func downloadCurrentStoryVideo(urlString: String, completion: @escaping (URL)->()) {
+
+    func downloadCurrentStoryVideo(urlString: String, completion: @escaping (URL) -> Void) {
         storyRepository.downloadCurrentStoryVideo(urlString: urlString, completion: completion)
     }
 }

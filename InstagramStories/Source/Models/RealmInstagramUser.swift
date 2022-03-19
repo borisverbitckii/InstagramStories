@@ -17,11 +17,11 @@ protocol RealmInstagramUserProtocol {
     var isPrivate: Bool { get set }
     var isOnFavorite: Bool { get set }
     var isRecent: Bool { get set }
-    
+
 }
 
 struct InstagramUser: RealmInstagramUserProtocol {
-    //MARK: - Public properties
+    // MARK: - Public properties
     var name: String
     var date: Date
     var instagramUsername: String
@@ -30,8 +30,8 @@ struct InstagramUser: RealmInstagramUserProtocol {
     var isPrivate: Bool
     var isOnFavorite: Bool
     var isRecent: Bool
-    
-    //MARK: - Init
+
+    // MARK: - Init
     init(instagramUser: RealmInstagramUser) {
         self.name = instagramUser.name
         self.date = instagramUser.date
@@ -42,7 +42,7 @@ struct InstagramUser: RealmInstagramUserProtocol {
         self.isOnFavorite = instagramUser.isOnFavorite
         self.isRecent = instagramUser.isRecent
     }
-    
+
     init(name: String,
          profileDescription: String,
          instagramUsername: String,
@@ -63,12 +63,12 @@ struct InstagramUser: RealmInstagramUserProtocol {
         self.isOnFavorite       = isOnFavorite
         self.isRecent           = isRecent
     }
-    
+
 }
 
 final class RealmInstagramUser: Object, RealmInstagramUserProtocol {
-    
-    //MARK: - Public properties
+
+    // MARK: - Public properties
     @objc dynamic var name = ""
     @objc dynamic var date = Date()
     @objc dynamic var profileDescription = ""
@@ -81,8 +81,8 @@ final class RealmInstagramUser: Object, RealmInstagramUserProtocol {
     @objc dynamic var isPrivate = false
     @objc dynamic var isOnFavorite = false
     @objc dynamic var isRecent = false
-    
-    //MARK: - Init
+
+    // MARK: - Init
     convenience init(name: String,
          profileDescription: String,
          instagramUsername: String,
@@ -107,7 +107,7 @@ final class RealmInstagramUser: Object, RealmInstagramUserProtocol {
         self.isOnFavorite       = isOnFavorite
         self.isRecent           = isRecent
     }
-    
+
     convenience init(user: RealmInstagramUserProtocol) {
         self.init()
         self.name               = user.name
@@ -118,7 +118,7 @@ final class RealmInstagramUser: Object, RealmInstagramUserProtocol {
         self.isOnFavorite       = user.isOnFavorite
         self.isRecent           = user.isRecent
     }
-    
+
     override class func primaryKey() -> String? {
         return "id"
     }

@@ -6,41 +6,38 @@
 //
 
 protocol ChangeRecentUseCaseProtocol {
-    func fetchRecentUsersFromBD(completion: @escaping ([RealmInstagramUserProtocol])->())
-    func saveRecentUser(user: RealmInstagramUserProtocol, isSavedCompletion: @escaping (Bool)->())
-    func changeRecentUser(user: RealmInstagramUserProtocol, isChangedCompletion: @escaping (Bool)->())
-    func removeRecentUser(user: RealmInstagramUserProtocol, isRemovedCompletion: @escaping (Bool)->())
+    func fetchRecentUsersFromBD(completion: @escaping ([RealmInstagramUserProtocol]) -> Void)
+    func saveRecentUser(user: RealmInstagramUserProtocol, isSavedCompletion: @escaping (Bool) -> Void)
+    func changeRecentUser(user: RealmInstagramUserProtocol, isChangedCompletion: @escaping (Bool) -> Void)
+    func removeRecentUser(user: RealmInstagramUserProtocol, isRemovedCompletion: @escaping (Bool) -> Void)
 }
 
 final class ChangeRecentUseCase: UseCase {
-    //MARK: - Private properties
+    // MARK: - Private properties
     private let usersRepository: UsersRepositoryProtocol
-    
+
     // MARK: - Init
     init(usersRepository: UsersRepositoryProtocol) {
         self.usersRepository = usersRepository
     }
 }
 
-//MARK: - extension + SaveRecentUseCaseProtocol
+// MARK: - extension + SaveRecentUseCaseProtocol
 
 extension ChangeRecentUseCase: ChangeRecentUseCaseProtocol {
-    func fetchRecentUsersFromBD(completion: @escaping ([RealmInstagramUserProtocol])->()) {
-        usersRepository.fetchUsersFromBD(userType: .recent,completion: completion)
+    func fetchRecentUsersFromBD(completion: @escaping ([RealmInstagramUserProtocol]) -> Void) {
+        usersRepository.fetchUsersFromBD(userType: .recent, completion: completion)
     }
-    
-    func removeRecentUser(user: RealmInstagramUserProtocol, isRemovedCompletion: @escaping (Bool) -> ()) {
+
+    func removeRecentUser(user: RealmInstagramUserProtocol, isRemovedCompletion: @escaping (Bool) -> Void) {
         usersRepository.removeUserFromBD(user: user, isDeletedCompletion: isRemovedCompletion)
     }
-    
-    
-    func saveRecentUser(user: RealmInstagramUserProtocol, isSavedCompletion: @escaping (Bool)->()) {
+
+    func saveRecentUser(user: RealmInstagramUserProtocol, isSavedCompletion: @escaping (Bool) -> Void) {
         usersRepository.saveUserToBD(user: user, isSavedCompletion: isSavedCompletion)
     }
-    
-    func changeRecentUser(user: RealmInstagramUserProtocol, isChangedCompletion: @escaping (Bool)->()) {
+
+    func changeRecentUser(user: RealmInstagramUserProtocol, isChangedCompletion: @escaping (Bool) -> Void) {
         usersRepository.changeUserInBD(user: user, isChangedCompletion: isChangedCompletion)
     }
 }
-
-

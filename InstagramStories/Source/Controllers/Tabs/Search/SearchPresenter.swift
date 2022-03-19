@@ -11,10 +11,10 @@ import Swiftagram
 protocol SearchPresenterProtocol {
     var searchingInstagramUsers: [RealmInstagramUserProtocol] { get }
     var recentUsers: [RealmInstagramUserProtocol] { get }
-    
+
     func viewWillAppear()
     func searchResultWasUpdated(username: String)
-    func userImageWillBeShown(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> ())
+    func userImageWillBeShown(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> Void)
     func cellWasTapped(indexPath: Int, isRecent: Bool)
     func searchBarCancelButtonClicked()
     func trailingButtonTapped(type: InstagramUserCellType, user: RealmInstagramUserProtocol)
@@ -22,12 +22,12 @@ protocol SearchPresenterProtocol {
 }
 
 final class SearchPresenter {
-    
-    //MARK: - Public properties
+
+    // MARK: - Public properties
     var searchingInstagramUsers: [RealmInstagramUserProtocol]
     var recentUsers: [RealmInstagramUserProtocol]
-    
-    //MARK: - Private properties
+
+    // MARK: - Private properties
     private weak var view: SearchViewProtocol?
     private weak var transitionHandler: TransitionProtocol?
     private let secret: Secret
@@ -35,8 +35,8 @@ final class SearchPresenter {
     private let searchUseCase: SearchUseCaseProtocol
     private let changeRecentUsersUseCase: ChangeRecentUseCaseProtocol
     private let changeFavoritesUseCase: ChangeFavoritesUseCaseProtocol
-    
-    //MARK: - Init
+
+    // MARK: - Init
     init(coordinator: CoordinatorProtocol,
          searchUseCase: SearchUseCaseProtocol,
          changeRecentUsersUseCase: ChangeRecentUseCaseProtocol,
@@ -50,21 +50,21 @@ final class SearchPresenter {
         self.changeFavoritesUseCase = changeFavoritesUseCase
         self.secret = secret
     }
-    
-    //MARK: - Public methods
+
+    // MARK: - Public methods
     func injectView(view: SearchViewProtocol) {
         self.view = view
     }
-    
+
     func injectTransitionHandler(view: TransitionProtocol) {
         self.transitionHandler = view
     }
 }
 
-//MARK: - SearchPresenterProtocol
+// MARK: - SearchPresenterProtocol
 
 extension SearchPresenter: SearchPresenterProtocol {
-    
+
     func viewWillAppear() {
         if recentUsers.isEmpty {
             changeRecentUsersUseCase.fetchRecentUsersFromBD { [weak self] users in
@@ -72,15 +72,14 @@ extension SearchPresenter: SearchPresenterProtocol {
                 self?.recentUsers = users
             }
         }
-        
+
         renewRecents(type: .reload)
     }
-    
-    
+
     func cellForItemIsExecute(user: RealmInstagramUserProtocol) -> Bool {
         DataBaseManager.isOnFavorite(user: user)
     }
-    
+
     func trailingButtonTapped(type: InstagramUserCellType, user: RealmInstagramUserProtocol) {
         let userState = DataBaseManager.getUserState(user: user)
         let firstIndexOfUser = recentUsers.firstIndex { $0.id == user.id} ?? 0
@@ -89,7 +88,7 @@ extension SearchPresenter: SearchPresenterProtocol {
             switch userState {
             case .onlyOnRecents:
                 changeRecentUsersUseCase.removeRecentUser(user: user) { [weak self] _ in
-                    self?.changeRecentUsersUseCase.fetchRecentUsersFromBD { users in
+                    self?.changeRecentUsersUseCase.fetchRecentUsersFromBD { _ in
                         self?.renewRecents(type: .remove(index: firstIndexOfUser))
                     }
                 }
@@ -97,16 +96,16 @@ extension SearchPresenter: SearchPresenterProtocol {
                 var notRecentUser = user
                 notRecentUser.isRecent = false
                 changeRecentUsersUseCase.changeRecentUser(user: notRecentUser) { [weak self] _ in
-                    self?.changeRecentUsersUseCase.fetchRecentUsersFromBD { users in
+                    self?.changeRecentUsersUseCase.fetchRecentUsersFromBD { _ in
                         self?.renewRecents(type: .remove(index: firstIndexOfUser))
                     }
                 }
             case .notExist, .onlyOnFavorites: break
             }
-            
+
         case .favorite:
             var favoriteUser = user
-            
+
             switch userState {
             case .notExist:
                 favoriteUser.isOnFavorite = true
@@ -124,18 +123,18 @@ extension SearchPresenter: SearchPresenterProtocol {
             }
         }
     }
-    
+
     func cellWasTapped(indexPath: Int, isRecent: Bool) {
-        
+
         if isRecent {
             let recentUser = recentUsers[indexPath]
             presentProfile(with: recentUser)
             return
         }
-        
+
         var user = searchingInstagramUsers[indexPath]
         let userState = DataBaseManager.getUserState(user: user)
-        
+
         switch userState {
         case .notExist:
             user.isRecent = true
@@ -147,14 +146,14 @@ extension SearchPresenter: SearchPresenterProtocol {
         case .onlyOnRecents, .onFavoritesAndRecents:
             break
         }
-        
+
         presentProfile(with: user)
     }
-    
-    func userImageWillBeShown(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> ()) {
+
+    func userImageWillBeShown(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> Void) {
         searchUseCase.fetchImage(stringURL: stringURL, completion: completion)
     }
-    
+
     func searchResultWasUpdated(username: String) {
         searchUseCase.fetchInstagramUsersFromNetwork(searchingTitle: username, secret: secret) { [weak self] result in
             switch result {
@@ -167,21 +166,21 @@ extension SearchPresenter: SearchPresenterProtocol {
             self?.view?.hideActivityIndicator()
         }
     }
-    
+
     func searchBarCancelButtonClicked() {
         searchUseCase.stopLastOperation()
-        changeRecentUsersUseCase.fetchRecentUsersFromBD { [weak self] users in
+        changeRecentUsersUseCase.fetchRecentUsersFromBD { [weak self] _ in
             self?.renewRecents(type: .reload)
             self?.view?.setupSearchingUsersCount(number: 0)
         }
     }
-    
-    //MARK: - Navigation
+
+    // MARK: - Navigation
     private func presentProfile(with user: RealmInstagramUserProtocol) {
         guard let transitionHandler = transitionHandler else { return }
         coordinator.presentProfileViewController(transitionHandler: transitionHandler, with: user, secret: secret)
     }
-    
+
     private func renewRecents(type: RenewCollectionViewType) {
         switch type {
         case .remove(index: let index):

@@ -8,20 +8,20 @@
 import UIKit
 
 final class CustomTransition: NSObject, UIViewControllerAnimatedTransitioning {
-    
+
     let viewControllers: [UIViewController]?
     let transitionDuration: Double = 0.35
-    
+
     init(viewControllers: [UIViewController]?) {
         self.viewControllers = viewControllers
     }
-    
+
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         return TimeInterval(transitionDuration)
     }
-    
+
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
-        
+
         guard
             let fromVC = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from),
             let fromView = fromVC.view,
@@ -33,14 +33,14 @@ final class CustomTransition: NSObject, UIViewControllerAnimatedTransitioning {
                 transitionContext.completeTransition(false)
                 return
         }
-        
+
         let frame = transitionContext.initialFrame(for: fromVC)
         var fromFrameEnd = frame
         var toFrameStart = frame
         fromFrameEnd.origin.x = toIndex > fromIndex ? frame.origin.x - frame.width : frame.origin.x + frame.width
         toFrameStart.origin.x = toIndex > fromIndex ? frame.origin.x + frame.width : frame.origin.x - frame.width
         toView.frame = toFrameStart
-        
+
         DispatchQueue.main.async {
             transitionContext.containerView.addSubview(toView)
             UIView.animate(withDuration: self.transitionDuration, animations: {
@@ -52,7 +52,7 @@ final class CustomTransition: NSObject, UIViewControllerAnimatedTransitioning {
             })
         }
     }
-    
+
     func getIndex(forViewController vc: UIViewController) -> Int? {
         guard let vcs = self.viewControllers else { return nil }
         for (index, thisVC) in vcs.enumerated() {

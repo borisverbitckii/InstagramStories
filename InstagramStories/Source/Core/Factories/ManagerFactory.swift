@@ -19,23 +19,23 @@ final class ManagerFactory: ManagerFactoryProtocol {
         NetworkManager(imageCacheManager: getImageCacheManager(),
                        videoCacheManager: getVideoCacheManager())
     }
-    
+
     func getDataBaseManager() -> DataBaseManagerProtocol {
         DataBaseManager()
     }
-    
+
     func getAuthManager() -> AuthManagerProtocol {
         AuthManager()
     }
-    
+
     func getImageCacheManager() -> ImageCacheManagerProtocol {
         ImageCacheManager()
     }
-    
+
     func getVideoCacheManager() -> VideoCacheManagerProtocol {
         VideoCacheManager()
     }
-    
+
     func getFirebaseManager() -> FireBaseManagerProtocol {
         FireBaseManager()
     }

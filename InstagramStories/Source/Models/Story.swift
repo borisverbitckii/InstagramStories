@@ -8,13 +8,13 @@
 import Foundation
 
 struct Story {
-    //MARK: - Public properties
+    // MARK: - Public properties
     let time: Int
     let previewImageURL: String
     let contentURLString: String
-    
-    //MARK: - Init
-    
+
+    // MARK: - Init
+
     init(time: Int,
          previewImageURL: String,
          contentURL: String) {

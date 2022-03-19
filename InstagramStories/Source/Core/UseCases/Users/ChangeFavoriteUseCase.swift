@@ -8,19 +8,19 @@
 import UIKit.UIImage
 
 protocol ChangeFavoritesUseCaseProtocol {
-    func saveFavoritesUser(user: RealmInstagramUserProtocol,isSavedCompletion: @escaping (Bool)->())
-    func changeFavoriteUser(user: RealmInstagramUserProtocol, isChangedCompletion: @escaping (Bool)->())
-    func loadFavoritesUsers(completion: @escaping ([RealmInstagramUserProtocol]) -> ())
-    func fetchImage(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> ())
-    func removeFavoriteUser(user: RealmInstagramUserProtocol, isRemovedCompletion: @escaping (Bool)->())
+    func saveFavoritesUser(user: RealmInstagramUserProtocol, isSavedCompletion: @escaping (Bool) -> Void)
+    func changeFavoriteUser(user: RealmInstagramUserProtocol, isChangedCompletion: @escaping (Bool) -> Void)
+    func loadFavoritesUsers(completion: @escaping ([RealmInstagramUserProtocol]) -> Void)
+    func fetchImage(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> Void)
+    func removeFavoriteUser(user: RealmInstagramUserProtocol, isRemovedCompletion: @escaping (Bool) -> Void)
 }
 
 final class ChangeFavoritesUseCase: UseCase {
-    //MARK: - Private properties
+    // MARK: - Private properties
     private let usersRepository: UsersRepositoryProtocol
     private let fetchImageRepository: UserImageRepositoryProtocol
-    
-    //MARK: - Init
+
+    // MARK: - Init
     init(usersRepository: UsersRepositoryProtocol,
          fetchImageRepository: UserImageRepositoryProtocol) {
         self.usersRepository = usersRepository
@@ -28,17 +28,17 @@ final class ChangeFavoritesUseCase: UseCase {
     }
 }
 
-//MARK: - extension + SaveRecentUseCaseProtocol
+// MARK: - extension + SaveRecentUseCaseProtocol
 extension ChangeFavoritesUseCase: ChangeFavoritesUseCaseProtocol {
-    func removeFavoriteUser(user: RealmInstagramUserProtocol, isRemovedCompletion: @escaping (Bool) -> ()) {
+    func removeFavoriteUser(user: RealmInstagramUserProtocol, isRemovedCompletion: @escaping (Bool) -> Void) {
         usersRepository.removeUserFromBD(user: user, isDeletedCompletion: isRemovedCompletion)
     }
-    
-    func loadFavoritesUsers(completion: @escaping ([RealmInstagramUserProtocol]) -> ()) {
+
+    func loadFavoritesUsers(completion: @escaping ([RealmInstagramUserProtocol]) -> Void) {
         usersRepository.fetchUsersFromBD(userType: .favorite, completion: completion)
     }
-    
-    func fetchImage(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> ()) {
+
+    func fetchImage(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> Void) {
         fetchImageRepository.fetchImageData(urlString: stringURL) { result in
             switch result {
             case .success(let imageData):
@@ -49,13 +49,12 @@ extension ChangeFavoritesUseCase: ChangeFavoritesUseCaseProtocol {
             }
         }
     }
-    
-    
-    func changeFavoriteUser(user: RealmInstagramUserProtocol, isChangedCompletion: @escaping (Bool)->()) {
+
+    func changeFavoriteUser(user: RealmInstagramUserProtocol, isChangedCompletion: @escaping (Bool) -> Void) {
         usersRepository.changeUserInBD(user: user, isChangedCompletion: isChangedCompletion)
     }
-    
-    func saveFavoritesUser(user: RealmInstagramUserProtocol,isSavedCompletion: @escaping (Bool)->()) {
+
+    func saveFavoritesUser(user: RealmInstagramUserProtocol, isSavedCompletion: @escaping (Bool) -> Void) {
         usersRepository.saveUserToBD(user: user, isSavedCompletion: isSavedCompletion)
     }
 }

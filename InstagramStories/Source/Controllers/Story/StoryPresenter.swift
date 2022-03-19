@@ -21,8 +21,8 @@ protocol StoryPresenterProtocol {
 }
 
 final class StoryPresenter {
-    
-    //MARK: - Private properties
+
+    // MARK: - Private properties
     private weak var view: StoryViewProtocol?
     private weak var transitionHandler: TransitionProtocol?
     private let coordinator: CoordinatorProtocol
@@ -41,8 +41,8 @@ final class StoryPresenter {
     private var durationForCurrentStory: TimeInterval = 0
     private var previousDurationWhenWasPaused: TimeInterval = 0
     private var durationWhenWasPaused: TimeInterval = 0
-    
-    //MARK: - Init
+
+    // MARK: - Init
     init(coordinator: CoordinatorProtocol,
          secret: Secret,
          useCase: ShowStoryUseCaseProtocol,
@@ -56,25 +56,24 @@ final class StoryPresenter {
         self.stories = stories.reversed() // for changing story position (new at the end)
         self.selectedStoryIndex = stories.count - 1 - selectedStoryIndex
     }
-    
-    //MARK: - Public methods
+
+    // MARK: - Public methods
     func injectView(view: StoryViewProtocol) {
         self.view = view
     }
-    
+
     func injectTransitionHandler(view: TransitionProtocol) {
         self.transitionHandler = view
     }
-    
-    
-    //MARK: - Private methods
+
+    // MARK: - Private methods
     private func showSelectedStory(oldValue: Int? = nil) {
         view?.setupSelectedStoryIndex(index: selectedStoryIndex)
-        
+
         // Posting time
         let postingTime = Utils.handleDate(unixDate: stories[selectedStoryIndex].time) + " назад"
         view?.setupStoryPostingTime(postingTime)
-        
+
         // CollectionViewProgress
         if let oldValue = oldValue, oldValue < selectedStoryIndex {
             let indexPaths = (selectedStoryIndex - 1...selectedStoryIndex).map { IndexPath(item: $0, section: 0)}
@@ -85,17 +84,17 @@ final class StoryPresenter {
         } else {
             view?.reloadCollectionViewItems(indexPaths: [IndexPath(item: selectedStoryIndex, section: 0)])
         }
-        
+
         // StoryPreview
         showStoryUseCase.fetchStoryPreview(urlString: stories[selectedStoryIndex].previewImageURL) { [weak self] result in
             guard let self = self else { return }
-            
+
             switch result {
             case .success(let image):
                 self.view?.showStoryPreview(with: image)
-                
+
                 /// Image already cached so I can show video in completion without any delay
-                
+
                 // StoryVideo
                 self.view?.videoPlayer.pause()
                 self.view?.videoPlayer.replaceCurrentItem(with: nil)
@@ -106,7 +105,7 @@ final class StoryPresenter {
                     self.view?.videoPlayer = AVPlayer(url: videoURL)
                     self.view?.videoPlayerLayer.player = self.view?.videoPlayer
                     self.view?.videoPlayer.play()
-                    
+
                     // Fire timer
                     let asset = AVAsset(url: videoURL)
                     let duration = asset.duration
@@ -114,31 +113,31 @@ final class StoryPresenter {
                     if durationTime == 0 {
                         durationTime = LocalConstants.mainTimerDurationTime
                     }
-                    
+
                     self.durationForCurrentStory = durationTime // for calculate pause progress
-                    
+
                     if self.timer != nil {
                         self.timer?.invalidate()
                     }
-                    
+
                     self.timer = Timer(timeInterval: durationTime, target: self,
                                        selector: #selector(self.timerWasFired),
                                        userInfo: nil,
                                        repeats: false)
-                    
+
                     guard let timer = self.timer else { return }
                     timer.tolerance = LocalConstants.mainTimerTolerance
                     RunLoop.current.add(timer, forMode: .common)
-                    
+
                     self.progressWidth = 0
                     self.timerForProgressWidth = Timer(timeInterval: LocalConstants.timerForProgressWidthDurationTime,
-                                                       repeats: true) { [weak self] timer in
+                                                       repeats: true) { [weak self] _ in
                         guard let self = self else { return }
                         self.durationWhenWasPaused += LocalConstants.timerForProgressWidthDurationTime
                         self.progressWidth += LocalConstants.timerForProgressWidthDurationTime / durationTime
                         self.view?.setupVideoProgressViewWidth(percentWidth: self.progressWidth)
                     }
-                    
+
                     guard let timerForProgressWidth = self.timerForProgressWidth else { return }
                     timerForProgressWidth.tolerance = LocalConstants.timerForProgressWidthTolerance
                     RunLoop.current.add(timerForProgressWidth, forMode: .common)
@@ -150,7 +149,7 @@ final class StoryPresenter {
     }
 }
 
-//MARK: - extension + StoryPresenterProtocol
+// MARK: - extension + StoryPresenterProtocol
 extension StoryPresenter: StoryPresenterProtocol {
 
     func viewDidLoad() {
@@ -160,14 +159,14 @@ extension StoryPresenter: StoryPresenterProtocol {
         view?.setupStoriesCount(stories.count)
         showSelectedStory()
     }
-    
+
     func viewDidDisappear() {
         view?.videoPlayer.pause()
         view?.videoPlayer.replaceCurrentItem(with: nil)
         timer?.invalidate()
         timerForProgressWidth?.invalidate()
     }
-    
+
     func selectedStoryIndexWasIncreased() {
         timer?.invalidate()
         timerForProgressWidth?.invalidate()
@@ -175,15 +174,15 @@ extension StoryPresenter: StoryPresenterProtocol {
         view?.setupVideoProgressViewWidth(percentWidth: progressWidth)
         durationWhenWasPaused = 0
         previousDurationWhenWasPaused = 0
-        
+
         if selectedStoryIndex < stories.count - 1 {
             selectedStoryIndex += 1
             return
         }
-        
-        view?.dismiss(animated: true,completion: nil)
+
+        view?.dismiss(animated: true, completion: nil)
     }
-    
+
     func selectedStoryIndexWasDecreased() {
         timer?.invalidate()
         timerForProgressWidth?.invalidate()
@@ -191,14 +190,14 @@ extension StoryPresenter: StoryPresenterProtocol {
         view?.setupVideoProgressViewWidth(percentWidth: progressWidth)
         durationWhenWasPaused = 0
         previousDurationWhenWasPaused = 0
-        
+
         if selectedStoryIndex > 0 {
             selectedStoryIndex -= 1
         } else {
             selectedStoryIndex = 0
         }
     }
-    
+
     /// Disable downloading and sharing because of apple regulations
 //    func saveVideoToLibrary(storyIndex: Int) {
 //        PHPhotoLibrary.shared().performChanges({ [weak self] in
@@ -214,7 +213,7 @@ extension StoryPresenter: StoryPresenterProtocol {
 //            }
 //        }
 //    }
-    
+
 //    func shareStory(storyIndex: Int) {
 //        let storyVideoPath = VideoCacheManager.shared.directoryFor(stringUrl: self.stories[storyIndex].contentURLString)
 //        let objectsToShare = [storyVideoPath]
@@ -267,8 +266,8 @@ extension StoryPresenter: StoryPresenterProtocol {
 //                completion: completion)
 //        }
 //    }
-    
-    //MARK: - OBJC methods
+
+    // MARK: - OBJC methods
     @objc private func timerWasFired() {
         timer?.invalidate()
         timerForProgressWidth?.invalidate()
@@ -276,7 +275,7 @@ extension StoryPresenter: StoryPresenterProtocol {
         view?.setupVideoProgressViewWidth(percentWidth: progressWidth)
         durationWhenWasPaused = 0
         previousDurationWhenWasPaused = 0
-        
+
         if selectedStoryIndex < stories.count  - 1 {
             selectedStoryIndex += 1
             return

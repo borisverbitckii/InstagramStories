@@ -15,7 +15,7 @@ extension UIView {
             self?.alpha = 0
         } completion: { _ in}
     }
-    
+
     func showWithFade(with duration: TimeInterval) {
         self.isHidden = false
         UIView.animate(withDuration: duration,

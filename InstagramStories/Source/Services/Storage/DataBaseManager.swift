@@ -32,15 +32,15 @@ protocol DataManagerSettingsProtocol {
 }
 
 protocol DataBaseManagerProtocol {
-    func executeDBOperation<T:DataManagerSettingsProtocol, Y>(settings: T,completion: @escaping (Result<Y, Error>)->())
+    func executeDBOperation<T: DataManagerSettingsProtocol, Y>(settings: T, completion: @escaping (Result<Y, Error>) -> Void)
 }
 
 final class DataBaseManager {
-    
-    //MARK: - Private properties
+
+    // MARK: - Private properties
     private let realm = try! Realm()
-    
-    //MARK: - Public methods
+
+    // MARK: - Public methods
     static func getUserState(user: RealmInstagramUserProtocol) -> UserState {
         let searchedUser = try! Realm().object(ofType: RealmInstagramUser.self, forPrimaryKey: user.id)
         if searchedUser?.isOnFavorite == true && searchedUser?.isRecent == true {
@@ -53,27 +53,27 @@ final class DataBaseManager {
             return .notExist
         }
     }
-    
+
     static func isAlreadyExist(user: RealmInstagramUserProtocol) -> Bool {
         let searchedUser = try! Realm().object(ofType: RealmInstagramUser.self, forPrimaryKey: user.id)
         return searchedUser != nil
     }
-    
+
     static func isOnFavorite(user: RealmInstagramUserProtocol) -> Bool {
         let searchedUser = try! Realm().object(ofType: RealmInstagramUser.self, forPrimaryKey: user.id)
         return searchedUser?.isOnFavorite ?? false
     }
-    
+
     static func isRecent(user: RealmInstagramUserProtocol) -> Bool {
         let searchedUser = try! Realm().object(ofType: RealmInstagramUser.self, forPrimaryKey: user.id)
         return searchedUser?.isRecent ?? false
     }
 }
 
-//MARK: - extension + DataBaseManagerProtocol, UsersDataSourceProtocol
-extension DataBaseManager : DataBaseManagerProtocol {
-    
-    func executeDBOperation<T:DataManagerSettingsProtocol, Y>(settings: T,completion: @escaping (Result<Y, Error>)->()) {
+// MARK: - extension + DataBaseManagerProtocol, UsersDataSourceProtocol
+extension DataBaseManager: DataBaseManagerProtocol {
+
+    func executeDBOperation<T: DataManagerSettingsProtocol, Y>(settings: T, completion: @escaping (Result<Y, Error>) -> Void) {
         let type = settings.type
         guard Y.self == Bool.self else {
             if type == .getUsers {
@@ -84,7 +84,7 @@ extension DataBaseManager : DataBaseManagerProtocol {
                         .sorted(byKeyPath: settings.sortingSettings?.sortingKeyPath ?? "",
                                 ascending: settings.sortingSettings?.ascending ?? true
                         )
-                    
+
                     var finalUsers = [RealmInstagramUserProtocol]()
                     for user in users {
                         finalUsers.append(InstagramUser(instagramUser: user))
@@ -106,12 +106,12 @@ extension DataBaseManager : DataBaseManagerProtocol {
             }
             return
         }
-        
+
         switch settings.type {
         case .save:
             do {
                 try realm.write({
-                    if let user = settings.user{
+                    if let user = settings.user {
                         let realmUser = RealmInstagramUser(user: user)
                         realm.add(realmUser)
                         guard let result = true as? Y else { return }
@@ -146,7 +146,7 @@ extension DataBaseManager : DataBaseManagerProtocol {
                         userToUpdate?.isPrivate = user.isPrivate
                         userToUpdate?.isRecent = user.isRecent
                         userToUpdate?.isOnFavorite = user.isOnFavorite
-                        
+
                         guard let result = true as? Y else { return }
                         completion(.success(result))
                     })

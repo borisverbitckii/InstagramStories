@@ -5,25 +5,25 @@
 ////  Created by Борис on 13.12.2021.
 ////
 //
-//import UIKit
+// import UIKit
 //
-//protocol Animatable {
+// protocol Animatable {
 //    var animatableMainView: UIView { get }
 //    func prepareBeingDismissed()
-//}
+// }
 //
-//final class PresentingViewAnimator: NSObject {
-//    //MARK: - Private properties
+// final class PresentingViewAnimator: NSObject {
+// MARK: - Private properties
 //    private let duration: TimeInterval
 //
-//    //MARK: - Init
+// MARK: - Init
 //    init(duration: TimeInterval = 0.4) {
 //        self.duration = duration
 //    }
-//}
+// }
 //
-////MARK: extension + UIViewControllerAnimatedTransitioning
-//extension PresentingViewAnimator: UIViewControllerAnimatedTransitioning {
+// MARK: extension + UIViewControllerAnimatedTransitioning
+// extension PresentingViewAnimator: UIViewControllerAnimatedTransitioning {
 //    
 //    func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
 //        return duration
@@ -53,4 +53,4 @@
 //        }
 //    }
 //    
-//}
+// }

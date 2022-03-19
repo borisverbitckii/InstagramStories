@@ -8,25 +8,24 @@
 import Swiftagram
 
 protocol SplashUseCaseProtocol {
-    func authInInstagram(completion: @escaping(Result<Secret,Error>) -> ())
+    func authInInstagram(completion: @escaping(Result<Secret, Error>) -> Void)
 }
 
 final class AuthUseCase: UseCase {
-    
-    //MARK: - Private properties
+
+    // MARK: - Private properties
     private let authRepository: AuthRepositoryProtocol
-    
+
     init(authRepository: AuthRepositoryProtocol) {
         self.authRepository = authRepository
     }
 }
 
-
-//MARK: - extension + SplashUseCaseProtocol
+// MARK: - extension + SplashUseCaseProtocol
 extension AuthUseCase: SplashUseCaseProtocol {
-    
-    //MARK: - Public methods
-    func authInInstagram(completion: @escaping(Result<Secret,Error>) -> ()) {
+
+    // MARK: - Public methods
+    func authInInstagram(completion: @escaping(Result<Secret, Error>) -> Void) {
         authRepository.authInInstagram(completion: completion)
     }
 }

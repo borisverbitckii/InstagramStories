@@ -5,11 +5,11 @@
 ////  Created by Борис on 13.12.2021.
 ////
 //
-//import UIKit
+// import UIKit
 //
-//final class ViewInteractiveAnimator: UIPercentDrivenInteractiveTransition {
+// final class ViewInteractiveAnimator: UIPercentDrivenInteractiveTransition {
 //
-//    //MARK: - Public properties
+// MARK: - Public properties
 //    let fromViewController: UIViewController
 //    let toViewController: UIViewController?
 //    var isTransitionInProgress = false
@@ -19,7 +19,7 @@
 //        }
 //    }
 //
-//    //MARK: - Private properties
+// MARK: - Private properties
 //    private var shouldComplete = false
 //    private let threshold: CGFloat = 0.5
 //    private let targetScreenWidth = UIScreen.main.bounds.width
@@ -30,7 +30,7 @@
 //        return pan
 //    }()
 //
-//    //MARK: - Init
+// MARK: - Init
 //    init(fromViewController: UIViewController, toViewController: UIViewController?, gestureView: UIView) {
 //        self.fromViewController = fromViewController
 //        self.toViewController = toViewController
@@ -39,12 +39,12 @@
 //        completionSpeed = 0.5
 //    }
 //
-//    //MARK: - Deinit
+// MARK: - Deinit
 //    deinit {
 //        pan.view?.removeGestureRecognizer(pan)
 //    }
 //
-//    //MARK: - OBJC methods
+// MARK: - OBJC methods
 //    @objc func onPan(_ pan: UIPanGestureRecognizer) {
 //        let translation = pan.translation(in: pan.view?.superview)
 //        switch pan.state {
@@ -76,5 +76,5 @@
 //            isTransitionInProgress = false
 //        }
 //    }
-//}
+// }
 //

@@ -20,28 +20,28 @@ protocol UseCaseFactoryProtocol {
 class UseCase {}
 
 final class UseCasesFactory {
-    //MARK: - Private properties
+    // MARK: - Private properties
     private let managerFactory: ManagerFactoryProtocol
     private let repositoryFactory: RepositoryFactoryProtocol
-    
-    //MARK: - Init
+
+    // MARK: - Init
     init(managerFactory: ManagerFactoryProtocol,
-         repositoryFactory: RepositoryFactoryProtocol){
+         repositoryFactory: RepositoryFactoryProtocol) {
         self.managerFactory = managerFactory
         self.repositoryFactory = repositoryFactory
     }
 }
 
 extension UseCasesFactory: UseCaseFactoryProtocol {
-    
+
     func getAuthUseCase() -> UseCase {
         return AuthUseCase(authRepository: repositoryFactory.getAuthRepository())
     }
-    
+
     func getChangeRecentsUsersUseCase() -> UseCase {
         return ChangeRecentUseCase(usersRepository: repositoryFactory.getUsersRepository())
     }
-    
+
     func getSearchUserUseCase() -> UseCase {
         return SearchUserUseCase(
             fetchImageRepository: repositoryFactory.getUserImageRepository(),
@@ -49,7 +49,7 @@ extension UseCasesFactory: UseCaseFactoryProtocol {
             usersRepository: repositoryFactory.getUsersRepository()
         )
     }
-    
+
     func getLoadUserProfileUseCase() -> UseCase {
         return LoadUserProfileUseCase(
             repository: repositoryFactory.getUserImageRepository(),
@@ -57,22 +57,22 @@ extension UseCasesFactory: UseCaseFactoryProtocol {
             searchUserRepository: repositoryFactory.getSearchUserRepository()
         )
     }
-    
+
     func getShowFavoritesUsersUseCase() -> UseCase {
         return ChangeFavoritesUseCase(usersRepository: repositoryFactory.getUsersRepository(),
                                     fetchImageRepository: repositoryFactory.getUserImageRepository())
     }
-    
+
     func getChangeRecentsUserUseCase() -> UseCase {
         return ChangeRecentUseCase(usersRepository: repositoryFactory.getUsersRepository())
     }
-    
+
     func getSaveFavoritesUsersUseCase() -> UseCase {
         return ChangeFavoritesUseCase(usersRepository: repositoryFactory.getUsersRepository(),
                                       fetchImageRepository: repositoryFactory.getUserImageRepository())
     }
-    
+
     func getShowStoryUseCase() -> UseCase {
-        return ShowStoryUseCase(userImageRepository: repositoryFactory.getUserImageRepository(),storyRepository: repositoryFactory.getStoryRepository())
+        return ShowStoryUseCase(userImageRepository: repositoryFactory.getUserImageRepository(), storyRepository: repositoryFactory.getStoryRepository())
     }
 }

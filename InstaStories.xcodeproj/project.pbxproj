@@ -527,6 +527,7 @@
 				A1DBE268275E2B040075176C /* Sources */,
 				A1DBE269275E2B040075176C /* Frameworks */,
 				A1DBE26A275E2B040075176C /* Resources */,
+				A133D81927E63CF800B75EFB /* SwiftLint */,
 			);
 			buildRules = (
 			);
@@ -576,6 +577,7 @@
 				A1AC5C1C2763105500A6168E /* XCRemoteSwiftPackageReference "realm-cocoa" */,
 				A155B4C4276346D3005CA2C0 /* XCRemoteSwiftPackageReference "lottie-ios" */,
 				A177719827B17526007967DA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				A133D81827E63CD000B75EFB /* XCRemoteSwiftPackageReference "SwiftLint" */,
 			);
 			productRefGroup = A1DBE26D275E2B040075176C /* Products */;
 			projectDirPath = "";
@@ -598,6 +600,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		A133D81927E63CF800B75EFB /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export PATH=\"$PATH:/opt/homebrew/bin\"\nif which swiftlint > /dev/null; then\n  swiftlint --fix\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		A1DBE268275E2B040075176C /* Sources */ = {
@@ -883,6 +906,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		A133D81827E63CD000B75EFB /* XCRemoteSwiftPackageReference "SwiftLint" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/SwiftLint";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.2;
+			};
+		};
 		A155B4C4276346D3005CA2C0 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/airbnb/lottie-ios";

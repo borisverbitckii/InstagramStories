@@ -8,11 +8,11 @@
 import Foundation
 
 struct UsersDataBaseManagerSettings: DataManagerSettingsProtocol {
-    var type: DataBaseOperationType? = nil
-    var user: RealmInstagramUserProtocol? = nil
-    var primaryKey: Int? = nil
-    var sortingSettings: SortingSettings? = nil
-    var predicate: NSPredicate? = nil
+    var type: DataBaseOperationType?
+    var user: RealmInstagramUserProtocol?
+    var primaryKey: Int?
+    var sortingSettings: SortingSettings?
+    var predicate: NSPredicate?
 }
 
 enum UserType {

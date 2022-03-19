@@ -23,7 +23,7 @@ enum Text {
     case stateViewMain(StateViewType)
     case stateViewSecondary(StateViewType)
     case next
-    
+
     func getText() -> String {
         switch self {
         case .navTitle(let titleType):
@@ -86,7 +86,7 @@ enum Text {
             case .isPrivate:
                 return "К сожалению, истории этого пользователя никак не посмотреть".localized
             }
-            
+
         case .next:
             return "Далее".localized
         }

@@ -17,11 +17,11 @@ final class ViewsFactory: ViewsFactoryProtocol {
     func getCustomActivityIndicator() -> CustomActivityIndicator {
         return CustomActivityIndicator()
     }
-    
+
     func getScrollToTopButton() -> ScrollToTopButton {
         return ScrollToTopButton()
     }
-    
+
     func getTabBar() -> CustomTabBarProtocol {
         return CustomTabBar()
     }

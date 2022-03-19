@@ -23,11 +23,11 @@ enum FontSizes: CGFloat {
 
 enum Fonts {
     case avenir(AvenirTypes)
-    
+
     func getFont(size: FontSizes) -> UIFont {
-        switch self{
+        switch self {
         case .avenir(let type):
-            switch type{
+            switch type {
             case .book:
                 guard let font = UIFont(name: "Avenir-Book", size: size.rawValue) else { return UIFont() }
                 return font

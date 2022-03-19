@@ -9,28 +9,28 @@ import Foundation
 import Firebase
 
 protocol CredentialsDataSourceProtocol {
-    func fetchCredentials(completion: @escaping ([String:String]) -> ())
+    func fetchCredentials(completion: @escaping ([String: String]) -> Void)
     func removeCredentials(pathString: String)
 }
 
 final class CredentialsDataSource {
-    
-    //MARK: - Private properties
+
+    // MARK: - Private properties
     private let fireBaseManager: FireBaseManagerProtocol
-    
-    //MARK: - Init
+
+    // MARK: - Init
     init(fireBaseManager: FireBaseManagerProtocol) {
         self.fireBaseManager = fireBaseManager
     }
-    
+
 }
 
-//MARK: - extension + CredentialsDataSourceProtocol
+// MARK: - extension + CredentialsDataSourceProtocol
 extension CredentialsDataSource: CredentialsDataSourceProtocol {
-    func fetchCredentials(completion: @escaping ([String:String]) -> ()) {
+    func fetchCredentials(completion: @escaping ([String: String]) -> Void) {
         fireBaseManager.fetchCredentials(completion: completion)
     }
-    
+
     func removeCredentials(pathString: String) {
         fireBaseManager.removeCredentials(pathString: pathString)
     }

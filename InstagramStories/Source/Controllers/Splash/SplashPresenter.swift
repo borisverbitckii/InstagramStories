@@ -12,26 +12,26 @@ protocol SplashPresenterProtocol {
 }
 
 final class SplashPresenter {
-    
-    //MARK: - Private methods
+
+    // MARK: - Private methods
     private weak var view: SplashView?
     private let coordinator: CoordinatorProtocol
     private let useCase: SplashUseCaseProtocol
-    
-    //MARK: - Init
+
+    // MARK: - Init
     init(coordinator: CoordinatorProtocol,
          useCase: SplashUseCaseProtocol) {
         self.coordinator = coordinator
         self.useCase = useCase
     }
-    
-    //MARK: - Public methods
+
+    // MARK: - Public methods
     func injectView(view: SplashView) {
         self.view = view
     }
 }
 
-//MARK: - extension + SplashPresenterProtocol
+// MARK: - extension + SplashPresenterProtocol
 
 extension SplashPresenter: SplashPresenterProtocol {
     func viewDidLoad() {

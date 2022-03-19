@@ -15,40 +15,40 @@ protocol RepositoryFactoryProtocol {
 }
 
 final class RepositoryFactory {
-    //MARK: - Private properties
+    // MARK: - Private properties
     private let dataSourceFactory: DataSourceFactoryProtocol
-    
-    //MARK: - Init
+
+    // MARK: - Init
     init(dataSourceFactory: DataSourceFactoryProtocol) {
         self.dataSourceFactory = dataSourceFactory
     }
-    
+
 }
 
-//MARK: - extension + RepositoryFactoryProtocol
+// MARK: - extension + RepositoryFactoryProtocol
 extension RepositoryFactory: RepositoryFactoryProtocol {
-    //MARK: - Public methods
+    // MARK: - Public methods
     func getAuthRepository() -> AuthRepositoryProtocol {
         return AuthRepository(authDataSource: dataSourceFactory.getAuthDataSource(),
                               credentialsDataSource: dataSourceFactory.getCredentialsDataSource())
     }
-    
+
     func getUserImageRepository() -> UserImageRepositoryProtocol {
         return UserImageRepository(remoteDataSource: dataSourceFactory.getUserImageDataSource())
     }
-    
+
     func getSearchUserRepository() -> SearchUserRepositoryProtocol {
         return SearchUserRepository(remoteDataSource: dataSourceFactory.getSearchDataSource())
     }
-    
+
     func getStoriesRepository() -> StoriesPreviewRepositoryProtocol {
         return StoriesPreviewRepository(remoteDataSource: dataSourceFactory.getStoriesDataSource())
     }
-    
+
     func getUsersRepository() -> UsersRepositoryProtocol {
         return UsersRepository(localDataSource: dataSourceFactory.getRecentUsersDataSource())
     }
-    
+
     func getStoryRepository() -> StoryRepositoryProtocol {
         return StoryRepository(remoteDataSource: dataSourceFactory.getStoryDataSource())
     }

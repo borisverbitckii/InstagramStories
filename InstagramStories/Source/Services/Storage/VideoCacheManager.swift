@@ -13,10 +13,10 @@ protocol VideoCacheManagerProtocol {
 }
 
 final class VideoCacheManager {
-    
+
     static let shared = VideoCacheManager()
-    
-    //MARK: - Private properties
+
+    // MARK: - Private properties
     private let fileManager = FileManager.default
     private lazy var mainDirectoryUrl: URL = {
         let documentsUrl = self.fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first!
@@ -24,7 +24,7 @@ final class VideoCacheManager {
     }()
 }
 
-//MARK: - extension + VideoCacheManagerProtocol
+// MARK: - extension + VideoCacheManagerProtocol
 extension VideoCacheManager: VideoCacheManagerProtocol {
     func directoryFor(stringUrl: String) -> URL {
         guard let url = URL(string: stringUrl) else { return URL(fileReferenceLiteralResourceName: "")}
@@ -32,7 +32,7 @@ extension VideoCacheManager: VideoCacheManagerProtocol {
         let file = self.mainDirectoryUrl.appendingPathComponent(fileURL)
         return file
     }
-    
+
     func fileExists(atPath: String) -> Bool {
         fileManager.fileExists(atPath: atPath)
     }

@@ -19,7 +19,7 @@ enum Errors: Swift.Error {
     case cantFetchUsers
     case noUserInDataBase
     case accountBlocked
-    
+
     var error: NSError {
         switch self {
         case .networkIsNotAvailable:

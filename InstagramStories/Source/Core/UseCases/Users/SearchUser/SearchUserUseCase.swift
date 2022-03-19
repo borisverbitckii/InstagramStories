@@ -11,19 +11,19 @@ import Swiftagram
 protocol SearchUseCaseProtocol {
     func fetchInstagramUsersFromNetwork(searchingTitle: String,
                                         secret: Secret,
-                                        completion: @escaping (Result <[InstagramUser], Error>)->())
-    func fetchImage(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> ())
-    func stopLastOperation() 
+                                        completion: @escaping (Result <[InstagramUser], Error>) -> Void)
+    func fetchImage(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> Void)
+    func stopLastOperation()
 }
 
 final class SearchUserUseCase: UseCase, SearchUseCaseProtocol {
-    
-    //MARK: - Private properties
+
+    // MARK: - Private properties
     private let fetchImageRepository: UserImageRepositoryProtocol
     private let searchUserRepository: SearchUserRepositoryProtocol
     private let usersRepository: UsersRepositoryProtocol
-    
-    //MARK: - Init
+
+    // MARK: - Init
     init(fetchImageRepository: UserImageRepositoryProtocol,
          searchUserRepository: SearchUserRepositoryProtocol,
          usersRepository: UsersRepositoryProtocol
@@ -32,18 +32,18 @@ final class SearchUserUseCase: UseCase, SearchUseCaseProtocol {
         self.searchUserRepository = searchUserRepository
         self.usersRepository = usersRepository
     }
-    
-    //MARK: - Public methods
+
+    // MARK: - Public methods
     func fetchInstagramUsersFromNetwork(searchingTitle: String,
                                         secret: Secret,
-                                        completion: @escaping (Result <[InstagramUser], Error>)->()) {
-        
+                                        completion: @escaping (Result <[InstagramUser], Error>) -> Void) {
+
         searchUserRepository.fetchInstagramUsersFromNetwork(searchingTitle: searchingTitle,
                                                             secret: secret) { [weak self] result in
             switch result {
             case .success(let users):
                 var finalUsers = [InstagramUser]()
-                
+
                 for user in users {
                     self?.usersRepository.fetchUserWithPrimaryKey(primaryKey: user.id) { result in
                         switch result {
@@ -56,7 +56,7 @@ final class SearchUserUseCase: UseCase, SearchUseCaseProtocol {
                         }
                     }
                 }
-                
+
                 completion(.success(finalUsers))
             case .failure(let error):
                 print(#file, #line, error)
@@ -64,9 +64,9 @@ final class SearchUserUseCase: UseCase, SearchUseCaseProtocol {
             }
         }
     }
-    
-    func fetchImage(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> ()) {
-        
+
+    func fetchImage(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> Void) {
+
         fetchImageRepository.fetchImageData(urlString: stringURL) { result in
             switch result {
             case .success(let imageData):
@@ -77,7 +77,7 @@ final class SearchUserUseCase: UseCase, SearchUseCaseProtocol {
             }
         }
     }
-    
+
     func stopLastOperation() {
         fetchImageRepository.stopLastOperation()
         searchUserRepository.stopLastOperation()

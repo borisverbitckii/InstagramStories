@@ -5,20 +5,20 @@
 ////  Created by Борис on 13.12.2021.
 ////
 //
-//import UIKit
+// import UIKit
 //
-//final class DismissingViewAnimator: NSObject {
-//    //MARK: - Private properties
+// final class DismissingViewAnimator: NSObject {
+// MARK: - Private properties
 //    private let duration: TimeInterval
 //    
-//    //MARK: - Init
+// MARK: - Init
 //    init(duration: TimeInterval = 0.4) {
 //        self.duration = duration
 //    }
-//}
+// }
 //
-////MARK: - extension + UIViewControllerAnimatedTransitioning
-//extension DismissingViewAnimator: UIViewControllerAnimatedTransitioning {
+// MARK: - extension + UIViewControllerAnimatedTransitioning
+// extension DismissingViewAnimator: UIViewControllerAnimatedTransitioning {
 //    
 //    func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
 //        return duration
@@ -44,4 +44,4 @@
 //            transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
 //        }
 //    }
-//}
+// }

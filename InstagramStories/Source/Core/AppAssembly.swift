@@ -8,16 +8,16 @@
 import Foundation
 
 final class AppAssembly {
-    
-    //MARK: - Private methods
+
+    // MARK: - Private methods
     private let coordinator: Coordinator
     private let managerFactory: ManagerFactoryProtocol
     private let dataSourceFactory: DataSourceFactoryProtocol
     private let repositoryFactory: RepositoryFactoryProtocol
     private let useCasesFactory: UseCaseFactoryProtocol
     private let moduleFactory: ModuleFactory
-    
-    //MARK: - Init
+
+    // MARK: - Init
     init() {
         self.managerFactory = ManagerFactory()
         self.dataSourceFactory = DataSourceFactory(managerFactory: managerFactory)

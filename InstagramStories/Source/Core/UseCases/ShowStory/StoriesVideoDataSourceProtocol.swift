@@ -8,21 +8,21 @@
 import Foundation
 
 protocol StoriesVideoDataSourceProtocol {
-    func downloadCurrentStoryVideo(urlString: String, completion: @escaping (URL)->())
+    func downloadCurrentStoryVideo(urlString: String, completion: @escaping (URL) -> Void)
 }
 
 final class StoriesVideoDataSource {
-    //MARK: - Private properties
+    // MARK: - Private properties
     private let networkManager: NetworkManagerProtocol
-    
-    //MARK: - Init
-    init(networkManager: NetworkManagerProtocol){
+
+    // MARK: - Init
+    init(networkManager: NetworkManagerProtocol) {
         self.networkManager = networkManager
     }
 }
 
 extension StoriesVideoDataSource: StoriesVideoDataSourceProtocol {
-    func downloadCurrentStoryVideo(urlString: String, completion: @escaping (URL) -> ()) {
+    func downloadCurrentStoryVideo(urlString: String, completion: @escaping (URL) -> Void) {
         networkManager.downloadCurrentStoryVideo(urlString: urlString, completion: completion)
     }
 }

@@ -8,28 +8,28 @@
 import Swiftagram
 
 protocol AuthDataSourceProtocol {
-    func authInInstagram(username: String, password: String, completion: @escaping (Result<Secret,Error>) -> ())
-    func checkAuthorization(completion: @escaping(Secret?)->())
+    func authInInstagram(username: String, password: String, completion: @escaping (Result<Secret, Error>) -> Void)
+    func checkAuthorization(completion: @escaping(Secret?) -> Void)
 }
- 
+
 final class AuthDataSource {
-    //MARK: - Private properties
+    // MARK: - Private properties
     private let authManager: AuthManagerProtocol
-    
-    //MARK: - Init
+
+    // MARK: - Init
     init(authManager: AuthManagerProtocol) {
         self.authManager = authManager
     }
-    
+
 }
 
-//MARK: - extension + AuthDataSourceProtocol
+// MARK: - extension + AuthDataSourceProtocol
 extension AuthDataSource: AuthDataSourceProtocol {
-    func authInInstagram(username: String, password: String, completion: @escaping (Result<Secret, Error>) -> ()) {
+    func authInInstagram(username: String, password: String, completion: @escaping (Result<Secret, Error>) -> Void) {
         authManager.authInInstagram(username: username, password: password, completion: completion)
     }
-    
-    func checkAuthorization(completion: @escaping (Secret?) -> ()) {
+
+    func checkAuthorization(completion: @escaping (Secret?) -> Void) {
         authManager.checkAuthorization(completion: completion)
     }
 }

@@ -21,7 +21,7 @@ protocol CoordinatorProtocol: AnyObject {
                                     secret: Secret)
     func presentActivityViewController(type: ActivityViewControllerType ,
                                        transitionHandler: TransitionProtocol,
-                                       completion: (()->())?)
+                                       completion: (() -> Void)?)
 }
 
 enum ActivityViewControllerType {
@@ -36,47 +36,47 @@ struct ActivityViewControllerSettings {
 }
 
 final class Coordinator {
-    
-    //MARK: - Private methods
+
+    // MARK: - Private methods
     private var window: UIWindow?
     var moduleFactory: ModuleFactoryProtocol
-    
-    //MARK: - Init
+
+    // MARK: - Init
     init(moduleFactory: ModuleFactoryProtocol) {
         self.moduleFactory = moduleFactory
     }
-    
-    //MARK: - Public methods
+
+    // MARK: - Public methods
     func start() {
         let scene = UIApplication.shared.connectedScenes.first
-        
+
         guard let sceneDelegate: SceneDelegate = (scene?.delegate as? SceneDelegate) else { return }
         window = sceneDelegate.window
-        
+
         presentSplashViewController()
     }
 }
 
-//MARK: - extension + CoordinatorProtocol
+// MARK: - extension + CoordinatorProtocol
 extension Coordinator: CoordinatorProtocol {
-    
+
     func presentTabBarController(secret: Secret) {
         window?.rootViewController = moduleFactory.buildTabBarController(secret: secret)
         window?.makeKeyAndVisible()
-        
+
         guard let window = window else { return }
-        
+
         UIView.transition(with: window,
                           duration: LocalConstants.tabBarTransitionDuration,
                           options: [.transitionCrossDissolve],
                           animations: nil)
     }
-    
+
     func presentSplashViewController() {
         window?.rootViewController = moduleFactory.buildSplashViewController()
         window?.makeKeyAndVisible()
     }
-    
+
     func presentProfileViewController(transitionHandler: TransitionProtocol,
                                       with user: RealmInstagramUserProtocol,
                                       secret: Secret) {
@@ -98,10 +98,10 @@ extension Coordinator: CoordinatorProtocol {
         transitionHandler.presentViewController(storyViewController,
                                                 animated: true)
     }
-    
+
     func presentActivityViewController(type: ActivityViewControllerType ,
                                        transitionHandler: TransitionProtocol,
-                                       completion: (()->())?) {
+                                       completion: (() -> Void)?) {
         switch type {
         case .video(let settings):
             let activityViewController = UIActivityViewController(activityItems: settings.objectsToShare,
@@ -110,12 +110,12 @@ extension Coordinator: CoordinatorProtocol {
             activityViewController.excludedActivityTypes = settings.excludedActivityTypes
             activityViewController.completionWithItemsHandler = { _, _, _, error in
                 if let error = error {
-                    print(error) 
+                    print(error)
                 }
                 if let completion = completion {
                     completion()
                 }
-                
+
             }
             transitionHandler.presentViewController(activityViewController, animated: true)
         }

@@ -10,21 +10,21 @@ import Swiftagram
 
 protocol ProfilePresenterProtocol {
     var stories: [Story]? { get }
-    
+
     func viewDidLoad()
     func viewWillAppear()
     func presentStory(transitionHandler: TransitionProtocol, selectedStoryIndex: Int)
     func favoritesButtonTapped()
-    func fetchImage(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> ())
+    func fetchImage(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> Void)
 
 }
 
 final class ProfilePresenter {
-    
-    //MARK: - Public properties
+
+    // MARK: - Public properties
     var stories: [Story]?
-    
-    //MARK: - Private properties
+
+    // MARK: - Private properties
     private weak var view: ProfileViewProtocol?
     private weak var transitionHandler: TransitionProtocol?
     private let coordinator: CoordinatorProtocol
@@ -32,8 +32,8 @@ final class ProfilePresenter {
     private let changeFavoritesUseCase: ChangeFavoritesUseCaseProtocol
     private var user: RealmInstagramUserProtocol
     private let secret: Secret
-    
-    //MARK: - Init
+
+    // MARK: - Init
     init(coordinator: CoordinatorProtocol,
          loadUserProfileUseCase: LoadUserProfileUseCase,
          saveFavoritesUseCase: ChangeFavoritesUseCaseProtocol,
@@ -45,22 +45,22 @@ final class ProfilePresenter {
         self.secret = secret
         self.user = user
     }
-    
-    //MARK: - Public methods
+
+    // MARK: - Public methods
     func injectView(view: ProfileViewProtocol) {
         self.view = view
     }
 }
 
-//MARK: - extension + ProfilePresenterProtocol
+// MARK: - extension + ProfilePresenterProtocol
 extension ProfilePresenter: ProfilePresenterProtocol {
-    
+
     func viewDidLoad() {
         var userDetails = UserDetails(title: "@" + user.instagramUsername,
                                       instagramUsername: user.name)
-        
+
         view?.setupUserDetails(details: userDetails)
-        
+
         // Fetch user avatar
         fetchImage(stringURL: user.userIconURL) { [weak self] result in
             switch result {
@@ -70,17 +70,17 @@ extension ProfilePresenter: ProfilePresenterProtocol {
                 print(#file, #line, error)
             }
         }
-        
+
         // Show that profile is private
         if user.isPrivate {
             view?.showProfileIsPrivate()
             return
         }
-        
+
         // UserAdditionalDetails
-        
+
         let group = DispatchGroup()
-        
+
         group.enter()
         self.loadUserProfileUseCase.fetchUserDetails(userID: self.user.id, secret: self.secret) { [weak self] result in
             guard let self = self else { return }
@@ -93,7 +93,7 @@ extension ProfilePresenter: ProfilePresenterProtocol {
             }
             group.leave()
         }
-        
+
         // UserStories
         /// UserStories should be downloaded after addition user info because it is not sure which description label height will be
         self.loadUserProfileUseCase.fetchUserStories(userID: String(self.user.id), secret: self.secret) { [weak self] result in
@@ -107,7 +107,7 @@ extension ProfilePresenter: ProfilePresenterProtocol {
             }
         }
     }
-    
+
     func viewWillAppear() {
         // Set favorite button image
         let userState = DataBaseManager.getUserState(user: user)
@@ -121,11 +121,11 @@ extension ProfilePresenter: ProfilePresenterProtocol {
             view?.setFavoriteButtonImage(Images.rightBarButton(.remove).getImage() ?? UIImage())
         }
     }
-    
+
     func favoritesButtonTapped() {
         let userState = DataBaseManager.getUserState(user: user)
         var favoriteUser = user
-        
+
         switch userState {
         case .onlyOnFavorites:
             changeFavoritesUseCase.removeFavoriteUser(user: user) { _ in }
@@ -143,8 +143,8 @@ extension ProfilePresenter: ProfilePresenterProtocol {
         case .notExist: break
         }
     }
-    
-    func fetchImage(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> ()) {
+
+    func fetchImage(stringURL: String, completion: @escaping (Result<UIImage, Error>) -> Void) {
         loadUserProfileUseCase.fetchImageData(urlString: stringURL) { result in
             switch result {
             case .success(let imageData):
@@ -156,13 +156,13 @@ extension ProfilePresenter: ProfilePresenterProtocol {
             }
         }
     }
-    
+
     func presentStory(transitionHandler: TransitionProtocol, selectedStoryIndex: Int) {
         coordinator.presentStoryViewController(transitionHandler: transitionHandler,
                                                user: user,
                                                selectedStoryIndex: selectedStoryIndex,
                                                stories: stories ?? [Story](),
                                                secret: secret)
-        
+
     }
 }

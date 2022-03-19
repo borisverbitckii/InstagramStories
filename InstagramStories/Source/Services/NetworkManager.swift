@@ -10,38 +10,38 @@ import SwiftagramCrypto
 import UIKit.UIImage
 
 protocol NetworkManagerProtocol {
-    func fetchImageData(urlString: String, completion: @escaping (Result<Data, Error>)->())
+    func fetchImageData(urlString: String, completion: @escaping (Result<Data, Error>) -> Void)
     func stopLastOperation()
     func fetchInstagramUsers(searchingTitle: String,
                              secret: Secret,
-                             completion: @escaping (Result <[InstagramUser], Error>)->())
+                             completion: @escaping (Result <[InstagramUser], Error>) -> Void)
     func fetchUserProfile(id: Int,
                           secret: Secret,
-                          completion: @escaping (Result<AdditionalUserDetails, Error>) -> ())
-    func fetchStories(userID: String, secret: Secret, completion: @escaping (Result<[Story],Error>)->())
-    func downloadCurrentStoryVideo(urlString: String, completion: @escaping (URL)->())
+                          completion: @escaping (Result<AdditionalUserDetails, Error>) -> Void)
+    func fetchStories(userID: String, secret: Secret, completion: @escaping (Result<[Story], Error>) -> Void)
+    func downloadCurrentStoryVideo(urlString: String, completion: @escaping (URL) -> Void)
 }
 
 final class NetworkManager {
-    
-    //MARK: - Private properties
+
+    // MARK: - Private properties
     private var bin: Set<AnyCancellable> = []
     private let imageCacheManager: ImageCacheManagerProtocol
     private let videoCacheManager: VideoCacheManagerProtocol
     private var dataTaskForStory: URLSessionDataTask?
-    
-    //MARK: - Init
+
+    // MARK: - Init
     init(imageCacheManager: ImageCacheManagerProtocol,
          videoCacheManager: VideoCacheManagerProtocol) {
         self.imageCacheManager = imageCacheManager
         self.videoCacheManager = videoCacheManager
     }
-    
-    //MARK: - Public methods
+
+    // MARK: - Public methods
     func stopLastOperation() {
         bin.removeAll()
     }
-    
+
     private func timeFormatHandle(date: Int?) -> Int {
         let dateFormat = 1000000000000000
         var correctDate = 0
@@ -61,11 +61,11 @@ final class NetworkManager {
     }
 }
 
-//MARK: - extension + NetworkManagerProtocol
+// MARK: - extension + NetworkManagerProtocol
 extension NetworkManager: NetworkManagerProtocol {
-    
-    func fetchImageData(urlString: String, completion: @escaping (Result<Data, Error>)->()) {
-        
+
+    func fetchImageData(urlString: String, completion: @escaping (Result<Data, Error>) -> Void) {
+
         DispatchQueue.global().async { [weak self] in
             guard let self = self else { return }
             if let imageData = self.imageCacheManager.getCacheImage(stringURL: urlString) {
@@ -74,14 +74,14 @@ extension NetworkManager: NetworkManagerProtocol {
                 }
                 return
             }
-            
+
             guard let url = URL(string: urlString) else {
                 print(#file, #line, Errors.urlNotValid.error)
                 DispatchQueue.main.async {
                     completion(.failure(Errors.urlNotValid.error))
                 }
                 return }
-            
+
             URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
                 if let error = error {
                     print(#file, #line, error)
@@ -90,7 +90,7 @@ extension NetworkManager: NetworkManagerProtocol {
                     }
                     return
                 }
-                
+
                 guard let response = response,
                       let responseURL = response.url,
                       url.absoluteString == responseURL.absoluteString else {
@@ -99,22 +99,22 @@ extension NetworkManager: NetworkManagerProtocol {
                               completion(.failure(Errors.urlNotValid.error))
                           }
                           return }
-                
+
                 guard let data = data  else { return }
-                
+
                 self?.imageCacheManager.saveImageToCache(imageData: data, response: response)
-                
+
                 DispatchQueue.main.async {
                     completion(.success(data))
                 }
             }.resume()
         }
     }
-    
+
     func fetchUserProfile(id: Int,
                           secret: Secret,
-                          completion: @escaping (Result<AdditionalUserDetails, Error>) -> ()) {
-        
+                          completion: @escaping (Result<AdditionalUserDetails, Error>) -> Void) {
+
         Endpoint
             .user(String(id))
             .unlock(with: secret)
@@ -130,7 +130,7 @@ extension NetworkManager: NetworkManagerProtocol {
                 let posts = userInfo.user?.counter?.posts ?? 0
                 let subscribers = userInfo.user?.counter?.followers ?? 0
                 let subscriptions = userInfo.user?.counter?.following ?? 0
-                
+
                 let additionalUserDetails = AdditionalUserDetails(description: profileDescription,
                                                                   subscription: subscriptions,
                                                                   subscribers: subscribers,
@@ -140,12 +140,12 @@ extension NetworkManager: NetworkManagerProtocol {
                 }
             }.store(in: &self.bin)
     }
-    
+
     func fetchInstagramUsers(searchingTitle: String,
                              secret: Secret,
-                             completion: @escaping (Result <[InstagramUser], Error>)->()){
+                             completion: @escaping (Result <[InstagramUser], Error>) -> Void) {
         bin.removeAll()
-        
+
         Endpoint
             .users(matching: searchingTitle)
             .unlock(with: secret)
@@ -166,7 +166,7 @@ extension NetworkManager: NetworkManagerProtocol {
                     guard let usersArray = users.users else { return }
                     var instagramUsers = [InstagramUser]()
                     for user in usersArray {
-                        
+
                         let name = user.name ?? ""
                         let profileDescription = user.biography ?? ""
                         let instagramUsername = user.username ?? ""
@@ -178,7 +178,7 @@ extension NetworkManager: NetworkManagerProtocol {
                         let isPrivate = user["isPrivate"].bool() ?? false
                         let isOnFavorite = false
                         let isRecent = false
-                        
+
                         let instagramUser = InstagramUser(name: name,
                                                           profileDescription: profileDescription,
                                                           instagramUsername: instagramUsername,
@@ -190,23 +190,23 @@ extension NetworkManager: NetworkManagerProtocol {
                                                           isPrivate: isPrivate,
                                                           isOnFavorite: isOnFavorite,
                                                           isRecent: isRecent)
-                    
+
                         instagramUsers.append(instagramUser)
                     }
-                    
+
                     DispatchQueue.main.async {
                         completion(.success(instagramUsers))
                     }
                 }
             }.store(in: &bin)
     }
-    
-    func fetchStories(userID: String, secret: Secret, completion: @escaping (Result<[Story],Error>)->()) {
+
+    func fetchStories(userID: String, secret: Secret, completion: @escaping (Result<[Story], Error>) -> Void) {
         Endpoint.user(userID)
             .stories.unlock(with: secret)
             .session(URLSession.instagram)
             .sink { response in
-                
+
                 switch response {
                 case .finished:
                     break
@@ -217,18 +217,18 @@ extension NetworkManager: NetworkManagerProtocol {
                 }
             } receiveValue: { [weak self] stories in
                 var storiesArray = [Story]()
-                
+
                 guard let items = stories["reel"]["items"].array() else {
                     DispatchQueue.main.async {
                         completion(.success(storiesArray))
                     }
                     return }
-                
+
                 for item in items {
-                    
+
                     var previewURLString = ""
                     var contentURLString = ""
-                    
+
                     if let videoVersions = item["videoVersions"].array() {
                         if let firstVideoVersion = videoVersions.first {
                             let url = firstVideoVersion["url"].description
@@ -248,7 +248,7 @@ extension NetworkManager: NetworkManagerProtocol {
                     }
                     let date = item["deviceTimestamp"].int()
                     let correctDate = self?.timeFormatHandle(date: date)
-                    
+
                     let story = Story(time: correctDate ?? 0, previewImageURL: previewURLString, contentURL: contentURLString)
                     storiesArray.append(story)
                 }
@@ -258,24 +258,24 @@ extension NetworkManager: NetworkManagerProtocol {
                 }
             }.store(in: &bin)
     }
-    
-    func downloadCurrentStoryVideo(urlString: String, completion: @escaping (URL) -> ()) {
-        
+
+    func downloadCurrentStoryVideo(urlString: String, completion: @escaping (URL) -> Void) {
+
         DispatchQueue.global().async { [weak self] in
             guard let self = self else { return }
             let video = self.videoCacheManager.directoryFor(stringUrl: urlString)
-            
+
             guard !self.videoCacheManager.fileExists(atPath: video.path) else {
                 DispatchQueue.main.async {
                     completion(video)
                 }
                 return
             }
-            
+
             if self.dataTaskForStory != nil { // check was previous story downloading started
                 self.dataTaskForStory?.cancel()
             }
-            
+
             if let url = URL(string: urlString) {
                 let request = URLRequest(url: url)
                 self.dataTaskForStory = URLSession.shared.dataTask(with: request) { data, _, error in
@@ -296,4 +296,3 @@ extension NetworkManager: NetworkManagerProtocol {
         }
     }
 }
-

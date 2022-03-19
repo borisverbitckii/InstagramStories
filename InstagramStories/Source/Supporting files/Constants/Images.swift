@@ -24,7 +24,7 @@ enum Images {
     case storyButtons(storyButtonsType)
     case stateView(StateViewType)
     case scrollToTop
-    
+
     func getImage() -> UIImage? {
         switch self {
         case .rightBarButton(let favoriteType):

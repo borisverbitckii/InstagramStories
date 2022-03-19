@@ -8,9 +8,9 @@
 import UIKit.UILabel
 
 extension UILabel {
-    
+
     func setupTextWithAnimation(text: String, with duration: TimeInterval) {
-        
+
         UIView.transition(with: self,
                           duration: duration,
                           options: .transitionCrossDissolve,

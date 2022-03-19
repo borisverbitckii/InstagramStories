@@ -8,24 +8,24 @@
 import Foundation
 
 protocol StoryRepositoryProtocol {
-    func downloadCurrentStoryVideo(urlString: String, completion: @escaping (URL)->())
+    func downloadCurrentStoryVideo(urlString: String, completion: @escaping (URL) -> Void)
 }
 
 final class StoryRepository {
-    
-    //MARK: - Private properties
+
+    // MARK: - Private properties
     private let remoteDataSource: StoriesVideoDataSourceProtocol
-    
-    //MARK: - Init
+
+    // MARK: - Init
     init(remoteDataSource: StoriesVideoDataSourceProtocol) {
         self.remoteDataSource = remoteDataSource
     }
-    
+
 }
 
-//MARK: - extension + StoryRepositoryProtocol
+// MARK: - extension + StoryRepositoryProtocol
 extension StoryRepository: StoryRepositoryProtocol {
-    func downloadCurrentStoryVideo(urlString: String, completion: @escaping (URL)->()) {
+    func downloadCurrentStoryVideo(urlString: String, completion: @escaping (URL) -> Void) {
         remoteDataSource.downloadCurrentStoryVideo(urlString: urlString, completion: completion)
     }
 }

@@ -9,7 +9,7 @@ import Swiftagram
 import Foundation
 
 protocol AuthRepositoryProtocol {
-    func authInInstagram(completion: @escaping(Result<Secret,Error>) -> ())
+    func authInInstagram(completion: @escaping(Result<Secret, Error>) -> Void)
 }
 
 enum CredentialsType {
@@ -17,14 +17,14 @@ enum CredentialsType {
 }
 
 final class AuthRepository {
-    
-    //MARK: - Private properties
+
+    // MARK: - Private properties
     private let authDataSource: AuthDataSourceProtocol
     private let credentialsDataSource: CredentialsDataSourceProtocol
-    
+
     private var tryCounter = 0
     private var credentials = [String: String]()
-    
+
     init(authDataSource: AuthDataSourceProtocol,
          credentialsDataSource: CredentialsDataSourceProtocol) {
         self.authDataSource = authDataSource
@@ -32,11 +32,11 @@ final class AuthRepository {
     }
 }
 
-//MARK: - extension + AuthRepositoryProtocol
+// MARK: - extension + AuthRepositoryProtocol
 extension AuthRepository: AuthRepositoryProtocol {
-    
-    //MARK: - Public methods
-    func authInInstagram(completion: @escaping(Result<Secret,Error>) -> ()) {
+
+    // MARK: - Public methods
+    func authInInstagram(completion: @escaping(Result<Secret, Error>) -> Void) {
         authDataSource.checkAuthorization { [weak self] secret in
             guard let self = self else { return }
             if let secret = secret {
@@ -56,24 +56,24 @@ extension AuthRepository: AuthRepositoryProtocol {
             }
         }
     }
-    
-    //MARK: - Private methods
+
+    // MARK: - Private methods
     private func tryToAuthWithCredentials(type: CredentialsType,
                                           credentials: [String: String],
-                                          completion: @escaping(Result<Secret,Error>) -> ()) {
+                                          completion: @escaping(Result<Secret, Error>) -> Void) {
         self.credentialsDataSource.fetchCredentials { credentials in
-            
+
             switch type {
             case .firebase: self.credentials = credentials
             default: break
             }
-            
+
             guard let usernameAndPassword = credentials.first else { return }
             let username = usernameAndPassword.key
             let password = usernameAndPassword.value
-            
+
             self.tryCounter += 1
-            
+
             self.authDataSource.authInInstagram(username: username,
                                                 password: password) { result in
                 switch result {

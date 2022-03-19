@@ -5,9 +5,9 @@
 ////  Created by Борис on 13.12.2021.
 ////
 //
-//import UIKit
+// import UIKit
 //
-//final class TransitionCoordinator: NSObject, UIViewControllerTransitioningDelegate {
+// final class TransitionCoordinator: NSObject, UIViewControllerTransitioningDelegate {
 //    
 //    // MARK: Properties
 //    
@@ -63,4 +63,4 @@
 //        }
 //        return dismissInteractor
 //    }
-//}
+// }

@@ -15,7 +15,7 @@ enum Palette {
     case superLightGray
     case purple
     case clear
-    
+
     var color: UIColor {
         switch self {
         case .white:

@@ -8,18 +8,18 @@
 import UIKit.UIViewController
 
 protocol CustomTabBarProtocol {
-    
+
 }
 
 final class CustomTabBar: UITabBar, UITabBarDelegate, CustomTabBarProtocol {
-    
-    //MARK: - Private properties
+
+    // MARK: - Private properties
     private let tabBarView: UIView = {
         $0.clipsToBounds = true
         return $0
     }(UIView())
-    
-    //MARK: - Init
+
+    // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupTabBar()
@@ -27,25 +27,25 @@ final class CustomTabBar: UITabBar, UITabBarDelegate, CustomTabBarProtocol {
         tabBarView.backgroundColor = Palette.white.color
         layout()
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    //MARK: - Private methods
+
+    // MARK: - Private methods
     private func setupTabBar() {
         Utils.addShadow(type: .shadowIsAbove, layer: layer)
         backgroundColor = .clear
         shadowImage = UIImage()
         backgroundImage = UIImage()
     }
-    
+
     private func layout() {
         pin
             .width(UIScreen.main.bounds.width)
             .bottom(layoutMargins)
             .height(LocalConstants.tabBarHeight)
-        
+
         tabBarView.frame = frame
         tabBarView.roundCorners(corners: [.topLeft, .topRight], radius: frame.height / 2)
     }

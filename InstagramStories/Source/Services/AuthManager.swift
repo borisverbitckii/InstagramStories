@@ -9,19 +9,19 @@ import SwiftagramCrypto
 import Foundation
 
 protocol AuthManagerProtocol {
-    func authInInstagram(username: String, password: String, completion: @escaping (Result<Secret,Error>) -> ())
-    func checkAuthorization(completion: @escaping(Secret?)->())
+    func authInInstagram(username: String, password: String, completion: @escaping (Result<Secret, Error>) -> Void)
+    func checkAuthorization(completion: @escaping(Secret?) -> Void)
 }
 
 final class AuthManager {
-    //MARK: - Private properties
+    // MARK: - Private properties
     private var bin: Set<AnyCancellable> = []
 }
 
-//MARK: - extension + AuthManagerProtocol
+// MARK: - extension + AuthManagerProtocol
 extension AuthManager {
-    
-    //MARK: - Private methods
+
+    // MARK: - Private methods
     private func storeSecret(_ secret: Secret) {
         do {
             try KeychainStorage<Secret>().store(secret)
@@ -31,11 +31,11 @@ extension AuthManager {
     }
 }
 
-//MARK: - extension + AuthManagerProtocol
+// MARK: - extension + AuthManagerProtocol
 extension AuthManager: AuthManagerProtocol {
-    
-    //MARK: - Public methods
-    func checkAuthorization(completion: @escaping(Secret?)->()) {
+
+    // MARK: - Public methods
+    func checkAuthorization(completion: @escaping(Secret?) -> Void) {
         do {
             if UserDefaults.standard.value(forKey: "secret.identifier") == nil {
                 completion(nil)
@@ -51,10 +51,10 @@ extension AuthManager: AuthManagerProtocol {
             print(#file, #line, Errors.noSecretIntoKeychainStorage.error)
         }
     }
-    
-    func authInInstagram(username: String, password: String, completion: @escaping (Result<Secret,Error>) -> ()) {
+
+    func authInInstagram(username: String, password: String, completion: @escaping (Result<Secret, Error>) -> Void) {
         let queue = DispatchQueue(label: "Auth", qos: .userInteractive)
-        
+
         queue.async {
             Authenticator.keychain
                 .basic(username: username,
