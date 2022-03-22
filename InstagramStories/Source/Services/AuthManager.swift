@@ -63,6 +63,13 @@ extension AuthManager: AuthManagerProtocol {
                 .sink(receiveCompletion: { response in
                     switch response {
                     case .failure(let error):
+                        if (error as NSError).code == -1200 { // no access to server (need VPN)
+                            DispatchQueue.main.async {
+                                completion(.failure(error))
+                            }
+                            return
+                        }
+                        
                         print(#file, #line, error)
                         switch error {
                         case Authenticator.Error.twoFactorChallenge(_):

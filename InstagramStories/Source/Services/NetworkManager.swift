@@ -155,8 +155,13 @@ extension NetworkManager: NetworkManagerProtocol {
                 switch response {
                 case .finished: break
                 case .failure(let error):
-                    print(error)
                     print(#file, #line, Errors.cantFetchUsers.error)
+                    if (error as NSError).code == -1200 {
+                        DispatchQueue.main.async {
+                            completion(.failure(error))
+                        }
+                        break
+                    }
                     DispatchQueue.main.async {
                         completion(.failure(Errors.accountBlocked.error))
                     }

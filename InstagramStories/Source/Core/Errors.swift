@@ -19,6 +19,7 @@ enum Errors: Swift.Error {
     case cantFetchUsers
     case noUserInDataBase
     case accountBlocked
+    case noCredentials
 
     var error: NSError {
         switch self {
@@ -43,7 +44,9 @@ enum Errors: Swift.Error {
         case .noUserInDataBase:
             return NSError(domain: "No user in dataBase", code: 9)
         case .accountBlocked:
-            return NSError(domain: "Аккаунт для просмотра историй заблокирован социальной сетью, к сожалению, сейчас функционал не доступен.", code: 10, userInfo: nil)
+            return NSError(domain: "Аккаунт для просмотра историй заблокирован социальной сетью, к сожалению, сейчас функционал не доступен.", code: 10)
+        case .noCredentials:
+            return NSError(domain: "Нету логина и пароля в базе", code: 11)
         }
     }
 }

@@ -8,7 +8,10 @@
 import UIKit.UIViewController
 
 protocol FavoritesViewProtocol: AnyObject {
-    func showAlertController(title: String, message: String, completion: (() -> Void)?)
+    func showAlertController(title: String,
+                             message: String,
+                             action: AlertControllerActionType?,
+                             completion: (() -> Void)?)
     func setupFavoritesCount(number: Int)
     func removeItem(at index: Int)
     func hideStateView()

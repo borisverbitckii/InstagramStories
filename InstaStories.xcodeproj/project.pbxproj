@@ -524,10 +524,10 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = A1DBE296275E2B050075176C /* Build configuration list for PBXNativeTarget "InstaStories" */;
 			buildPhases = (
+				A133D81927E63CF800B75EFB /* SwiftLint */,
 				A1DBE268275E2B040075176C /* Sources */,
 				A1DBE269275E2B040075176C /* Frameworks */,
 				A1DBE26A275E2B040075176C /* Resources */,
-				A133D81927E63CF800B75EFB /* SwiftLint */,
 			);
 			buildRules = (
 			);

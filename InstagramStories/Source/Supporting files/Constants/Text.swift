@@ -23,6 +23,9 @@ enum Text {
     case stateViewMain(StateViewType)
     case stateViewSecondary(StateViewType)
     case next
+    case errorHeader
+    case errorText
+    case needVPN
 
     func getText() -> String {
         switch self {
@@ -89,6 +92,12 @@ enum Text {
 
         case .next:
             return "Далее".localized
+        case .errorHeader:
+            return "Ошибка".localized
+        case .errorText:
+            return "Приложение временно не работает по внутренним причинам. Скоро все починю, только не ставьте плохую оценку в AppStore:)"
+        case .needVPN:
+            return "Не получается подключиться к социальной сети. Возможно, вам требуется установка VPN. После включения vpn выключите и включите приложение:)"
         }
     }
 }

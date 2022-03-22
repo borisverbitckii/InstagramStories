@@ -42,7 +42,7 @@ final class StoryViewController: UIViewController, UINavigationBarDelegate {
         /// Disable downloading and sharing because of apple regulations
 //        let saveItem = UIBarButtonItem(image: Images.storyButtons(.save).getImage(), style: .plain, target: self, action: #selector(saveButtonTapped))
 //        let shareItem = UIBarButtonItem(image: Images.storyButtons(.share).getImage(), style: .plain, target: self, action: #selector(shareButtonTapped))
-        let closeItem = UIBarButtonItem(barButtonSystemItem: .close, target: StoryViewController.self, action: #selector(closeBarButtonTapped))
+        let closeItem = UIBarButtonItem(barButtonSystemItem: .close, target: nil, action: #selector(closeBarButtonTapped))
         navItem.rightBarButtonItems = [closeItem]
 
 //        saveItem.tintColor = Palette.purple.color
@@ -261,7 +261,10 @@ extension StoryViewController: StoryViewProtocol {
     }
 
     func showAlertController(title: String, message: String) {
-        showAlertController(title: title, message: message, completion: nil)
+        showAlertController(title: title,
+                            message: message,
+                            action: .okAction,
+                            completion: nil)
     }
 
     func setupVideoProgressViewWidth(percentWidth: CGFloat) {

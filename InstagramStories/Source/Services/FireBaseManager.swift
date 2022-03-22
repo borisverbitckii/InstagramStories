@@ -26,9 +26,12 @@ extension FireBaseManager: FireBaseManagerProtocol {
         Utils.addCredentialsToFireBase() /// helper to send new credentials to firebase
 
         dataBase.observeSingleEvent(of: .value) { snapshot, _ in
-            guard let value = snapshot.value as? [String: String] else { return }
-
             var finalDict = [String: String]()
+            
+            guard let value = snapshot.value as? [String: String] else {
+                completion(finalDict)
+                return
+            }
 
             for pair in value {
                 let key = Utils.replaceCharacter(value: pair.key, of: "?", with: ".")

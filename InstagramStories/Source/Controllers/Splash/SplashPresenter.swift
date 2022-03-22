@@ -42,7 +42,18 @@ extension SplashPresenter: SplashPresenterProtocol {
                     self?.coordinator.presentTabBarController(secret: secret)
                 }
             case .failure(let error):
-                self?.view?.showAlertController(title: "Error", message: error.localizedDescription, completion: nil)
+                if (error as NSError).code == -1200 {
+                    self?.view?.showAlertController(title: Text.errorHeader.getText(),
+                                                    message: Text.needVPN.getText(),
+                                                    action: nil,
+                                                    completion: nil)
+                } else {
+                    self?.view?.showAlertController(title: Text.errorHeader.getText(),
+                                                    message: Text.errorText.getText(),
+                                                    action: nil,
+                                                    completion: nil)
+                }
+                self?.view?.hideActivityIndicator()
             }
         }
     }

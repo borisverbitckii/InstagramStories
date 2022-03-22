@@ -9,7 +9,10 @@ import UIKit
 import PinLayout
 
 protocol SearchViewProtocol: AnyObject {
-    func showAlertController(title: String, message: String, completion: (() -> Void)?)
+    func showAlertController(title: String,
+                             message: String,
+                             action: AlertControllerActionType?,
+                             completion: (() -> Void)?)
     func hideActivityIndicator()
     func setupRecentUsersCount(number: Int)
     func removeItem(at index: Int)
@@ -264,7 +267,9 @@ extension SearchViewController: UISearchResultsUpdating {
               !text.isEmpty,
               previousValue != text else { return }
         guard !text.contains(where: { $0 == " "}) else {
-            showAlertController(title: Text.error.getText(), message: Text.errorInUsername.getText()) {
+            showAlertController(title: Text.error.getText(),
+                                message: Text.errorInUsername.getText(),
+                                action: .okAction) {
                 searchController.searchBar.becomeFirstResponder()
             }
             searchController.searchBar.text?.removeLast()

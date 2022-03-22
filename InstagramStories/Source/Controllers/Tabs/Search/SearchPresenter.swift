@@ -161,7 +161,17 @@ extension SearchPresenter: SearchPresenterProtocol {
                 self?.searchingInstagramUsers = users
                 self?.view?.setupSearchingUsersCount(number: users.count)
             case .failure(let error):
-                self?.view?.showAlertController(title: "Error", message: error.localizedDescription, completion: nil)
+                if (error as NSError).code == -1200 {
+                    self?.view?.showAlertController(title: Text.errorHeader.getText(),
+                                                    message: Text.needVPN.getText(),
+                                                    action: .okAction,
+                                                    completion: nil)
+                    break
+                }
+                self?.view?.showAlertController(title: Text.errorHeader.getText(),
+                                                message: error.localizedDescription,
+                                                action: .okAction,
+                                                completion: nil)
             }
             self?.view?.hideActivityIndicator()
         }

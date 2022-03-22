@@ -7,11 +7,22 @@
 
 import UIKit
 
+enum AlertControllerActionType {
+    case okAction
+}
+
 extension UIViewController {
-    func showAlertController(title: String, message: String, completion: (() -> Void)? = nil) {
+    func showAlertController(title: String, message: String,
+                             action:AlertControllerActionType? = nil,
+                             completion: (() -> Void)? = nil) {
         let alertController = UIAlertController(title: title,
                                                 message: message,
                                                 preferredStyle: .alert)
+        if action == nil {
+            present(alertController, animated: true)
+            return 
+        }
+        
         let okAction = UIAlertAction(title: "Ок", style: .default) { _ in
             if let completion = completion {
                 completion()

@@ -8,7 +8,11 @@
 import UIKit.UIViewController
 
 protocol SplashView: AnyObject {
-    func showAlertController(title: String, message: String, completion: (() -> Void)?)
+    func showAlertController(title: String,
+                             message: String,
+                             action: AlertControllerActionType?,
+                             completion: (() -> Void)?)
+    func hideActivityIndicator()
 }
 
 final class SplashViewController: UIViewController {
@@ -53,4 +57,7 @@ final class SplashViewController: UIViewController {
 
 // MARK: - extension + SplashView
 extension SplashViewController: SplashView {
+    func hideActivityIndicator() {
+        activityIndicator.hide()
+    }
 }

@@ -44,13 +44,12 @@ extension AuthRepository: AuthRepositoryProtocol {
                 return
             }
             if !self.credentials.isEmpty {
-                self.tryToAuthWithCredentials(type: .property,
-                                              credentials: self.credentials,
+                self.tryToAuthWithCredentials(credentials: self.credentials,
                                               completion: completion)
             } else {
                 self.credentialsDataSource.fetchCredentials { credentials in
                     self.tryToAuthWithCredentials(type: .firebase,
-                                                  credentials: self.credentials,
+                                                  credentials: credentials,
                                                   completion: completion)
                 }
             }
@@ -58,36 +57,39 @@ extension AuthRepository: AuthRepositoryProtocol {
     }
 
     // MARK: - Private methods
-    private func tryToAuthWithCredentials(type: CredentialsType,
+    private func tryToAuthWithCredentials(type: CredentialsType? = nil,
                                           credentials: [String: String],
                                           completion: @escaping(Result<Secret, Error>) -> Void) {
-        self.credentialsDataSource.fetchCredentials { credentials in
-
-            switch type {
-            case .firebase: self.credentials = credentials
-            default: break
-            }
-
-            guard let usernameAndPassword = credentials.first else { return }
-            let username = usernameAndPassword.key
-            let password = usernameAndPassword.value
-
-            self.tryCounter += 1
-
-            self.authDataSource.authInInstagram(username: username,
-                                                password: password) { result in
-                switch result {
-                case .success(let secret):
-                    completion(.success(secret))
-                case .failure(let error):
-                    self.credentialsDataSource.removeCredentials(pathString: username)
-                    self.credentials.removeValue(forKey: username)
-                    if self.tryCounter >= credentials.count {
-                        completion(.failure(error))
-                        break
-                    }
-                    self.authInInstagram(completion: completion)
+        switch type {
+        case .firebase: self.credentials = credentials
+        default: break
+        }
+        
+        guard let usernameAndPassword = credentials.first else {
+            completion(.failure(Errors.noCredentials.error))
+            return
+        }
+        let username = usernameAndPassword.key
+        let password = usernameAndPassword.value
+        
+        self.authDataSource.authInInstagram(username: username,
+                                            password: password) { [weak self] result in
+            switch result {
+            case .success(let secret):
+                completion(.success(secret))
+            case .failure(let error):
+                if (error as NSError).code == -1200 {
+                    completion(.failure(error))
+                    break
                 }
+                self?.credentialsDataSource.removeCredentials(pathString: username)
+                self?.credentials.removeValue(forKey: username)
+                if self?.tryCounter ?? 0 > credentials.count {
+                    completion(.failure(error))
+                    break
+                }
+                self?.authInInstagram(completion: completion)
+                self?.tryCounter += 1
             }
         }
     }
